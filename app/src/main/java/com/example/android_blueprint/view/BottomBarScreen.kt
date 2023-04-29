@@ -54,7 +54,8 @@ fun ListScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White).padding(8.dp),
+            .background(Color.White)
+            .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -71,7 +72,8 @@ fun ConsoleScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White).padding(8.dp),
+            .background(Color.White)
+            .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(

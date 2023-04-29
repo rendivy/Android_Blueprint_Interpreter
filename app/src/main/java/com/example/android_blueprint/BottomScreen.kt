@@ -31,7 +31,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Preview(showBackground = true)
+@Preview(showBackground = true,
+    device = "spec:width=720px,height=1280px,dpi=440"
+)
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
@@ -89,6 +91,7 @@ fun RowScope.AddItem(
                     popUpTo(navController.graph.findStartDestination().id)
                     launchSingleTop = true
                 }
+
             })
     )
     {
