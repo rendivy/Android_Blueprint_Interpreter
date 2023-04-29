@@ -46,14 +46,7 @@ sealed class BottomBarScreen(
 
 @Composable
 fun FieldScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White).padding(8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Здесь наше полотно с блоками", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-    }
+    InfiniteField()
 }
 
 @Composable
