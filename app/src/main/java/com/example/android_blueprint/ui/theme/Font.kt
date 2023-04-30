@@ -5,3 +5,4 @@ import androidx.compose.ui.text.font.FontFamily
 import com.example.android_blueprint.R
 
 val sfMediumFont = FontFamily(Font(R.font.sfpro_medium))
+val neueMedium = FontFamily(Font(R.font.neue_montrea_medium))

@@ -1,7 +1,6 @@
 package com.example.android_blueprint.view
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,16 +9,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +29,11 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.android_blueprint.ui.theme.Purple40
+import com.example.android_blueprint.ui.theme.BackgroundColor
+import com.example.android_blueprint.ui.theme.actionColor
+import com.example.android_blueprint.ui.theme.actionFontColor
+import com.example.android_blueprint.ui.theme.neueMedium
+import com.example.android_blueprint.ui.theme.unSelectedColor
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Preview(
@@ -62,22 +65,20 @@ fun BottomBar(modifier: Modifier, navController: NavHostController) {
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    Box(modifier = Modifier.clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))){
-        Row(
-            modifier = Modifier
-                .background(Purple40)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            screens.forEach() { screen ->
-                AddItem(
-                    screen = screen,
-                    currentDestination = currentDestination,
-                    navController = navController
-                )
-            }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth().background(BackgroundColor),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        screens.forEach() { screen ->
+            AddItem(
+                screen = screen,
+                currentDestination = currentDestination,
+                navController = navController
+            )
         }
     }
+
 }
 
 
@@ -88,7 +89,8 @@ fun AddItem(
     navController: NavHostController
 ) {
     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-    val iconColor = if (selected) Color.White else Color.Black
+    val iconColor = if (selected) actionColor else unSelectedColor
+    val textColor = if (selected) actionFontColor else unSelectedColor
     Box(
         modifier = Modifier
             .clip(CircleShape)
@@ -102,23 +104,16 @@ fun AddItem(
     )
     {
         Column(
-            modifier = Modifier.padding(bottom = 16.dp, top = 8.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(bottom = 8.dp, top = 8.dp, start = 16.dp, end = 16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-
         ) {
             Icon(
                 painter = painterResource(id = screen.icon), contentDescription = null,
-                tint = iconColor
+                tint = iconColor, modifier = if (selected) Modifier
+                    .shadow(24.dp, spotColor = actionColor, ambientColor = actionColor) else Modifier
             )
-            AnimatedVisibility(visible = selected) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                )
-            }
+            Text(text = screen.title, color = textColor, fontFamily = neueMedium)
         }
     }
 }

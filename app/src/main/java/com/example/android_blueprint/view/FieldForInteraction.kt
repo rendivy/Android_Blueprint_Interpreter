@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.InitialOffset
 import com.example.android_blueprint.ui.theme.InitialScale
 import kotlin.math.roundToInt
@@ -35,7 +36,7 @@ fun InfiniteField() {
     }
     Column(modifier = Modifier
         .transformable(state = state)
-        .background(Color.White)
+        .background(BackgroundColor)
         .fillMaxSize()
         .graphicsLayer(
             scaleX = scale,

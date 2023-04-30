@@ -8,29 +8,35 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.android_blueprint.R
+import com.example.android_blueprint.ui.theme.BackgroundColor
+import com.example.android_blueprint.ui.theme.actionColor
+import com.example.android_blueprint.ui.theme.neueMedium
 
 sealed class BottomBarScreen(
     val route: String,
+    val title: String,
     val icon: Int
 ) {
     object Field : BottomBarScreen(
         route = "Field",
-        icon = R.drawable.field_of_block_vector
+        title = "Field",
+        icon = R.drawable.field_page_logo
     )
 
     object BlockOfList : BottomBarScreen(
         route = "BlockList",
-        icon = R.drawable.field_of_block_vector
+        title = "Block list",
+        icon = R.drawable.list_page_logo
     )
 
     object Console : BottomBarScreen(
         route = "Console",
-        icon = R.drawable.field_of_block_vector
+        title = "Console",
+        icon = R.drawable.console_page_logo
     )
 
 }
@@ -52,14 +58,16 @@ fun ConsoleScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(BackgroundColor)
             .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = "Здесь будет наша консоль с выводом, планирую сюда перекидывать пользователя, либо по клику, либо по нажанию кнопки компиляции на главном ",
             fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = neueMedium,
+            color = actionColor
         )
     }
 }
