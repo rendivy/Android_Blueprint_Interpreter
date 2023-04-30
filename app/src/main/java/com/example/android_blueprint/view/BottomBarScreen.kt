@@ -5,40 +5,32 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.android_blueprint.R
 
 sealed class BottomBarScreen(
     val route: String,
-    val title: String,
-    val icon: ImageVector
+    val icon: Int
 ) {
     object Field : BottomBarScreen(
         route = "Field",
-        title = "Field",
-        icon = Icons.Default.Home
+        icon = R.drawable.field_of_block_vector
     )
 
     object BlockOfList : BottomBarScreen(
         route = "BlockList",
-        title = "Block list",
-        icon = Icons.Default.AccountCircle
+        icon = R.drawable.field_of_block_vector
     )
 
     object Console : BottomBarScreen(
         route = "Console",
-        title = "Console",
-        icon = Icons.Default.Settings
+        icon = R.drawable.field_of_block_vector
     )
 
 }
