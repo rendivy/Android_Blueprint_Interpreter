@@ -1,4 +1,4 @@
-package com.example.android_blueprint.view
+package com.example.android_blueprint
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -32,6 +33,8 @@ import com.example.android_blueprint.ui.theme.actionColor
 import com.example.android_blueprint.ui.theme.actionFontColor
 import com.example.android_blueprint.ui.theme.neueMedium
 import com.example.android_blueprint.ui.theme.unSelectedColor
+import com.example.android_blueprint.viewModel.BottomBarScreen
+import com.example.android_blueprint.viewModel.BottomNavGraphViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Preview(
@@ -40,6 +43,7 @@ import com.example.android_blueprint.ui.theme.unSelectedColor
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    val viewModel: BottomNavGraphViewModel = viewModel()
     Scaffold(
         bottomBar = {
             BottomBar(
@@ -49,7 +53,7 @@ fun MainScreen() {
         },
     )
     {
-        BottomNavGraph(navController = navController)
+        viewModel.BottomNav(navController = navController)
     }
 }
 
@@ -69,7 +73,7 @@ fun BottomBar(modifier: Modifier, navController: NavHostController) {
             .background(BackgroundColor),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        screens.forEach() { screen ->
+        screens.forEach{ screen ->
             AddItem(
                 screen = screen,
                 currentDestination = currentDestination,
