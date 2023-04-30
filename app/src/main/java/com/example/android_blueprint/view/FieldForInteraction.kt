@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -38,26 +39,28 @@ fun InfiniteField() {
         .transformable(state = state)
         .background(Color.White)
         .fillMaxSize()
+        .graphicsLayer(
+            scaleX = scale,
+            scaleY = scale,
+            translationX = offset.x,
+            translationY = offset.y
+        )
     )
     {
-        SomeBlock(scale = scale, offset = offset)
+        SomeBlock()
+        SomeBlock()
+        SomeBlock()
     }
 }
 
 
 @Composable
-fun SomeBlock(scale: Float, offset: Offset) {
+fun SomeBlock() {
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
 
     Box(
-        Modifier
-            .graphicsLayer(
-                scaleX = scale,
-                scaleY = scale,
-                translationX = offset.x,
-                translationY = offset.y
-            )
+        modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
             .background(Color.Blue)
             .size(50.dp)
@@ -66,7 +69,6 @@ fun SomeBlock(scale: Float, offset: Offset) {
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
-
                 }
             }
     )
