@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -63,7 +64,7 @@ fun BlockList() {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(100.dp),
         modifier = Modifier // Отступ для нав бара
-            .fillMaxSize().background(BackgroundColor),
+            .fillMaxSize().background(BackgroundColor).padding(56.dp),
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalItemSpacing = 16.dp

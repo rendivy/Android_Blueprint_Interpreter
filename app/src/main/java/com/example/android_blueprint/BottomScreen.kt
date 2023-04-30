@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -17,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -67,7 +65,8 @@ fun BottomBar(modifier: Modifier, navController: NavHostController) {
     val currentDestination = navBackStackEntry?.destination
     Row(
         modifier = Modifier
-            .fillMaxWidth().background(BackgroundColor),
+            .fillMaxWidth()
+            .background(BackgroundColor),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         screens.forEach() { screen ->
@@ -93,7 +92,6 @@ fun AddItem(
     val textColor = if (selected) actionFontColor else unSelectedColor
     Box(
         modifier = Modifier
-            .clip(CircleShape)
             .clickable(onClick = {
                 navController.navigate(screen.route) {
                     popUpTo(navController.graph.findStartDestination().id)
@@ -111,7 +109,11 @@ fun AddItem(
             Icon(
                 painter = painterResource(id = screen.icon), contentDescription = null,
                 tint = iconColor, modifier = if (selected) Modifier
-                    .shadow(24.dp, spotColor = actionColor, ambientColor = actionColor) else Modifier
+                    .shadow(
+                        24.dp,
+                        spotColor = actionColor,
+                        ambientColor = actionColor
+                    ) else Modifier
             )
             Text(text = screen.title, color = textColor, fontFamily = neueMedium)
         }
