@@ -51,19 +51,7 @@ fun FieldScreen() {
 
 @Composable
 fun ListScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Здесь будет список с нашими блоками",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
+    BlockList()
 }
 
 
