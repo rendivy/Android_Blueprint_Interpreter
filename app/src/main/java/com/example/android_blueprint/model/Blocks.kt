@@ -1,4 +1,4 @@
-package com.example.android_blueprint.viewModel
+package com.example.android_blueprint.model
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp

@@ -28,12 +28,12 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.android_blueprint.model.BottomBarModel
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.actionColor
 import com.example.android_blueprint.ui.theme.actionFontColor
 import com.example.android_blueprint.ui.theme.neueMedium
 import com.example.android_blueprint.ui.theme.unSelectedColor
-import com.example.android_blueprint.viewModel.BottomBarScreen
 import com.example.android_blueprint.viewModel.BottomNavGraphViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -61,9 +61,9 @@ fun MainScreen() {
 @Composable
 fun BottomBar(modifier: Modifier, navController: NavHostController) {
     val screens = listOf(
-        BottomBarScreen.Console,
-        BottomBarScreen.Field,
-        BottomBarScreen.BlockOfList,
+        BottomBarModel.Console,
+        BottomBarModel.Field,
+        BottomBarModel.BlockOfList,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -87,7 +87,7 @@ fun BottomBar(modifier: Modifier, navController: NavHostController) {
 
 @Composable
 fun AddItem(
-    screen: BottomBarScreen,
+    screen: BottomBarModel,
     currentDestination: NavDestination?,
     navController: NavHostController
 ) {

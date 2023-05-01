@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,14 +13,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.android_blueprint.model.Blocks
+import com.example.android_blueprint.model.Transform
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.actionColor
 import com.example.android_blueprint.ui.theme.neueMedium
-import com.example.android_blueprint.viewModel.Blocks
+import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 @Composable
-fun FieldScreen(blocks: MutableList<Blocks>) {
-    InfiniteField(blocks)
+fun FieldScreen(blocks: MutableList<Blocks>, transform: Transform) {
+    InfiniteField(blocks, transform)
 }
 
 @Composable
