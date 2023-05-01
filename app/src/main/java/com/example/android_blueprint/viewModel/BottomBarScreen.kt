@@ -24,5 +24,4 @@ sealed class BottomBarScreen(
         title = "Console",
         icon = R.drawable.console_page_logo
     )
-
 }

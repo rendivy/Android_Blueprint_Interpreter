@@ -7,54 +7,51 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.android_blueprint.ui.theme.BackgroundColor
+import com.example.android_blueprint.ui.theme.BlockListPadding
+import com.example.android_blueprint.ui.theme.BlockShape
+import com.example.android_blueprint.ui.theme.BlockWidth
+import com.example.android_blueprint.ui.theme.BottomBarPadding
 import kotlin.random.Random
 
-
+// Test version
 data class ListItem(
     val height: Dp,
     val color: Color
 )
 
 @Composable
-fun RandomColorBox(item: ListItem) {
-    var isButtonClicked by remember { mutableStateOf(false) }
-    val backgroundColor = if (isButtonClicked) Color.Gray else item.color
-
+fun RandomColorBox(item: ListItem, addBlock: (height: Dp, color: Color) -> Unit) {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .height(item.height)
-            .clip(RoundedCornerShape(10.dp))
-            .background(color = backgroundColor)
+            .clip(BlockShape)
+            .background(color = item.color)
             .clickable(onClick = {
-                isButtonClicked = !isButtonClicked
+                addBlock(item.height, item.color)
             })
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BlockList() {
+fun BlockList(addBlock: (height: Dp, color: Color) -> Unit) {
     val items = (1..100).map {
         ListItem(
-            height = Random.nextInt(100, 120).dp,
+            height = Random.nextInt(100, 150).dp,
             color = Color(
                 Random.nextLong(0xFFFFFFFFF)
             ).copy(alpha = 1f)
@@ -62,15 +59,17 @@ fun BlockList() {
     }
 
     LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(100.dp),
-        modifier = Modifier // Отступ для нав бара
-            .fillMaxSize().background(BackgroundColor).padding(56.dp),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalItemSpacing = 16.dp
+        columns = StaggeredGridCells.Adaptive(BlockWidth),
+        contentPadding = PaddingValues(BlockListPadding),
+        horizontalArrangement = Arrangement.spacedBy(BlockListPadding),
+        verticalItemSpacing = BlockListPadding,
+        modifier = Modifier
+            .padding(bottom = BottomBarPadding)
+            .background(BackgroundColor)
+            .fillMaxSize(),
     ) {
         items(items) { item ->
-            RandomColorBox(item = item)
+            RandomColorBox(item = item, addBlock)
         }
     }
 }
