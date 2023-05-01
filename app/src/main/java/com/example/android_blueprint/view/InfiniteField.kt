@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -29,10 +30,9 @@ import com.example.android_blueprint.ui.theme.BlockWidth
 import kotlin.math.roundToInt
 
 @Composable
-fun InfiniteField(blocks: MutableList<Blocks>, transform: Transform) {
+fun InfiniteField(blocks: MutableList<Blocks>, transform: Transform, changeTransform: (zoomChange: Float, offsetChange: Offset) -> Unit) {
     val state = rememberTransformableState { zoomChange, offsetChange, _ ->
-        transform.scale *= zoomChange
-        transform.offset += offsetChange
+        changeTransform(zoomChange, offsetChange)
     }
     Box(
         modifier = Modifier
