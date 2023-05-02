@@ -3,7 +3,8 @@ package com.example.android_blueprint.model
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 
-data class Blocks(
+data class BlockDimension(
     val height: Dp,
-    val color: Color
+    val color: Color,
+    val symbol: String
 )

@@ -14,20 +14,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.android_blueprint.model.Blocks
+import com.example.android_blueprint.model.BlockDimension
 import com.example.android_blueprint.model.Transform
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.actionColor
 import com.example.android_blueprint.ui.theme.neueMedium
-import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 @Composable
-fun FieldScreen(blocks: MutableList<Blocks>, transform: Transform, changeTransform: (zoomChange: Float, offsetChange: Offset) -> Unit) {
+fun FieldScreen(
+    blocks: MutableList<BlockDimension>,
+    transform: Transform,
+    changeTransform: (zoomChange: Float, offsetChange: Offset) -> Unit
+) {
     InfiniteField(blocks, transform, changeTransform)
 }
 
 @Composable
-fun ListScreen(addBlock: (height: Dp, color: Color) -> Unit) {
+fun ListScreen(addBlock: (height: Dp, color: Color, symbol: String) -> Unit) {
     BlockList(addBlock)
 }
 
