@@ -73,7 +73,7 @@ fun BottomBar(modifier: Modifier, navController: NavHostController) {
             .background(BackgroundColor),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        screens.forEach{ screen ->
+        screens.forEach { screen ->
             AddItem(
                 screen = screen,
                 currentDestination = currentDestination,

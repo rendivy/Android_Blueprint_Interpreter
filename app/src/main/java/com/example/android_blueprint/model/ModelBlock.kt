@@ -1,6 +1,4 @@
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 
 fun main() {
     val listViewsBlock = ArrayList<ViewBlock<*>>();
@@ -19,25 +17,30 @@ class ViewBlock<T : Any>(
     private val type: String,
     private val variableName: String,
     private val value: T,
-    private val listID: List<Int>){
+    private val listID: List<Int>
+) {
     fun getId(): Int {
         return id
     }
+
     fun getType(): String {
         return type
     }
+
     fun getListID(): List<Int> {
         return listID
     }
+
     fun getValue(): T {
         return value
     }
+
     fun getVariableName(): String {
         return variableName
     }
 }
 
-fun postOrderDFS(listBlock: List<ViewBlock<*>>, rootBlock: ViewBlock<*>): List<Block<*>>{
+fun postOrderDFS(listBlock: List<ViewBlock<*>>, rootBlock: ViewBlock<*>): List<Block<*>> {
     val stack = Stack<ViewBlock<*>>()
     val visited = HashSet<ViewBlock<*>>()
     val result = ArrayList<Block<*>>()
@@ -46,18 +49,24 @@ fun postOrderDFS(listBlock: List<ViewBlock<*>>, rootBlock: ViewBlock<*>): List<B
         val current = stack.peek()
         val children = current.getListID()
         if (visited.contains(current)) {
-            if(!result.contains(getBlock(current, result))){
+            if (!result.contains(getBlock(current, result))) {
                 result.add(getBlock(current, result))
             }
             stack.pop()
-        } else if(children.isEmpty()) {
-            result.add(ConstantBlock(current.getValue(), current.getId(), current.getVariableName()))
+        } else if (children.isEmpty()) {
+            result.add(
+                ConstantBlock(
+                    current.getValue(),
+                    current.getId(),
+                    current.getVariableName()
+                )
+            )
             stack.pop()
-        }else {
+        } else {
             visited.add(current)
             for (child in children.reversed()) {
-                for(block in listBlock){
-                    if(block.getId() == child && !visited.contains(block)){
+                for (block in listBlock) {
+                    if (block.getId() == child && !visited.contains(block)) {
                         stack.push(block)
                     }
                 }
@@ -67,33 +76,48 @@ fun postOrderDFS(listBlock: List<ViewBlock<*>>, rootBlock: ViewBlock<*>): List<B
     return result
 }
 
-fun getBlock(block: ViewBlock<*>, listBlock: List<Block<*>>): Block<*>{
+fun getBlock(block: ViewBlock<*>, listBlock: List<Block<*>>): Block<*> {
     lateinit var leftBlock: Block<*>
     lateinit var rightBlock: Block<*>
-    for (i in listBlock){
-        if(i.getId() == block.getListID()[0]){
+    for (i in listBlock) {
+        if (i.getId() == block.getListID()[0]) {
             leftBlock = i
         }
-        if(i.getId() == block.getListID()[1]){
+        if (i.getId() == block.getListID()[1]) {
             rightBlock = i
         }
     }
-    return when(block.getType()){
-        "SumBlock" -> SumBlock(leftBlock as BlockWithExpression<Number>,
+    return when (block.getType()) {
+        "SumBlock" -> SumBlock(
+            leftBlock as BlockWithExpression<Number>,
             rightBlock as BlockWithExpression<Number>,
-            block.getId())
-        "SubtractBlock" -> SubtractBlock(leftBlock as BlockWithExpression<Number>,
+            block.getId()
+        )
+
+        "SubtractBlock" -> SubtractBlock(
+            leftBlock as BlockWithExpression<Number>,
             rightBlock as BlockWithExpression<Number>,
-            block.getId())
-        "MultiplicationBlock" -> MultiplicationBlock(leftBlock as BlockWithExpression<Number>,
+            block.getId()
+        )
+
+        "MultiplicationBlock" -> MultiplicationBlock(
+            leftBlock as BlockWithExpression<Number>,
             rightBlock as BlockWithExpression<Number>,
-            block.getId())
-        "DivisionBlock" -> DivisionBlock(leftBlock as BlockWithExpression<Number>,
+            block.getId()
+        )
+
+        "DivisionBlock" -> DivisionBlock(
+            leftBlock as BlockWithExpression<Number>,
             rightBlock as BlockWithExpression<Number>,
-            block.getId())
-        "ModBlock" -> ModBlock(leftBlock as BlockWithExpression<Int>,
+            block.getId()
+        )
+
+        "ModBlock" -> ModBlock(
+            leftBlock as BlockWithExpression<Int>,
             rightBlock as BlockWithExpression<Int>,
-            block.getId())
+            block.getId()
+        )
+
         else -> throw IllegalArgumentException("Unknown type")
     }
 }
@@ -104,22 +128,24 @@ abstract class Block<T>(private val id: Int) {
     fun getId(): Int {
         return id
     }
+
     abstract fun execute(): T
 }
 
 interface BlockWithExpression<T> {
     fun getExpression(): Expression<T>
-    fun getValue() : T{
+    fun getValue(): T {
         return getExpression().interpret()
     }
 }
 
 //ConstantBlock.kt
 
-class ConstantBlock<T : Any>(private val value: T, id: Int, private val name: String) : Block<T>(id), BlockWithExpression<T> {
+class ConstantBlock<T : Any>(private val value: T, id: Int, private val name: String) :
+    Block<T>(id), BlockWithExpression<T> {
     override fun getExpression(): Expression<T> {
         @Suppress("UNCHECKED_CAST")
-        return when(value::class){
+        return when (value::class) {
             Int::class -> NumericExpression(value as Int) as Expression<T>
             Double::class -> NumericExpression(value as Double) as Expression<T>
             Float::class -> NumericExpression(value as Float) as Expression<T>
@@ -130,9 +156,11 @@ class ConstantBlock<T : Any>(private val value: T, id: Int, private val name: St
             else -> throw IllegalArgumentException("Unknown type")
         }
     }
-    fun getName(): String{
+
+    fun getName(): String {
         return name
     }
+
     override fun execute(): T {
         return getExpression().interpret()
     }
@@ -147,12 +175,15 @@ class SumBlock<T : Number>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<T> {
         return SumExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): T {
         return getExpression().interpret()
     }
@@ -165,12 +196,15 @@ class SubtractBlock<T : Number>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<T> {
         return DifferenceExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): T {
         return getExpression().interpret()
     }
@@ -183,12 +217,15 @@ class MultiplicationBlock<T : Number>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<T> {
         return MultiplicationExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): T {
         return getExpression().interpret()
     }
@@ -201,12 +238,15 @@ class DivisionBlock<T : Number>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<Double> {
         return DivisionExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): Double {
         return getExpression().interpret()
     }
@@ -219,12 +259,15 @@ class ModBlock<T : Number>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<T> {
         return ModExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): T {
         return getExpression().interpret()
     }
@@ -239,6 +282,7 @@ class AndBlock(
     override fun getExpression(): Expression<Boolean> {
         return AndExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): Boolean {
         return getExpression().interpret()
     }
@@ -251,6 +295,7 @@ class OrBlock(
     override fun getExpression(): Expression<Boolean> {
         return OrExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): Boolean {
         return getExpression().interpret()
     }
@@ -262,6 +307,7 @@ class NotBlock(
     override fun getExpression(): Expression<Boolean> {
         return NotExpression(operator.getExpression())
     }
+
     override fun execute(): Boolean {
         return getExpression().interpret()
     }
@@ -274,12 +320,15 @@ class EqualBlock<T : Any>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<Boolean> {
         return EqualExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): Boolean {
         return getExpression().interpret()
     }
@@ -292,12 +341,15 @@ class LessThenBlock<T : Number>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<Boolean> {
         return LessThenExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): Boolean {
         return getExpression().interpret()
     }
@@ -310,12 +362,15 @@ class GreaterThenBlock<T : Number>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<Boolean> {
         return GreaterThenExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
+
     override fun execute(): Boolean {
         return getExpression().interpret()
     }
@@ -328,12 +383,18 @@ class LessThenOrEqualBlock<T : Number>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<Boolean> {
-        return LessThenOrEqualExpression(leftOperator.getExpression(), rightOperator.getExpression())
+        return LessThenOrEqualExpression(
+            leftOperator.getExpression(),
+            rightOperator.getExpression()
+        )
     }
+
     override fun execute(): Boolean {
         return getExpression().interpret()
     }
@@ -346,12 +407,18 @@ class GreaterThenOrEqualBlock<T : Number>(
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                    rightOperator.getExpression().interpret()::class
+        )
         { "Both operands must have the same type" }
     }
+
     override fun getExpression(): Expression<Boolean> {
-        return GreaterThenOrEqualExpression(leftOperator.getExpression(), rightOperator.getExpression())
+        return GreaterThenOrEqualExpression(
+            leftOperator.getExpression(),
+            rightOperator.getExpression()
+        )
     }
+
     override fun execute(): Boolean {
         return getExpression().interpret()
     }
@@ -359,13 +426,13 @@ class GreaterThenOrEqualBlock<T : Number>(
 
 //Expression.kt
 
-interface Expression<T>{
+interface Expression<T> {
     fun interpret(): T
 }
 
 //BooleanExpression.kt
 
-class BooleanExpression(private val boolean: Boolean): Expression<Boolean>{
+class BooleanExpression(private val boolean: Boolean) : Expression<Boolean> {
     override fun interpret(): Boolean {
         return boolean
     }
@@ -444,63 +511,115 @@ class GreaterThenOrEqualExpression<T : Number>(
 
 //NumericExpression.kt
 
-class NumericExpression<T : Number>(private val number: T): Expression<T>{
+class NumericExpression<T : Number>(private val number: T) : Expression<T> {
     override fun interpret(): T {
         return number
     }
 }
 
 fun <T : Number> getCastExpressionValue(
-    leftExpression : Expression<T>,
+    leftExpression: Expression<T>,
     rightExpression: Expression<T>,
     operator: String
-): T{
+): T {
     @Suppress("UNCHECKED_CAST")
-    return when(operator){
+    return when (operator) {
         "+" -> (
-                when(leftExpression.interpret()::class){
-                    Int::class -> (leftExpression.interpret().toInt() + rightExpression.interpret().toInt()) as T
-                    Double::class -> (leftExpression.interpret().toDouble() + rightExpression.interpret().toDouble()) as T
-                    Float::class -> (leftExpression.interpret().toFloat() + rightExpression.interpret().toFloat()) as T
-                    Long::class -> (leftExpression.interpret().toLong() + rightExpression.interpret().toLong()) as T
-                    Short::class -> (leftExpression.interpret().toShort() + rightExpression.interpret().toShort()) as T
-                    Byte::class -> (leftExpression.interpret().toByte() + rightExpression.interpret().toByte()) as T
+                when (leftExpression.interpret()::class) {
+                    Int::class -> (leftExpression.interpret().toInt() + rightExpression.interpret()
+                        .toInt()) as T
+
+                    Double::class -> (leftExpression.interpret()
+                        .toDouble() + rightExpression.interpret().toDouble()) as T
+
+                    Float::class -> (leftExpression.interpret()
+                        .toFloat() + rightExpression.interpret().toFloat()) as T
+
+                    Long::class -> (leftExpression.interpret()
+                        .toLong() + rightExpression.interpret().toLong()) as T
+
+                    Short::class -> (leftExpression.interpret()
+                        .toShort() + rightExpression.interpret().toShort()) as T
+
+                    Byte::class -> (leftExpression.interpret()
+                        .toByte() + rightExpression.interpret().toByte()) as T
+
                     else -> throw IllegalArgumentException("Unknown type")
                 }
                 )
+
         "-" -> (
-                when(leftExpression.interpret()::class){
-                    Int::class -> (leftExpression.interpret().toInt() - rightExpression.interpret().toInt()) as T
-                    Double::class -> (leftExpression.interpret().toDouble() - rightExpression.interpret().toDouble()) as T
-                    Float::class -> (leftExpression.interpret().toFloat() - rightExpression.interpret().toFloat()) as T
-                    Long::class -> (leftExpression.interpret().toLong() - rightExpression.interpret().toLong()) as T
-                    Short::class -> (leftExpression.interpret().toShort() - rightExpression.interpret().toShort()) as T
-                    Byte::class -> (leftExpression.interpret().toByte() - rightExpression.interpret().toByte()) as T
+                when (leftExpression.interpret()::class) {
+                    Int::class -> (leftExpression.interpret().toInt() - rightExpression.interpret()
+                        .toInt()) as T
+
+                    Double::class -> (leftExpression.interpret()
+                        .toDouble() - rightExpression.interpret().toDouble()) as T
+
+                    Float::class -> (leftExpression.interpret()
+                        .toFloat() - rightExpression.interpret().toFloat()) as T
+
+                    Long::class -> (leftExpression.interpret()
+                        .toLong() - rightExpression.interpret().toLong()) as T
+
+                    Short::class -> (leftExpression.interpret()
+                        .toShort() - rightExpression.interpret().toShort()) as T
+
+                    Byte::class -> (leftExpression.interpret()
+                        .toByte() - rightExpression.interpret().toByte()) as T
+
                     else -> throw IllegalArgumentException("Unknown type")
                 }
                 )
+
         "*" -> (
-                when(leftExpression.interpret()::class){
-                    Int::class -> (leftExpression.interpret().toInt() * rightExpression.interpret().toInt()) as T
-                    Double::class -> (leftExpression.interpret().toDouble() * rightExpression.interpret().toDouble()) as T
-                    Float::class -> (leftExpression.interpret().toFloat() * rightExpression.interpret().toFloat()) as T
-                    Long::class -> (leftExpression.interpret().toLong() * rightExpression.interpret().toLong()) as T
-                    Short::class -> (leftExpression.interpret().toShort() * rightExpression.interpret().toShort()) as T
-                    Byte::class -> (leftExpression.interpret().toByte() * rightExpression.interpret().toByte()) as T
+                when (leftExpression.interpret()::class) {
+                    Int::class -> (leftExpression.interpret().toInt() * rightExpression.interpret()
+                        .toInt()) as T
+
+                    Double::class -> (leftExpression.interpret()
+                        .toDouble() * rightExpression.interpret().toDouble()) as T
+
+                    Float::class -> (leftExpression.interpret()
+                        .toFloat() * rightExpression.interpret().toFloat()) as T
+
+                    Long::class -> (leftExpression.interpret()
+                        .toLong() * rightExpression.interpret().toLong()) as T
+
+                    Short::class -> (leftExpression.interpret()
+                        .toShort() * rightExpression.interpret().toShort()) as T
+
+                    Byte::class -> (leftExpression.interpret()
+                        .toByte() * rightExpression.interpret().toByte()) as T
+
                     else -> throw IllegalArgumentException("Unknown type")
                 }
                 )
+
         "%" -> (
-                when(leftExpression.interpret()::class){
-                    Int::class -> (leftExpression.interpret().toInt() % rightExpression.interpret().toInt()) as T
-                    Double::class -> (leftExpression.interpret().toDouble() % rightExpression.interpret().toDouble()) as T
-                    Float::class -> (leftExpression.interpret().toFloat() % rightExpression.interpret().toFloat()) as T
-                    Long::class -> (leftExpression.interpret().toLong() % rightExpression.interpret().toLong()) as T
-                    Short::class -> (leftExpression.interpret().toShort() % rightExpression.interpret().toShort()) as T
-                    Byte::class -> (leftExpression.interpret().toByte() % rightExpression.interpret().toByte()) as T
+                when (leftExpression.interpret()::class) {
+                    Int::class -> (leftExpression.interpret().toInt() % rightExpression.interpret()
+                        .toInt()) as T
+
+                    Double::class -> (leftExpression.interpret()
+                        .toDouble() % rightExpression.interpret().toDouble()) as T
+
+                    Float::class -> (leftExpression.interpret()
+                        .toFloat() % rightExpression.interpret().toFloat()) as T
+
+                    Long::class -> (leftExpression.interpret()
+                        .toLong() % rightExpression.interpret().toLong()) as T
+
+                    Short::class -> (leftExpression.interpret()
+                        .toShort() % rightExpression.interpret().toShort()) as T
+
+                    Byte::class -> (leftExpression.interpret()
+                        .toByte() % rightExpression.interpret().toByte()) as T
+
                     else -> throw IllegalArgumentException("Unknown type")
                 }
                 )
+
         else -> throw IllegalArgumentException("Unknown operator")
     }
 }
@@ -540,7 +659,9 @@ class DivisionExpression(
     private val rightOperand: Expression<out Number>
 ) : Expression<Double> {
     override fun interpret(): Double {
-        if(rightOperand.interpret().toDouble() == 0.0) throw ArithmeticException("Division by zero")
+        if (rightOperand.interpret()
+                .toDouble() == 0.0
+        ) throw ArithmeticException("Division by zero")
         return (leftOperand.interpret().toDouble() / rightOperand.interpret().toDouble())
     }
 }
