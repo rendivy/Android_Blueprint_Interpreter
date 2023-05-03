@@ -2,8 +2,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
-fun main() {
-    val listViewsBlock = ArrayList<ViewBlock<*>>();
+/*    val listViewsBlock = ArrayList<ViewBlock<*>>();
     listViewsBlock.add(ViewBlock(7, "MultiplicationBlock", "", 0, listOf(3, 4)))
     listViewsBlock.add(ViewBlock(4, "SubtractBlock", "", 0, listOf(3, 6)))
     listViewsBlock.add(ViewBlock(3, "SumBlock", "", 0, listOf(0, 1)))
@@ -11,9 +10,19 @@ fun main() {
     listViewsBlock.add(ViewBlock(0, "ConstantBlock", "a", 1, listOf()))
     listViewsBlock.add(ViewBlock(1, "ConstantBlock", "b", 2, listOf()))
     val listBlock = postOrderDFS(listViewsBlock, listViewsBlock[0])
-    println(listBlock[5].execute())
+    println(listBlock[5].execute())*/
+
+fun main() {
+    var parseMap: MutableMap<String, List<String>> = mutableMapOf()
+    val raw = "100>160"
+    val interpreter = Interpret()
+    val value = interpreter.parseRawBlock(raw)
+    println(value.value)
 }
 
+
+
+/*
 class ViewBlock<T : Any>(
     private val id: Int,
     private val type: String,
@@ -37,10 +46,10 @@ class ViewBlock<T : Any>(
     }
 }
 
-fun postOrderDFS(listBlock: List<ViewBlock<*>>, rootBlock: ViewBlock<*>): List<Block<*>>{
+fun postOrderDFS(listBlock: List<ViewBlock<*>>, rootBlock: ViewBlock<*>): List<Block.Block<*>>{
     val stack = Stack<ViewBlock<*>>()
     val visited = HashSet<ViewBlock<*>>()
-    val result = ArrayList<Block<*>>()
+    val result = ArrayList<Block.Block<*>>()
     stack.push(rootBlock)
     while (!stack.isEmpty()) {
         val current = stack.peek()
@@ -67,9 +76,9 @@ fun postOrderDFS(listBlock: List<ViewBlock<*>>, rootBlock: ViewBlock<*>): List<B
     return result
 }
 
-fun getBlock(block: ViewBlock<*>, listBlock: List<Block<*>>): Block<*>{
-    lateinit var leftBlock: Block<*>
-    lateinit var rightBlock: Block<*>
+fun getBlock(block: ViewBlock<*>, listBlock: List<Block.Block<*>>): Block.Block<*>{
+    lateinit var leftBlock: Block.Block<*>
+    lateinit var rightBlock: Block.Block<*>
     for (i in listBlock){
         if(i.getId() == block.getListID()[0]){
             leftBlock = i
@@ -78,6 +87,7 @@ fun getBlock(block: ViewBlock<*>, listBlock: List<Block<*>>): Block<*>{
             rightBlock = i
         }
     }
+    @Suppress("UNCHECKED_CAST")
     return when(block.getType()){
         "SumBlock" -> SumBlock(leftBlock as BlockWithExpression<Number>,
             rightBlock as BlockWithExpression<Number>,
@@ -98,9 +108,9 @@ fun getBlock(block: ViewBlock<*>, listBlock: List<Block<*>>): Block<*>{
     }
 }
 
-//Block.kt
+//Block.Block.kt
 
-abstract class Block<T>(private val id: Int) {
+abstract class Block.Block<T>(private val id: Int) {
     fun getId(): Int {
         return id
     }
@@ -114,9 +124,42 @@ interface BlockWithExpression<T> {
     }
 }
 
+//InputValueBlock.kt
+
+class InputValueBlock<T : Any>(private val value: String,
+                               id: Int
+) : Block.Block<T>(id), BlockWithExpression<T> {
+    override fun getExpression(): Expression<T> {
+        @Suppress("UNCHECKED_CAST")
+        val result = toNumericValue()
+        @Suppress("UNCHECKED_CAST")
+        return when(value::class){
+            Int::class -> NumericExpression(value as Int) as Expression<T>
+            Double::class -> NumericExpression(value as Double) as Expression<T>
+            Float::class -> NumericExpression(value as Float) as Expression<T>
+            Long::class -> NumericExpression(value as Long) as Expression<T>
+            Short::class -> NumericExpression(value as Short) as Expression<T>
+            Byte::class -> NumericExpression(value as Byte) as Expression<T>
+            Boolean::class -> BooleanExpression(value as Boolean) as Expression<T>
+            else -> throw IllegalArgumentException("Unknown type")
+        }
+    }
+    override fun execute(): T {
+        return getExpression().interpret()
+    }
+    private fun toNumericValue(): Number{
+        //TODO: convert string to numeric value
+        return 0
+    }
+
+}
+
 //ConstantBlock.kt
 
-class ConstantBlock<T : Any>(private val value: T, id: Int, private val name: String) : Block<T>(id), BlockWithExpression<T> {
+class ConstantBlock<T : Any>(private val value: T,
+                             id: Int,
+                             private val name: String
+) : Block.Block<T>(id), BlockWithExpression<T> {
     override fun getExpression(): Expression<T> {
         @Suppress("UNCHECKED_CAST")
         return when(value::class){
@@ -138,12 +181,42 @@ class ConstantBlock<T : Any>(private val value: T, id: Int, private val name: St
     }
 }
 
+//VariableBlock.kt
+
+class VariableBlock<T : Any>(private var value: T,
+                             private val name: String,
+                             id: Int
+) : Block.Block<T>(id), BlockWithExpression<T> {
+    override fun getExpression(): Expression<T> {
+        @Suppress("UNCHECKED_CAST")
+        return when(value::class){
+            Int::class -> NumericExpression(value as Int) as Expression<T>
+            Double::class -> NumericExpression(value as Double) as Expression<T>
+            Float::class -> NumericExpression(value as Float) as Expression<T>
+            Long::class -> NumericExpression(value as Long) as Expression<T>
+            Short::class -> NumericExpression(value as Short) as Expression<T>
+            Byte::class -> NumericExpression(value as Byte) as Expression<T>
+            Boolean::class -> BooleanExpression(value as Boolean) as Expression<T>
+            else -> throw IllegalArgumentException("Unknown type")
+        }
+    }
+    override fun execute(): T {
+        return getExpression().interpret()
+    }
+    fun getName(): String{
+        return name
+    }
+    fun setValue(value: T){
+        this.value = value
+    }
+}
+
 //NumericOperatorBlock.kt
 
 class SumBlock<T : Number>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<T>(id), BlockWithExpression<T> {
+) : Block.Block<T>(id), BlockWithExpression<T> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
@@ -161,7 +234,7 @@ class SumBlock<T : Number>(
 class SubtractBlock<T : Number>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<T>(id), BlockWithExpression<T> {
+) : Block.Block<T>(id), BlockWithExpression<T> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
@@ -179,11 +252,11 @@ class SubtractBlock<T : Number>(
 class MultiplicationBlock<T : Number>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<T>(id), BlockWithExpression<T> {
+) : Block.Block<T>(id), BlockWithExpression<T> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
+                   rightOperator.getExpression().interpret()::class)
         { "Both operands must have the same type" }
     }
     override fun getExpression(): Expression<T> {
@@ -197,7 +270,7 @@ class MultiplicationBlock<T : Number>(
 class DivisionBlock<T : Number>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<Double>(id), BlockWithExpression<Double> {
+) : Block.Block<Double>(id), BlockWithExpression<Double> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
@@ -215,7 +288,7 @@ class DivisionBlock<T : Number>(
 class ModBlock<T : Number>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<T>(id), BlockWithExpression<T> {
+) : Block.Block<T>(id), BlockWithExpression<T> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
@@ -235,7 +308,7 @@ class ModBlock<T : Number>(
 class AndBlock(
     private val leftOperator: BlockWithExpression<Boolean>,
     private val rightOperator: BlockWithExpression<Boolean>, id: Int
-) : Block<Boolean>(id), BlockWithExpression<Boolean> {
+) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
     override fun getExpression(): Expression<Boolean> {
         return AndExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
@@ -247,7 +320,7 @@ class AndBlock(
 class OrBlock(
     private val leftOperator: BlockWithExpression<Boolean>,
     private val rightOperator: BlockWithExpression<Boolean>, id: Int
-) : Block<Boolean>(id), BlockWithExpression<Boolean> {
+) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
     override fun getExpression(): Expression<Boolean> {
         return OrExpression(leftOperator.getExpression(), rightOperator.getExpression())
     }
@@ -258,7 +331,7 @@ class OrBlock(
 
 class NotBlock(
     private val operator: BlockWithExpression<Boolean>, id: Int
-) : Block<Boolean>(id), BlockWithExpression<Boolean> {
+) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
     override fun getExpression(): Expression<Boolean> {
         return NotExpression(operator.getExpression())
     }
@@ -270,7 +343,7 @@ class NotBlock(
 class EqualBlock<T : Any>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<Boolean>(id), BlockWithExpression<Boolean> {
+) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
@@ -288,7 +361,7 @@ class EqualBlock<T : Any>(
 class LessThenBlock<T : Number>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<Boolean>(id), BlockWithExpression<Boolean> {
+) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
@@ -306,7 +379,7 @@ class LessThenBlock<T : Number>(
 class GreaterThenBlock<T : Number>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<Boolean>(id), BlockWithExpression<Boolean> {
+) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
@@ -324,7 +397,7 @@ class GreaterThenBlock<T : Number>(
 class LessThenOrEqualBlock<T : Number>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<Boolean>(id), BlockWithExpression<Boolean> {
+) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
@@ -342,7 +415,7 @@ class LessThenOrEqualBlock<T : Number>(
 class GreaterThenOrEqualBlock<T : Number>(
     private val leftOperator: BlockWithExpression<T>,
     private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block<Boolean>(id), BlockWithExpression<Boolean> {
+) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
     init {
         require(
             leftOperator.getExpression().interpret()::class ==
@@ -557,4 +630,5 @@ class ModExpression<T : Number>(
 
 //BranchOperatorBlock.kt
 
+*/
 
