@@ -15,5 +15,5 @@ val actionColor = Color(94,213,168)
 val actionFontColor = Color(193,199,205)
 val unSelectedColor = Color(119,119,119)
 
-val BlockBackgroundColor = Color(17, 22, 27)
-val OperatorsTextColor = Color.LightGray
+val BlockBackgroundColor = Color(17, 22, 27).copy(alpha = 0.8f)
+val OperatorsTextColor = Color.LightGray.copy(alpha = 0.8f)

@@ -9,12 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.android_blueprint.model.BlockDimension
 import com.example.android_blueprint.model.Transform
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.actionColor
@@ -22,7 +19,7 @@ import com.example.android_blueprint.ui.theme.neueMedium
 
 @Composable
 fun FieldScreen(
-    blocks: MutableList<BlockDimension>,
+    blocks: MutableList<Any>,
     transform: Transform,
     changeTransform: (zoomChange: Float, offsetChange: Offset) -> Unit
 ) {
@@ -30,7 +27,7 @@ fun FieldScreen(
 }
 
 @Composable
-fun ListScreen(addBlock: (height: Dp, color: Color, symbol: String) -> Unit) {
+fun ListScreen(addBlock: (blockValue: Any) -> Unit) {
     BlockList(addBlock)
 }
 
