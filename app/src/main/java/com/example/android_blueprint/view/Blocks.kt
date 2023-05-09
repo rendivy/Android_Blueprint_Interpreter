@@ -1,117 +1,69 @@
 package com.example.android_blueprint.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockShape
-import com.example.android_blueprint.ui.theme.BlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockTextSize
+import com.example.android_blueprint.ui.theme.FlowPadding
+import com.example.android_blueprint.ui.theme.FlowSize
+import com.example.android_blueprint.ui.theme.FlowTextSize
+import com.example.android_blueprint.ui.theme.MainFlowShape
 import com.example.android_blueprint.ui.theme.OperatorsTextColor
 import com.example.android_blueprint.ui.theme.OperatorsTextSize
+import com.example.android_blueprint.ui.theme.TextPaddingForFlow
 import com.example.android_blueprint.ui.theme.neueMedium
-import kotlin.math.roundToInt
-
+import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 @Composable
 fun SetBlock(
     value: Any,
     addBlock: ((blockValue: Any) -> Unit)? = null,
 ) {
+    val viewModel: InfiniteFieldViewModel = viewModel()
+    if (addBlock == null) {
+        when (value) {
+            is BlockValue.Operator -> MovableOperatorBlock(value = value)
+            is BlockValue.InitializationBlock -> MovableInitializationBlock(value = value, viewModel.initializationBlock)
+            is BlockValue.BranchBlock -> MovableBranchBlock(value = value)
+            is BlockValue.PrintBlock -> MovablePrintBlock(value = value)
+        }
+    } else {
+        when (value) {
+            is BlockValue.Operator -> FixedOperatorBlock(value = value, addBlock = addBlock)
+            is BlockValue.InitializationBlock -> FixedInitializationBlock(
+                value,
+                addBlock = addBlock
+            )
 
-    when (value) {
-        is BlockValue.Operator -> OperatorBlock(addBlock = addBlock, value = value)
-        is BlockValue.InitializationBlock -> InitializationBlock(addBlock = addBlock, value = value)
+            is BlockValue.BranchBlock -> FixedBranchBlock(value = value, addBlock = addBlock)
+            is BlockValue.PrintBlock -> FixedPrintBlock(value = value, addBlock = addBlock)
+        }
     }
 }
 
 
 @Composable
-fun OperatorBlock(
-    value: BlockValue.Operator,
-    addBlock: ((blockValue: Any) -> Unit)?
-) {
-    if (addBlock != null) {
-        OperatorBlockWrapper(
-            value = value,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = {
-                    addBlock(value)
-                })
-        )
-    } else {
-        var offsetX by rememberSaveable { mutableStateOf(0f) }
-        var offsetY by rememberSaveable { mutableStateOf(0f) }
-        OperatorBlockWrapper(
-            value = value,
-            modifier = Modifier
-                .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-                .width(BlockWidth)
-                .pointerInput(Unit) {
-                    detectDragGestures { change, dragAmount ->
-                        change.consume()
-                        offsetX += dragAmount.x
-                        offsetY += dragAmount.y
-                    }
-                }
-        )
-    }
+fun TextForFlow(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        fontSize = FlowTextSize,
+        color = Color.White,
+        modifier = modifier.padding(TextPaddingForFlow)
+    )
 }
-
-@Composable
-fun InitializationBlock(
-    value: BlockValue.InitializationBlock,
-    addBlock: ((blockValue: Any) -> Unit)?,
-) {
-    if (addBlock != null) {
-        InitializationBlockWrapper(
-            value = value,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = {
-                    addBlock(value)
-                })
-        )
-    } else {
-        var offsetX by rememberSaveable { mutableStateOf(0f) }
-        var offsetY by rememberSaveable { mutableStateOf(0f) }
-        InitializationBlockWrapper(
-            value = value,
-            modifier = Modifier
-                .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-                .width(BlockWidth)
-                .pointerInput(Unit) {
-                    detectDragGestures { change, dragAmount ->
-                        change.consume()
-                        offsetX += dragAmount.x
-                        offsetY += dragAmount.y
-                    }
-                }
-        )
-    }
-}
-
 
 @Composable
 fun OperatorText(modifier: Modifier, text: String) {
@@ -138,30 +90,27 @@ fun ComplexBlockText(modifier: Modifier, text: String) {
 
 
 @Composable
-fun SupportingFlow(modifier: Modifier = Modifier) {
+fun SupportingFlow(
+    modifier: Modifier = Modifier,
+) {
     Box(
         modifier = modifier
-            .padding(9.dp)
+            .padding(FlowPadding )
             .clip(BlockShape)
-            .size(12.dp)
+            .size(FlowSize)
             .background(Color.White)
     )
 }
 
 @Composable
-fun MainFlow(modifier: Modifier = Modifier) {
+fun MainFlow(
+    modifier: Modifier = Modifier,
+) {
     Box(
         modifier = modifier
-            .padding(9.dp)
-            .clip(
-                CutCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 40.dp,
-                    bottomStart = 0.dp,
-                    bottomEnd = 40.dp
-                )
-            )
-            .size(12.dp)
+            .padding(FlowPadding)
+            .clip(MainFlowShape)
+            .size(FlowSize)
             .background(Color.White)
     )
 }

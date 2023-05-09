@@ -18,8 +18,6 @@ import com.example.android_blueprint.ui.theme.BlockListPadding
 import com.example.android_blueprint.ui.theme.BottomBarPadding
 
 
-// Test version
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -27,6 +25,8 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
 
     val blocks = listOf(
         BlockValue.InitializationBlock,
+        BlockValue.PrintBlock,
+        BlockValue.BranchBlock,
         BlockValue.Operator.ADDITION,
         BlockValue.Operator.SUBTRACTION,
         BlockValue.Operator.MULTIPLICATION,

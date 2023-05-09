@@ -1,6 +1,7 @@
 package com.example.android_blueprint.viewModel
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
@@ -10,8 +11,10 @@ import com.example.android_blueprint.ui.theme.InitialOffset
 import com.example.android_blueprint.ui.theme.InitialScale
 
 class InfiniteFieldViewModel : ViewModel() {
-    val blocks by mutableStateOf(mutableListOf<Any>())
+    var initializationBlock = mutableStateListOf<String>()
+    val blocks = mutableStateListOf<Any>()
     var transform by mutableStateOf(Transform(InitialScale, InitialOffset))
+
     fun addBlock(blockValue: Any) {
         blocks.add(blockValue)
     }
@@ -22,5 +25,4 @@ class InfiniteFieldViewModel : ViewModel() {
             offset = transform.offset + offsetChange
         )
     }
-
 }

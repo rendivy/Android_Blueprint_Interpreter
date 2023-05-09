@@ -41,4 +41,30 @@ sealed class BlockValue(
             )
     )
 
+    object BranchBlock : BlockValue(
+        text = "Branch",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
+
+    object PrintBlock: BlockValue(
+        text = "Print",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
+
 }
