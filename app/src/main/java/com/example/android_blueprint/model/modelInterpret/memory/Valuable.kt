@@ -1,15 +1,19 @@
-import Block.ViewBlock
+package memory
+
+import Instruction
+import Type
+import exceptions.TypeError
 import kotlin.math.floor
 import kotlin.math.abs
 import kotlin.math.exp
 
-class Valuable (varValue: Any, var type: Type): ViewBlock(Instruction.VAL, ""){
+class Valuable (varValue: Any, var type: Type): MemoryArea(Instruction.VAL){
     var value: String = varValue.toString()
     var array: MutableList<Valuable> = mutableListOf()
 
     private val numericTypes = listOf(Type.INT, Type.DOUBLE)
 
-    fun clone(): Valuable{
+    fun clone(): Valuable {
         val valuable = Valuable(value, type)
         valuable.array = array
         return valuable
@@ -25,7 +29,7 @@ class Valuable (varValue: Any, var type: Type): ViewBlock(Instruction.VAL, ""){
         }
     }
 
-    operator fun unaryPlus(): Valuable{
+    operator fun unaryPlus(): Valuable {
         return when (type){
             Type.STRING -> {
                 when (value.contains('.')){
@@ -302,5 +306,12 @@ class Valuable (varValue: Any, var type: Type): ViewBlock(Instruction.VAL, ""){
         result = 31 * result + value.hashCode()
         result = 31 * result + array.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return when (type) {
+            Type.LIST -> "${array.toString()} ($type)"
+            else -> "$value ($type)"
+        }
     }
 }

@@ -1,3 +1,5 @@
+package exceptions
+
 class RuntimeError(message: String = "") : Exception(message)
 
 class UnhandledError(message: String = "") : Exception(message)
@@ -21,3 +23,9 @@ class BlockOutOfCycleContextError(message: String = "") :
 
 class NullPointerException(message: String = "") :
     Exception("FATAL ERROR:\nNullPointerException: $message\n\nStack traceback:")
+
+class NullPointerExceptionInOperator(message: String = "") :
+    Exception("FATAL ERROR:\nNullPointerExceptionInOperator: $message\n\nStack traceback:")
+
+class InvalidBlockStructure(message: String = "") :
+    Exception("FATAL ERROR:\nInvalidBlockStructure: $message\n\nStack traceback:")

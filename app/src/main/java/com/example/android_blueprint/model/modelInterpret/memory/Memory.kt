@@ -1,9 +1,12 @@
-import Block.ViewBlock
+package memory
 
-class Memory(val prevMemory: Memory?, val scope: String) {
+import exceptions.StackCorruptionError
+import Type
+
+class Memory(val previousMemory: Memory?, val scope: String) {
     val stack: MutableMap<String, Valuable> = mutableMapOf()
 
-    fun push(address: String, value: ViewBlock) {
+    fun push(address: String, value: MemoryArea) {
         value as Valuable
         if (value.type == Type.LIST) {
             if (value.array.isEmpty()) {
@@ -26,7 +29,7 @@ class Memory(val prevMemory: Memory?, val scope: String) {
     fun throwStackError(address: String) {
         val corruptedVar = Variable(address)
         throw StackCorruptionError(
-            "Expected reserved memory for Variable ${address}@" +
+            "Expected reserved memory for memory.Variable ${address}@" +
                     "${corruptedVar.hashCode()} at address 0x" +
                     "${corruptedVar.toString().split('@').last().uppercase()} " +
                     "but stack corruption has occurred"

@@ -1,634 +1,269 @@
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
-
-/*    val listViewsBlock = ArrayList<ViewBlock<*>>();
-    listViewsBlock.add(ViewBlock(7, "MultiplicationBlock", "", 0, listOf(3, 4)))
-    listViewsBlock.add(ViewBlock(4, "SubtractBlock", "", 0, listOf(3, 6)))
-    listViewsBlock.add(ViewBlock(3, "SumBlock", "", 0, listOf(0, 1)))
-    listViewsBlock.add(ViewBlock(6, "ConstantBlock", "c", 4, listOf()))
-    listViewsBlock.add(ViewBlock(0, "ConstantBlock", "a", 1, listOf()))
-    listViewsBlock.add(ViewBlock(1, "ConstantBlock", "b", 2, listOf()))
-    val listBlock = postOrderDFS(listViewsBlock, listViewsBlock[0])
-    println(listBlock[5].execute())*/
+import block.*
 
 fun main() {
-    var parseMap: MutableMap<String, List<String>> = mutableMapOf()
-    val raw = "100>160"
-    val interpreter = Interpret()
-    val value = interpreter.parseRawBlock(raw)
-    println(value.value)
+    val startBlock = StartBlock()
+    val endBlock = EndBlock()
+
+    val getVariableBlock1 = GetVariableBlock()
+    getVariableBlock1.setRawInput("1")
+    val getVariableBlock2 = GetVariableBlock()
+    getVariableBlock2.setRawInput("2")
+    val getVariableBlock3 = GetVariableBlock()
+    getVariableBlock3.setRawInput("4")
+
+    val binarySumOperatorBlock1 = BinarySumOperatorBlock()
+    binarySumOperatorBlock1.setLeftOperator(getVariableBlock1)
+    binarySumOperatorBlock1.setRightOperator(getVariableBlock2)
+
+    val binarySubOperatorBlock1 = BinarySubOperatorBlock()
+    binarySubOperatorBlock1.setLeftOperator(binarySumOperatorBlock1)
+    binarySubOperatorBlock1.setRightOperator(getVariableBlock3)
+
+    val binaryMulOperatorBlock1 = BinaryMulOperatorBlock()
+    binaryMulOperatorBlock1.setLeftOperator(binarySumOperatorBlock1)
+    binaryMulOperatorBlock1.setRightOperator(binarySubOperatorBlock1)
+
+    val ifBlock1 = IfBlock()
+    ifBlock1.setOperator(binaryMulOperatorBlock1)
+    ifBlock1.setPreviousMainFlowBlock(startBlock)
+
+    val printBlock1 = PrintBlock()
+    printBlock1.setOperator(binaryMulOperatorBlock1)
+    printBlock1.setPreviousMainFlowBlock(ifBlock1)
+
+    val endIfBlock1 = EndIfBlock()
+    endIfBlock1.setTrueExpressionBranch(printBlock1)
+    endIfBlock1.setFalseExpressionBranch(ifBlock1)
+    endIfBlock1.setNextMainFlowBlock(endBlock)
+
+    printBlock1.setNextMainFlowBlock(endIfBlock1)
+    startBlock.setNextMainFlowBlock(ifBlock1)
+    endBlock.setPreviousMainFlowBlock(endIfBlock1)
+
+    ifBlock1.setTrueExpressionBranch(printBlock1)
+    ifBlock1.setFalseExpressionBranch(endIfBlock1)
+
+    val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
+    interpreter.run(startBlock)
 }
 
 
 
 /*
-class ViewBlock<T : Any>(
-    private val id: Int,
-    private val type: String,
-    private val variableName: String,
-    private val value: T,
-    private val listID: List<Int>){
-    fun getId(): Int {
-        return id
-    }
-    fun getType(): String {
-        return type
-    }
-    fun getListID(): List<Int> {
-        return listID
-    }
-    fun getValue(): T {
-        return value
-    }
-    fun getVariableName(): String {
-        return variableName
-    }
-}
+    val startBlock = StartBlock()
+    val endBlock = EndBlock()
 
-fun postOrderDFS(listBlock: List<ViewBlock<*>>, rootBlock: ViewBlock<*>): List<Block.Block<*>>{
-    val stack = Stack<ViewBlock<*>>()
-    val visited = HashSet<ViewBlock<*>>()
-    val result = ArrayList<Block.Block<*>>()
-    stack.push(rootBlock)
-    while (!stack.isEmpty()) {
-        val current = stack.peek()
-        val children = current.getListID()
-        if (visited.contains(current)) {
-            if(!result.contains(getBlock(current, result))){
-                result.add(getBlock(current, result))
-            }
-            stack.pop()
-        } else if(children.isEmpty()) {
-            result.add(ConstantBlock(current.getValue(), current.getId(), current.getVariableName()))
-            stack.pop()
-        }else {
-            visited.add(current)
-            for (child in children.reversed()) {
-                for(block in listBlock){
-                    if(block.getId() == child && !visited.contains(block)){
-                        stack.push(block)
-                    }
-                }
-            }
-        }
-    }
-    return result
-}
+    val initializationVariableBlock1 = InitializationAndSetVariableBlock()
+    initializationVariableBlock1.setRawInput("i=10")
+    startBlock.setNextMainFlowBlock(initializationVariableBlock1)
+    initializationVariableBlock1.setPreviousMainFlowBlock(startBlock)
 
-fun getBlock(block: ViewBlock<*>, listBlock: List<Block.Block<*>>): Block.Block<*>{
-    lateinit var leftBlock: Block.Block<*>
-    lateinit var rightBlock: Block.Block<*>
-    for (i in listBlock){
-        if(i.getId() == block.getListID()[0]){
-            leftBlock = i
-        }
-        if(i.getId() == block.getListID()[1]){
-            rightBlock = i
-        }
-    }
-    @Suppress("UNCHECKED_CAST")
-    return when(block.getType()){
-        "SumBlock" -> SumBlock(leftBlock as BlockWithExpression<Number>,
-            rightBlock as BlockWithExpression<Number>,
-            block.getId())
-        "SubtractBlock" -> SubtractBlock(leftBlock as BlockWithExpression<Number>,
-            rightBlock as BlockWithExpression<Number>,
-            block.getId())
-        "MultiplicationBlock" -> MultiplicationBlock(leftBlock as BlockWithExpression<Number>,
-            rightBlock as BlockWithExpression<Number>,
-            block.getId())
-        "DivisionBlock" -> DivisionBlock(leftBlock as BlockWithExpression<Number>,
-            rightBlock as BlockWithExpression<Number>,
-            block.getId())
-        "ModBlock" -> ModBlock(leftBlock as BlockWithExpression<Int>,
-            rightBlock as BlockWithExpression<Int>,
-            block.getId())
-        else -> throw IllegalArgumentException("Unknown type")
-    }
-}
+    val printBlock1 = PrintBlock()
+    printBlock1.setPreviousMainFlowBlock(initializationVariableBlock1)
+    initializationVariableBlock1.setNextMainFlowBlock(printBlock1)
+    printBlock1.setNextMainFlowBlock(endBlock)
+    endBlock.setPreviousMainFlowBlock(printBlock1)
 
-//Block.Block.kt
+    val getVariableBlock1 = GetVariableBlock()
+    getVariableBlock1.setRawInput("print(i)+print(10+print(10))")
+    printBlock1.setOperator(getVariableBlock1)
 
-abstract class Block.Block<T>(private val id: Int) {
-    fun getId(): Int {
-        return id
-    }
-    abstract fun execute(): T
-}
+//function
+    val functionBlock = FunctionBlock()
+    functionBlock.setRawInput("print(n)")
 
-interface BlockWithExpression<T> {
-    fun getExpression(): Expression<T>
-    fun getValue() : T{
-        return getExpression().interpret()
-    }
-}
+    val getVariableBlock2 = GetVariableBlock()
+    getVariableBlock2.setRawInput("n")
 
-//InputValueBlock.kt
+    val endFunctionBlock1 = EndFunctionBlock()
+    endFunctionBlock1.setPreviousMainFlowBlock(functionBlock)
+    endFunctionBlock1.setOperator(getVariableBlock2)
+    functionBlock.setNextMainFlowBlock(endFunctionBlock1)
 
-class InputValueBlock<T : Any>(private val value: String,
-                               id: Int
-) : Block.Block<T>(id), BlockWithExpression<T> {
-    override fun getExpression(): Expression<T> {
-        @Suppress("UNCHECKED_CAST")
-        val result = toNumericValue()
-        @Suppress("UNCHECKED_CAST")
-        return when(value::class){
-            Int::class -> NumericExpression(value as Int) as Expression<T>
-            Double::class -> NumericExpression(value as Double) as Expression<T>
-            Float::class -> NumericExpression(value as Float) as Expression<T>
-            Long::class -> NumericExpression(value as Long) as Expression<T>
-            Short::class -> NumericExpression(value as Short) as Expression<T>
-            Byte::class -> NumericExpression(value as Byte) as Expression<T>
-            Boolean::class -> BooleanExpression(value as Boolean) as Expression<T>
-            else -> throw IllegalArgumentException("Unknown type")
-        }
-    }
-    override fun execute(): T {
-        return getExpression().interpret()
-    }
-    private fun toNumericValue(): Number{
-        //TODO: convert string to numeric value
-        return 0
-    }
-
-}
-
-//ConstantBlock.kt
-
-class ConstantBlock<T : Any>(private val value: T,
-                             id: Int,
-                             private val name: String
-) : Block.Block<T>(id), BlockWithExpression<T> {
-    override fun getExpression(): Expression<T> {
-        @Suppress("UNCHECKED_CAST")
-        return when(value::class){
-            Int::class -> NumericExpression(value as Int) as Expression<T>
-            Double::class -> NumericExpression(value as Double) as Expression<T>
-            Float::class -> NumericExpression(value as Float) as Expression<T>
-            Long::class -> NumericExpression(value as Long) as Expression<T>
-            Short::class -> NumericExpression(value as Short) as Expression<T>
-            Byte::class -> NumericExpression(value as Byte) as Expression<T>
-            Boolean::class -> BooleanExpression(value as Boolean) as Expression<T>
-            else -> throw IllegalArgumentException("Unknown type")
-        }
-    }
-    fun getName(): String{
-        return name
-    }
-    override fun execute(): T {
-        return getExpression().interpret()
-    }
-}
-
-//VariableBlock.kt
-
-class VariableBlock<T : Any>(private var value: T,
-                             private val name: String,
-                             id: Int
-) : Block.Block<T>(id), BlockWithExpression<T> {
-    override fun getExpression(): Expression<T> {
-        @Suppress("UNCHECKED_CAST")
-        return when(value::class){
-            Int::class -> NumericExpression(value as Int) as Expression<T>
-            Double::class -> NumericExpression(value as Double) as Expression<T>
-            Float::class -> NumericExpression(value as Float) as Expression<T>
-            Long::class -> NumericExpression(value as Long) as Expression<T>
-            Short::class -> NumericExpression(value as Short) as Expression<T>
-            Byte::class -> NumericExpression(value as Byte) as Expression<T>
-            Boolean::class -> BooleanExpression(value as Boolean) as Expression<T>
-            else -> throw IllegalArgumentException("Unknown type")
-        }
-    }
-    override fun execute(): T {
-        return getExpression().interpret()
-    }
-    fun getName(): String{
-        return name
-    }
-    fun setValue(value: T){
-        this.value = value
-    }
-}
-
-//NumericOperatorBlock.kt
-
-class SumBlock<T : Number>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<T>(id), BlockWithExpression<T> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<T> {
-        return SumExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): T {
-        return getExpression().interpret()
-    }
-}
-
-class SubtractBlock<T : Number>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<T>(id), BlockWithExpression<T> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<T> {
-        return DifferenceExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): T {
-        return getExpression().interpret()
-    }
-}
-
-class MultiplicationBlock<T : Number>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<T>(id), BlockWithExpression<T> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                   rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<T> {
-        return MultiplicationExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): T {
-        return getExpression().interpret()
-    }
-}
-
-class DivisionBlock<T : Number>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<Double>(id), BlockWithExpression<Double> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<Double> {
-        return DivisionExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): Double {
-        return getExpression().interpret()
-    }
-}
-
-class ModBlock<T : Number>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<T>(id), BlockWithExpression<T> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<T> {
-        return ModExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): T {
-        return getExpression().interpret()
-    }
-}
-
-//BooleanOperatorBlock.kt
-
-class AndBlock(
-    private val leftOperator: BlockWithExpression<Boolean>,
-    private val rightOperator: BlockWithExpression<Boolean>, id: Int
-) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
-    override fun getExpression(): Expression<Boolean> {
-        return AndExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): Boolean {
-        return getExpression().interpret()
-    }
-}
-
-class OrBlock(
-    private val leftOperator: BlockWithExpression<Boolean>,
-    private val rightOperator: BlockWithExpression<Boolean>, id: Int
-) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
-    override fun getExpression(): Expression<Boolean> {
-        return OrExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): Boolean {
-        return getExpression().interpret()
-    }
-}
-
-class NotBlock(
-    private val operator: BlockWithExpression<Boolean>, id: Int
-) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
-    override fun getExpression(): Expression<Boolean> {
-        return NotExpression(operator.getExpression())
-    }
-    override fun execute(): Boolean {
-        return getExpression().interpret()
-    }
-}
-
-class EqualBlock<T : Any>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<Boolean> {
-        return EqualExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): Boolean {
-        return getExpression().interpret()
-    }
-}
-
-class LessThenBlock<T : Number>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<Boolean> {
-        return LessThenExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): Boolean {
-        return getExpression().interpret()
-    }
-}
-
-class GreaterThenBlock<T : Number>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<Boolean> {
-        return GreaterThenExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): Boolean {
-        return getExpression().interpret()
-    }
-}
-
-class LessThenOrEqualBlock<T : Number>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<Boolean> {
-        return LessThenOrEqualExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): Boolean {
-        return getExpression().interpret()
-    }
-}
-
-class GreaterThenOrEqualBlock<T : Number>(
-    private val leftOperator: BlockWithExpression<T>,
-    private val rightOperator: BlockWithExpression<T>, id: Int
-) : Block.Block<Boolean>(id), BlockWithExpression<Boolean> {
-    init {
-        require(
-            leftOperator.getExpression().interpret()::class ==
-                    rightOperator.getExpression().interpret()::class)
-        { "Both operands must have the same type" }
-    }
-    override fun getExpression(): Expression<Boolean> {
-        return GreaterThenOrEqualExpression(leftOperator.getExpression(), rightOperator.getExpression())
-    }
-    override fun execute(): Boolean {
-        return getExpression().interpret()
-    }
-}
-
-//Expression.kt
-
-interface Expression<T>{
-    fun interpret(): T
-}
-
-//BooleanExpression.kt
-
-class BooleanExpression(private val boolean: Boolean): Expression<Boolean>{
-    override fun interpret(): Boolean {
-        return boolean
-    }
-}
-
-class AndExpression(
-    private val leftExpression: Expression<Boolean>,
-    private val rightExpression: Expression<Boolean>
-) : Expression<Boolean> {
-    override fun interpret(): Boolean {
-        return leftExpression.interpret() && rightExpression.interpret()
-    }
-}
-
-class OrExpression(
-    private val leftExpression: Expression<Boolean>,
-    private val rightExpression: Expression<Boolean>
-) : Expression<Boolean> {
-    override fun interpret(): Boolean {
-        return leftExpression.interpret() || rightExpression.interpret()
-    }
-}
-
-class NotExpression(
-    private val expression: Expression<Boolean>
-) : Expression<Boolean> {
-    override fun interpret(): Boolean {
-        return !expression.interpret()
-    }
-}
-
-class EqualExpression<T : Any>(
-    private val leftExpression: Expression<T>,
-    private val rightExpression: Expression<T>
-) : Expression<Boolean> {
-    override fun interpret(): Boolean {
-        return leftExpression.interpret() == rightExpression.interpret()
-    }
-}
-
-class LessThenExpression<T : Number>(
-    private val leftExpression: Expression<T>,
-    private val rightExpression: Expression<T>
-) : Expression<Boolean> {
-    override fun interpret(): Boolean {
-        return leftExpression.interpret().toDouble() < rightExpression.interpret().toDouble()
-    }
-}
-
-class GreaterThenExpression<T : Number>(
-    private val leftExpression: Expression<T>,
-    private val rightExpression: Expression<T>
-) : Expression<Boolean> {
-    override fun interpret(): Boolean {
-        return leftExpression.interpret().toDouble() > rightExpression.interpret().toDouble()
-    }
-}
-
-class LessThenOrEqualExpression<T : Number>(
-    private val leftExpression: Expression<T>,
-    private val rightExpression: Expression<T>
-) : Expression<Boolean> {
-    override fun interpret(): Boolean {
-        return leftExpression.interpret().toDouble() <= rightExpression.interpret().toDouble()
-    }
-}
-
-class GreaterThenOrEqualExpression<T : Number>(
-    private val leftExpression: Expression<T>,
-    private val rightExpression: Expression<T>
-) : Expression<Boolean> {
-    override fun interpret(): Boolean {
-        return leftExpression.interpret().toDouble() >= rightExpression.interpret().toDouble()
-    }
-}
-
-//NumericExpression.kt
-
-class NumericExpression<T : Number>(private val number: T): Expression<T>{
-    override fun interpret(): T {
-        return number
-    }
-}
-
-fun <T : Number> getCastExpressionValue(
-    leftExpression : Expression<T>,
-    rightExpression: Expression<T>,
-    operator: String
-): T{
-    @Suppress("UNCHECKED_CAST")
-    return when(operator){
-        "+" -> (
-                when(leftExpression.interpret()::class){
-                    Int::class -> (leftExpression.interpret().toInt() + rightExpression.interpret().toInt()) as T
-                    Double::class -> (leftExpression.interpret().toDouble() + rightExpression.interpret().toDouble()) as T
-                    Float::class -> (leftExpression.interpret().toFloat() + rightExpression.interpret().toFloat()) as T
-                    Long::class -> (leftExpression.interpret().toLong() + rightExpression.interpret().toLong()) as T
-                    Short::class -> (leftExpression.interpret().toShort() + rightExpression.interpret().toShort()) as T
-                    Byte::class -> (leftExpression.interpret().toByte() + rightExpression.interpret().toByte()) as T
-                    else -> throw IllegalArgumentException("Unknown type")
-                }
-                )
-        "-" -> (
-                when(leftExpression.interpret()::class){
-                    Int::class -> (leftExpression.interpret().toInt() - rightExpression.interpret().toInt()) as T
-                    Double::class -> (leftExpression.interpret().toDouble() - rightExpression.interpret().toDouble()) as T
-                    Float::class -> (leftExpression.interpret().toFloat() - rightExpression.interpret().toFloat()) as T
-                    Long::class -> (leftExpression.interpret().toLong() - rightExpression.interpret().toLong()) as T
-                    Short::class -> (leftExpression.interpret().toShort() - rightExpression.interpret().toShort()) as T
-                    Byte::class -> (leftExpression.interpret().toByte() - rightExpression.interpret().toByte()) as T
-                    else -> throw IllegalArgumentException("Unknown type")
-                }
-                )
-        "*" -> (
-                when(leftExpression.interpret()::class){
-                    Int::class -> (leftExpression.interpret().toInt() * rightExpression.interpret().toInt()) as T
-                    Double::class -> (leftExpression.interpret().toDouble() * rightExpression.interpret().toDouble()) as T
-                    Float::class -> (leftExpression.interpret().toFloat() * rightExpression.interpret().toFloat()) as T
-                    Long::class -> (leftExpression.interpret().toLong() * rightExpression.interpret().toLong()) as T
-                    Short::class -> (leftExpression.interpret().toShort() * rightExpression.interpret().toShort()) as T
-                    Byte::class -> (leftExpression.interpret().toByte() * rightExpression.interpret().toByte()) as T
-                    else -> throw IllegalArgumentException("Unknown type")
-                }
-                )
-        "%" -> (
-                when(leftExpression.interpret()::class){
-                    Int::class -> (leftExpression.interpret().toInt() % rightExpression.interpret().toInt()) as T
-                    Double::class -> (leftExpression.interpret().toDouble() % rightExpression.interpret().toDouble()) as T
-                    Float::class -> (leftExpression.interpret().toFloat() % rightExpression.interpret().toFloat()) as T
-                    Long::class -> (leftExpression.interpret().toLong() % rightExpression.interpret().toLong()) as T
-                    Short::class -> (leftExpression.interpret().toShort() % rightExpression.interpret().toShort()) as T
-                    Byte::class -> (leftExpression.interpret().toByte() % rightExpression.interpret().toByte()) as T
-                    else -> throw IllegalArgumentException("Unknown type")
-                }
-                )
-        else -> throw IllegalArgumentException("Unknown operator")
-    }
-}
-
-class SumExpression<T : Number>(
-    private val leftOperand: Expression<T>,
-    private val rightOperand: Expression<T>
-) : Expression<T> {
-    override fun interpret(): T {
-        @Suppress("UNCHECKED_CAST")
-        return getCastExpressionValue(leftOperand, rightOperand, "+")
-    }
-}
-
-class DifferenceExpression<T : Number>(
-    private val leftOperand: Expression<T>,
-    private val rightOperand: Expression<T>
-) : Expression<T> {
-    override fun interpret(): T {
-        @Suppress("UNCHECKED_CAST")
-        return getCastExpressionValue(leftOperand, rightOperand, "-")
-    }
-}
-
-class MultiplicationExpression<T : Number>(
-    private val leftOperand: Expression<T>,
-    private val rightOperand: Expression<T>
-) : Expression<T> {
-    override fun interpret(): T {
-        @Suppress("UNCHECKED_CAST")
-        return getCastExpressionValue(leftOperand, rightOperand, "*")
-    }
-}
-
-class DivisionExpression(
-    private val leftOperand: Expression<out Number>,
-    private val rightOperand: Expression<out Number>
-) : Expression<Double> {
-    override fun interpret(): Double {
-        if(rightOperand.interpret().toDouble() == 0.0) throw ArithmeticException("Division by zero")
-        return (leftOperand.interpret().toDouble() / rightOperand.interpret().toDouble())
-    }
-}
-
-class ModExpression<T : Number>(
-    private val leftOperand: Expression<T>,
-    private val rightOperand: Expression<T>
-) : Expression<T> {
-    override fun interpret(): T {
-        @Suppress("UNCHECKED_CAST")
-        return getCastExpressionValue(leftOperand, rightOperand, "%")
-    }
-}
-
-//BranchOperatorBlock.kt
-
+    val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
+    interpreter.run(startBlock)
 */
 
+/*
+    val startBlock = StartBlock()
+    val endBlock = EndBlock()
+
+    val initializationVariableBlock1 = InitializationAndSetVariableBlock()
+    initializationVariableBlock1.setRawInput("i=10")
+    startBlock.setNextMainFlowBlock(initializationVariableBlock1)
+    initializationVariableBlock1.setPreviousMainFlowBlock(startBlock)
+
+    val callFunctionBlock1 = CallFunctionBlock()
+    callFunctionBlock1.setRawInput("print(i)")
+    initializationVariableBlock1.setNextMainFlowBlock(callFunctionBlock1)
+    callFunctionBlock1.setPreviousMainFlowBlock(initializationVariableBlock1)
+
+    callFunctionBlock1.setNextMainFlowBlock(endBlock)
+    endBlock.setPreviousMainFlowBlock(callFunctionBlock1)
+
+//function
+    val functionBlock = FunctionBlock()
+    functionBlock.setRawInput("print(n)")
+
+    val changeBlock = InitializationAndSetVariableBlock()
+    changeBlock.setRawInput("n=15")
+    functionBlock.setNextMainFlowBlock(changeBlock)
+
+    val printBlock = PrintBlock()
+    printBlock.setPreviousMainFlowBlock(changeBlock)
+    changeBlock.setNextMainFlowBlock(printBlock)
+
+    val getVariableBlock = GetVariableBlock()
+    getVariableBlock.setRawInput("n")
+    printBlock.setOperator(getVariableBlock)
+
+    val endFunctionBlock = EndFunctionBlock()
+    endFunctionBlock.setPreviousMainFlowBlock(printBlock)
+    printBlock.setNextMainFlowBlock(endFunctionBlock)
+
+    val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
+    interpreter.run(startBlock)
+*/
+
+/*
+val startBlock = StartBlock()
+    val endBlock = EndBlock()
+
+    val initializationVariableBlock1 = InitializationAndSetVariableBlock()
+    startBlock.setNextMainFlowBlock(initializationVariableBlock1)
+    initializationVariableBlock1.setRawInput("n=15,*arr[n]")
+
+    val forBlock1 = ForBlock()
+    initializationVariableBlock1.setNextMainFlowBlock(forBlock1)
+    forBlock1.setRawInput("i=0,i<n,i+=1")
+    forBlock1.setPreviousMainFlowBlock(initializationVariableBlock1)
+
+    val variableChangeBlock1 = InitializationAndSetVariableBlock()
+    forBlock1.setTrueExpressionBranch(variableChangeBlock1)
+    variableChangeBlock1.setRawInput("arr[i]=(100*rand()-50).toInt()")
+    variableChangeBlock1.setPreviousMainFlowBlock(forBlock1)
+
+    val forBlock2 = ForBlock()
+    forBlock2.setRawInput("i=0,i<n,i+=1")
+
+    val printBlock2 = PrintBlock()
+    forBlock1.setFalseExpressionBranch(printBlock2)
+    val getVariableBlock3 = GetVariableBlock()
+    getVariableBlock3.setRawInput("arr")
+    printBlock2.setOperator(getVariableBlock3)
+    printBlock2.setPreviousMainFlowBlock(forBlock1)
+    printBlock2.setNextMainFlowBlock(forBlock2)
+    forBlock2.setPreviousMainFlowBlock(printBlock2)
+
+    val forBlock3 = ForBlock()
+    forBlock3.setPreviousMainFlowBlock(forBlock2)
+    forBlock2.setTrueExpressionBranch(forBlock3)
+    forBlock3.setRawInput("j=i+1,j<n,j+=1")
+
+    val ifBlock1 = IfBlock()
+    ifBlock1.setPreviousMainFlowBlock(forBlock3)
+    forBlock3.setTrueExpressionBranch(ifBlock1)
+
+    val getVariableBlock1 = GetVariableBlock()
+    getVariableBlock1.setRawInput("arr[i]>arr[j]")
+    ifBlock1.setOperator(getVariableBlock1)
+
+    val initializationVariableBlock2 = InitializationAndSetVariableBlock()
+    initializationVariableBlock2.setRawInput("t=arr[i]")
+    ifBlock1.setTrueExpressionBranch(initializationVariableBlock2)
+    initializationVariableBlock2.setPreviousMainFlowBlock(ifBlock1)
+
+    val variableChangeBlock2 = InitializationAndSetVariableBlock()
+    variableChangeBlock2.setRawInput("arr[i]=arr[j],arr[j]=t")
+    initializationVariableBlock2.setNextMainFlowBlock(variableChangeBlock2)
+    variableChangeBlock2.setPreviousMainFlowBlock(initializationVariableBlock2)
+
+    val endIfBlock1 = EndIfBlock()
+    variableChangeBlock2.setNextMainFlowBlock(endIfBlock1)
+    ifBlock1.setFalseExpressionBranch(endIfBlock1)
+    endIfBlock1.setTrueExpressionBranch(variableChangeBlock2)
+    endIfBlock1.setFalseExpressionBranch(ifBlock1)
+
+    val printBlock1 = PrintBlock()
+    forBlock2.setFalseExpressionBranch(printBlock1)
+    printBlock1.setPreviousMainFlowBlock(forBlock2)
+    printBlock1.setNextMainFlowBlock(endBlock)
+
+    val getVariableBlock2 = GetVariableBlock()
+    getVariableBlock2.setRawInput("arr")
+    printBlock1.setOperator(getVariableBlock2)
+    endBlock.setPreviousMainFlowBlock(printBlock1)
+
+    val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
+    interpreter.run(startBlock)
+*/
+
+/*
+    val startBlock = StartBlock()
+    val endBlock = EndBlock()
+
+    val getVariableBlock1 = GetVariableBlock()
+    getVariableBlock1.setRawInput("1")
+    val getVariableBlock2 = GetVariableBlock()
+    getVariableBlock2.setRawInput("2")
+    val getVariableBlock3 = GetVariableBlock()
+    getVariableBlock3.setRawInput("4")
+
+    val binarySumOperatorBlock1 = BinarySumOperatorBlock()
+    binarySumOperatorBlock1.setLeftOperator(getVariableBlock1)
+    binarySumOperatorBlock1.setRightOperator(getVariableBlock2)
+
+    val binarySubOperatorBlock1 = BinarySubOperatorBlock()
+    binarySubOperatorBlock1.setLeftOperator(binarySumOperatorBlock1)
+    binarySubOperatorBlock1.setRightOperator(getVariableBlock3)
+
+    val binaryMulOperatorBlock1 = BinaryMulOperatorBlock()
+    binaryMulOperatorBlock1.setLeftOperator(binarySumOperatorBlock1)
+    binaryMulOperatorBlock1.setRightOperator(binarySubOperatorBlock1)
+
+    val ifBlock1 = IfBlock()
+    ifBlock1.setOperator(binaryMulOperatorBlock1)
+    ifBlock1.setPreviousMainFlowBlock(startBlock)
+
+    val printBlock1 = PrintBlock()
+    printBlock1.setOperator(binaryMulOperatorBlock1)
+    printBlock1.setPreviousMainFlowBlock(ifBlock1)
+
+    val endIfBlock1 = EndIfBlock()
+    endIfBlock1.setTrueExpressionBranch(printBlock1)
+    endIfBlock1.setFalseExpressionBranch(ifBlock1)
+    endIfBlock1.setNextMainFlowBlock(endBlock)
+
+    printBlock1.setNextMainFlowBlock(endIfBlock1)
+    startBlock.setNextMainFlowBlock(ifBlock1)
+    endBlock.setPreviousMainFlowBlock(endIfBlock1)
+
+    ifBlock1.setTrueExpressionBranch(printBlock1)
+    ifBlock1.setFalseExpressionBranch(endIfBlock1)
+
+    val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
+    interpreter.run(startBlock)
+*/
+
+/*
+    val startBlock = StartBlock()
+    val endBlock = EndBlock()
+
+    val forBlock = ForBlock()
+    val printBlock = PrintBlock()
+    val getVariableBlock = GetVariableBlock()
+
+    getVariableBlock.setRawInput("n")
+
+    startBlock.setNextMainFlowBlock(forBlock)
+    forBlock.setPreviousMainFlowBlock(startBlock)
+    forBlock.setRawInput("n=0,n<15,n+=1")
+    forBlock.setTrueExpressionBranch(printBlock)
+    forBlock.setFalseExpressionBranch(endBlock)
+    printBlock.setOperator(getVariableBlock)
+    printBlock.setPreviousMainFlowBlock(forBlock)
+    endBlock.setPreviousMainFlowBlock(forBlock)
+
+    val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
+    interpreter.run(startBlock)
+*/
