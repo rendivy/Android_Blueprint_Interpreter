@@ -27,8 +27,8 @@ fun FieldScreen(
 }
 
 @Composable
-fun ListScreen() {
-    BlockList()
+fun ListScreen(addBlock: (blockValue: Any) -> Unit) {
+    BlockList(addBlock)
 }
 
 

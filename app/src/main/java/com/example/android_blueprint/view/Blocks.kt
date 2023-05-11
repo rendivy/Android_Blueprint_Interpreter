@@ -26,13 +26,11 @@ import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 @Composable
 fun SetBlock(
-    movable: Boolean,
     value: Any,
+    addBlock: ((blockValue: Any) -> Unit)? = null
 ) {
     val infiniteFieldViewModel: InfiniteFieldViewModel = viewModel()
-    val addBlock = infiniteFieldViewModel::addBlock
-
-    if (movable) {
+    if (addBlock == null) {
         when (value) {
             is BlockValue.Operator -> MovableOperatorBlock(value = value)
             is BlockValue.InitializationBlock -> MovableInitializationBlock(

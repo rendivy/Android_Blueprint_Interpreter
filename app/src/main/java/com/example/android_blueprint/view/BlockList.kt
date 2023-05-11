@@ -22,7 +22,7 @@ import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BlockList() {
+fun BlockList(addBlock: (blockValue: Any) -> Unit) {
 
     val blocks = listOf(
         BlockValue.InitializationBlock,
@@ -54,7 +54,7 @@ fun BlockList() {
     ) {
 
         items(blocks) { item ->
-            SetBlock(movable = false, value = item)
+            SetBlock(value = item, addBlock = addBlock)
         }
     }
 }

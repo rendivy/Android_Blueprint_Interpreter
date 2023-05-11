@@ -35,7 +35,7 @@ fun InfiniteField(
     )
     {
         for (block in blocks) {
-            SetBlock(movable = true, value = block)
+            SetBlock(value = block)
         }
     }
 }
