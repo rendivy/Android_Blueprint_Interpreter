@@ -1,12 +1,12 @@
 package com.example.android_blueprint.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -17,7 +17,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
@@ -25,9 +24,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,14 +38,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
+import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
-import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 import kotlin.math.roundToInt
 
 @Composable
@@ -159,10 +155,14 @@ fun MovableBranchBlock(value: BlockValue.BranchBlock) {
 @Composable
 fun MovableInitializationBlock(
     value: BlockValue.InitializationBlock,
-    variableInformation: MutableList<String>
+    addVariable: (list: List<String>) -> List<String>,
+    removeAtIndex: (list: List<String>, indexToRemove: Int) -> List<String>,
+    valueChange: (list: List<String>, index: Int, value: String) -> List<String>
 ) {
+    var variableInformation by rememberSaveable { mutableStateOf(listOf<String>()) }
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
+
     Column(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
@@ -174,7 +174,6 @@ fun MovableInitializationBlock(
                     offsetY += dragAmount.y
                 }
             }
-            .heightIn(min = BlockHeight)
             .clip(BlockShape)
             .background(ComplexBlockColor)
     ) {
@@ -187,20 +186,20 @@ fun MovableInitializationBlock(
             MainFlow()
             MainFlow()
         }
-        for (i in 0 until variableInformation.size) {
+        for (i in variableInformation.indices) {
             val focusManager = LocalFocusManager.current
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
                 IconButton(
-                    onClick = { variableInformation.removeAt(i) },
+                    onClick = { variableInformation = removeAtIndex(variableInformation, i) },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
                     Icon(
                         Icons.Rounded.Delete, contentDescription = null,
                         modifier = Modifier
-                            .padding(9.dp)
+                            .padding(DefaultPadding)
                             .clip(BlockShape)
                             .background(Color.Gray)
                     )
@@ -208,7 +207,7 @@ fun MovableInitializationBlock(
                 TextField(
                     value = variableInformation[i],
                     onValueChange = {
-                        variableInformation[i] = it
+                        variableInformation = valueChange(variableInformation, i, it)
                     },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done
@@ -229,13 +228,13 @@ fun MovableInitializationBlock(
             }
         }
         IconButton(
-            onClick = { variableInformation.add("name = value") },
+            onClick = { variableInformation = addVariable(variableInformation) },
             modifier = Modifier.align(Alignment.End)
         ) {
             Icon(
                 Icons.Rounded.Add, contentDescription = null,
                 modifier = Modifier
-                    .padding(9.dp)
+                    .padding(DefaultPadding)
                     .clip(BlockShape)
                     .background(Color.Gray)
             )

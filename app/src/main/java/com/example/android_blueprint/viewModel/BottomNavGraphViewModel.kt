@@ -14,20 +14,20 @@ import com.example.android_blueprint.view.ListScreen
 class BottomNavGraphViewModel : ViewModel() {
     @Composable
     fun BottomNav(navController: NavHostController) {
-        val viewModel: InfiniteFieldViewModel = viewModel()
+        val infiniteFieldViewModel: InfiniteFieldViewModel = viewModel()
         NavHost(navController = navController, startDestination = BottomBarModel.Field.route) {
             composable(route = BottomBarModel.Field.route) {
                 FieldScreen(
-                    blocks = viewModel.blocks,
-                    viewModel.transform,
-                    viewModel::changeTransform
+                    blocks = infiniteFieldViewModel.blocks,
+                    infiniteFieldViewModel.transform,
+                    infiniteFieldViewModel::changeTransform
                 )
             }
             composable(route = BottomBarModel.Console.route) {
                 ConsoleScreen()
             }
             composable(route = BottomBarModel.BlockOfList.route) {
-                ListScreen(addBlock = viewModel::addBlock)
+                ListScreen()
             }
         }
     }

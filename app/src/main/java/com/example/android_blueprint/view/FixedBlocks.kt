@@ -18,17 +18,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
+import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 
 @Composable
 fun FixedOperatorBlock(
     value: BlockValue.Operator,
-    addBlock: ((blockValue: Any) -> Unit)
+    addBlock: (blockValue: Any) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -50,7 +50,7 @@ fun FixedOperatorBlock(
 @Composable
 fun FixedPrintBlock(
     value: BlockValue.PrintBlock,
-    addBlock: ((blockValue: Any) -> Unit)
+    addBlock: (blockValue: Any) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -78,7 +78,7 @@ fun FixedPrintBlock(
 @Composable
 fun FixedBranchBlock(
     value: BlockValue.BranchBlock,
-    addBlock: ((blockValue: Any) -> Unit)
+    addBlock: (blockValue: Any) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -122,7 +122,7 @@ fun FixedBranchBlock(
 @Composable
 fun FixedInitializationBlock(
     value: BlockValue.InitializationBlock,
-    addBlock: ((blockValue: Any) -> Unit)
+    addBlock: (blockValue: Any) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -147,7 +147,7 @@ fun FixedInitializationBlock(
             Icons.Rounded.Add,
             contentDescription = null,
             modifier = Modifier
-                .padding(9.dp)
+                .padding(DefaultPadding)
                 .clip(BlockShape)
                 .background(Color.Gray)
                 .align(Alignment.End)

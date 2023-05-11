@@ -11,17 +11,18 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.AdaptiveWidth
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.BlockListPadding
 import com.example.android_blueprint.ui.theme.BottomBarPadding
-
+import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BlockList(addBlock: (blockValue: Any) -> Unit) {
+fun BlockList() {
 
     val blocks = listOf(
         BlockValue.InitializationBlock,
@@ -53,9 +54,8 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
     ) {
 
         items(blocks) { item ->
-            SetBlock(addBlock = addBlock, value = item)
+            SetBlock(movable = false, value = item)
         }
-
     }
 }
 

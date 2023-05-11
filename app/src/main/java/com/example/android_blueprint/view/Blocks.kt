@@ -4,20 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.ComplexBlockTextSize
-import com.example.android_blueprint.ui.theme.FlowPadding
+import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.FlowSize
 import com.example.android_blueprint.ui.theme.FlowTextSize
 import com.example.android_blueprint.ui.theme.MainFlowShape
@@ -29,14 +26,22 @@ import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 @Composable
 fun SetBlock(
+    movable: Boolean,
     value: Any,
-    addBlock: ((blockValue: Any) -> Unit)? = null,
 ) {
-    val viewModel: InfiniteFieldViewModel = viewModel()
-    if (addBlock == null) {
+    val infiniteFieldViewModel: InfiniteFieldViewModel = viewModel()
+    val addBlock = infiniteFieldViewModel::addBlock
+
+    if (movable) {
         when (value) {
             is BlockValue.Operator -> MovableOperatorBlock(value = value)
-            is BlockValue.InitializationBlock -> MovableInitializationBlock(value = value, viewModel.initializationBlock)
+            is BlockValue.InitializationBlock -> MovableInitializationBlock(
+                value = value,
+                addVariable = infiniteFieldViewModel::addVariable,
+                removeAtIndex = infiniteFieldViewModel::removeAtIndex,
+                valueChange = infiniteFieldViewModel::valueChange
+            )
+
             is BlockValue.BranchBlock -> MovableBranchBlock(value = value)
             is BlockValue.PrintBlock -> MovablePrintBlock(value = value)
         }
@@ -61,7 +66,7 @@ fun TextForFlow(text: String, modifier: Modifier = Modifier) {
         text = text,
         fontSize = FlowTextSize,
         color = Color.White,
-        modifier = modifier.padding(TextPaddingForFlow)
+        modifier = modifier.padding(top = TextPaddingForFlow)
     )
 }
 
@@ -95,7 +100,7 @@ fun SupportingFlow(
 ) {
     Box(
         modifier = modifier
-            .padding(FlowPadding )
+            .padding(DefaultPadding)
             .clip(BlockShape)
             .size(FlowSize)
             .background(Color.White)
@@ -108,7 +113,7 @@ fun MainFlow(
 ) {
     Box(
         modifier = modifier
-            .padding(FlowPadding)
+            .padding(DefaultPadding)
             .clip(MainFlowShape)
             .size(FlowSize)
             .background(Color.White)
