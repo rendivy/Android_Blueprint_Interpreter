@@ -18,10 +18,14 @@ import block.BinaryNotEqualOperatorBlock
 import block.BinarySubOperatorBlock
 import block.BinarySumOperatorBlock
 import block.BlockEntity
+import block.EndBlock
+import block.EndIfBlock
 import block.IBinaryOperatorBlock
 import block.IUnaryOperatorBlock
+import block.IfBlock
 import block.InitializationAndSetVariableBlock
 import block.PrintBlock
+import block.StartBlock
 import block.UnaryNotOperatorBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.Transform
@@ -29,10 +33,20 @@ import com.example.android_blueprint.ui.theme.InitialOffset
 import com.example.android_blueprint.ui.theme.InitialScale
 
 class InfiniteFieldViewModel : ViewModel() {
+    val startBlock = StartBlock()
+    val endBlock = EndBlock()
     val blocks = mutableStateListOf<Any>()
     var transform by mutableStateOf(Transform(InitialScale, InitialOffset))
     fun addBlock(blockValue: Any) {
         blocks.add(blockValue)
+    }
+
+    fun createIfBlock(): IfBlock {
+        return IfBlock()
+    }
+
+    fun createEndifBlock(): EndIfBlock {
+        return EndIfBlock()
     }
 
     fun createInitializationBlock(): InitializationAndSetVariableBlock {

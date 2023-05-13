@@ -44,8 +44,8 @@ sealed class BlockValue(
             )
     )
 
-    object BranchBlock : BlockValue(
-        text = "Branch",
+    object IfBlock : BlockValue(
+        text = "If",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -57,7 +57,20 @@ sealed class BlockValue(
             )
     )
 
-    object PrintBlock: BlockValue(
+    object EndifBlock : BlockValue(
+        text = "Endif",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
+
+    object PrintBlock : BlockValue(
         text = "Print",
         modifier = Modifier
             .fillMaxWidth()
@@ -70,4 +83,29 @@ sealed class BlockValue(
             )
     )
 
+    object StartBlock : BlockValue(
+        text = "Start",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
+
+    object EndBlock : BlockValue(
+        text = "End",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
 }

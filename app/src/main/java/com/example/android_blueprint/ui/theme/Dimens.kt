@@ -13,5 +13,7 @@ val ComplexBlockTextSize = 17.sp
 val FlowSize = 12.dp
 val BlockWidth = 180.dp
 val BlockHeight = 80.dp
+val InitializationBlockWidth = 250.dp
+val BorderBlockWidth = 130.dp
 val AdaptiveWidth = 156.dp
 val InitialOffset = Offset.Zero

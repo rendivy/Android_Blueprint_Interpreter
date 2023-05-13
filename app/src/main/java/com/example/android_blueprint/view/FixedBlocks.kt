@@ -98,7 +98,7 @@ fun FixedPrintBlock(
 
 @Composable
 fun FixedBranchBlock(
-    value: BlockValue.BranchBlock,
+    value: BlockValue.IfBlock,
     addBlock: (blockValue: Any) -> Unit
 ) {
     Column(

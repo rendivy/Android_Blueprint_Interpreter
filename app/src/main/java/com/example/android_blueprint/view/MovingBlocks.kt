@@ -37,25 +37,85 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import block.BinaryModOperatorBlock
 import block.BlockEntity
+import block.EndBlock
+import block.EndIfBlock
 import block.IBinaryOperatorBlock
 import block.IUnaryOperatorBlock
+import block.IfBlock
 import block.InitializationAndSetVariableBlock
 import block.PrintBlock
+import block.StartBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BlockWidth
+import com.example.android_blueprint.ui.theme.BorderBlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.DefaultPadding
+import com.example.android_blueprint.ui.theme.InitializationBlockWidth
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import kotlin.math.roundToInt
+
+
+@Composable
+fun StartBlock(
+    value: BlockValue.StartBlock,
+    block: StartBlock
+) {
+    var offsetX by rememberSaveable { mutableStateOf(0f) }
+    var offsetY by rememberSaveable { mutableStateOf(0f) }
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .width(BorderBlockWidth)
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    offsetX += dragAmount.x
+                    offsetY += dragAmount.y
+                }
+            }
+            .heightIn(min = BlockHeight)
+            .clip(BlockShape)
+            .background(ComplexBlockColor)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        MainFlow(modifier = Modifier.align(Alignment.CenterEnd))
+    }
+}
+
+@Composable
+fun EndBLock(
+    value: BlockValue.EndBlock,
+    block: EndBlock
+) {
+    var offsetX by rememberSaveable { mutableStateOf(0f) }
+    var offsetY by rememberSaveable { mutableStateOf(0f) }
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .width(BorderBlockWidth)
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    offsetX += dragAmount.x
+                    offsetY += dragAmount.y
+                }
+            }
+            .heightIn(min = BlockHeight)
+            .clip(BlockShape)
+            .background(ComplexBlockColor)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        MainFlow(modifier = Modifier.align(Alignment.CenterStart))
+    }
+}
 
 @Composable
 fun <T> BinaryMovableOperatorBlock(
     value: BlockValue.BinaryOperator,
-    block: T
+    block: T,
 ) where T : BlockEntity, T : IBinaryOperatorBlock {
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
@@ -144,7 +204,23 @@ fun MovablePrintBlock(
 }
 
 @Composable
-fun MovableBranchBlock(value: BlockValue.BranchBlock) {
+fun MovableBranchBlock(
+    ifBlockValue: BlockValue.IfBlock,
+    ifBlock: IfBlock,
+    endIfBlock: EndIfBlock,
+    endifBlockValue: BlockValue.EndifBlock = BlockValue.EndifBlock,
+) {
+    Row {
+        MovableIfBlock(value = ifBlockValue, block = ifBlock)
+        MovableEndifBLock(value = endifBlockValue, block = endIfBlock)
+    }
+}
+
+@Composable
+fun MovableIfBlock(
+    value: BlockValue.IfBlock,
+    block: IfBlock
+) {
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     Column(
@@ -192,6 +268,34 @@ fun MovableBranchBlock(value: BlockValue.BranchBlock) {
 }
 
 @Composable
+fun MovableEndifBLock(
+    value: BlockValue.EndifBlock,
+    block: EndIfBlock
+) {
+    var offsetX by rememberSaveable { mutableStateOf(0f) }
+    var offsetY by rememberSaveable { mutableStateOf(0f) }
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .width(BorderBlockWidth)
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    offsetX += dragAmount.x
+                    offsetY += dragAmount.y
+                }
+            }
+            .heightIn(min = BlockHeight)
+            .clip(BlockShape)
+            .background(ComplexBlockColor)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        MainFlow(modifier = Modifier.align(Alignment.CenterStart))
+        MainFlow(modifier = Modifier.align(Alignment.CenterEnd))
+    }
+}
+
+@Composable
 fun MovableInitializationBlock(
     value: BlockValue.InitializationBlock,
     addVariable: (list: List<String>) -> List<String>,
@@ -206,7 +310,7 @@ fun MovableInitializationBlock(
     Column(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-            .width(250.dp)
+            .width(InitializationBlockWidth)
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()

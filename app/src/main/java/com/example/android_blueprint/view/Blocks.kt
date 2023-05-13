@@ -27,11 +27,21 @@ import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 @Composable
 fun SetBlock(
     value: Any,
-    addBlock: ((blockValue: Any) -> Unit)? = null
+    addBlock: ((blockValue: Any) -> Unit)? = null,
 ) {
     val infiniteFieldViewModel: InfiniteFieldViewModel = viewModel()
     if (addBlock == null) {
         when (value) {
+            is BlockValue.StartBlock -> StartBlock(
+                value = value,
+                block = infiniteFieldViewModel.startBlock
+            )
+
+            is BlockValue.EndBlock -> EndBLock(
+                value = value,
+                block = infiniteFieldViewModel.endBlock
+            )
+
             is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
                 value = value,
                 block = infiniteFieldViewModel.createUnaryOperatorBlockInstance(value)
@@ -50,7 +60,12 @@ fun SetBlock(
                 block = infiniteFieldViewModel.createInitializationBlock()
             )
 
-            is BlockValue.BranchBlock -> MovableBranchBlock(value = value)
+            is BlockValue.IfBlock -> MovableBranchBlock(
+                ifBlockValue = value,
+                ifBlock = infiniteFieldViewModel.createIfBlock(),
+                endIfBlock = infiniteFieldViewModel.createEndifBlock()
+            )
+
             is BlockValue.PrintBlock -> MovablePrintBlock(
                 value = value,
                 block = infiniteFieldViewModel.createPrintBlock()
@@ -73,7 +88,7 @@ fun SetBlock(
                 addBlock = addBlock
             )
 
-            is BlockValue.BranchBlock -> FixedBranchBlock(value = value, addBlock = addBlock)
+            is BlockValue.IfBlock -> FixedBranchBlock(value = value, addBlock = addBlock)
             is BlockValue.PrintBlock -> FixedPrintBlock(value = value, addBlock = addBlock)
         }
     }

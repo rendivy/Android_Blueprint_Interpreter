@@ -25,7 +25,7 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
     val blocks = listOf(
         BlockValue.InitializationBlock,
         BlockValue.PrintBlock,
-        BlockValue.BranchBlock,
+        BlockValue.IfBlock,
         BlockValue.BinaryOperator.ADDITION,
         BlockValue.BinaryOperator.SUBTRACTION,
         BlockValue.BinaryOperator.MULTIPLICATION,
