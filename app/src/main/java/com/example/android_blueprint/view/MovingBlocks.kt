@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -48,7 +47,7 @@ import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import kotlin.math.roundToInt
 
 @Composable
-fun MovableOperatorBlock(value: BlockValue.Operator) {
+fun BinaryMovableOperatorBlock(value: BlockValue.Operator) {
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     Box(
@@ -69,6 +68,31 @@ fun MovableOperatorBlock(value: BlockValue.Operator) {
         OperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow()
         SupportingFlow(modifier = Modifier.align(Alignment.BottomStart))
+        SupportingFlow(modifier = Modifier.align(Alignment.CenterEnd))
+    }
+}
+
+@Composable
+fun UnaryMovableOperatorBlock(value: BlockValue.Operator) {
+    var offsetX by rememberSaveable { mutableStateOf(0f) }
+    var offsetY by rememberSaveable { mutableStateOf(0f) }
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .width(BlockWidth)
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    offsetX += dragAmount.x
+                    offsetY += dragAmount.y
+                }
+            }
+            .height(BlockHeight)
+            .clip(BlockShape)
+            .background(OperatorBlockColor)
+    ) {
+        OperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
+        SupportingFlow(modifier = Modifier.align(Alignment.CenterStart))
         SupportingFlow(modifier = Modifier.align(Alignment.CenterEnd))
     }
 }

@@ -32,7 +32,8 @@ fun SetBlock(
     val infiniteFieldViewModel: InfiniteFieldViewModel = viewModel()
     if (addBlock == null) {
         when (value) {
-            is BlockValue.Operator -> MovableOperatorBlock(value = value)
+            BlockValue.Operator.INVERSION -> UnaryMovableOperatorBlock(value = value as BlockValue.Operator)
+            is BlockValue.Operator -> BinaryMovableOperatorBlock(value = value)
             is BlockValue.InitializationBlock -> MovableInitializationBlock(
                 value = value,
                 addVariable = infiniteFieldViewModel::addVariable,
@@ -45,7 +46,8 @@ fun SetBlock(
         }
     } else {
         when (value) {
-            is BlockValue.Operator -> FixedOperatorBlock(value = value, addBlock = addBlock)
+            BlockValue.Operator.INVERSION -> UnaryFixedOperatorBlock(value = value as BlockValue.Operator, addBlock = addBlock)
+            is BlockValue.Operator -> BinaryFixedOperatorBlock(value = value, addBlock = addBlock)
             is BlockValue.InitializationBlock -> FixedInitializationBlock(
                 value,
                 addBlock = addBlock

@@ -26,7 +26,7 @@ import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 
 @Composable
-fun FixedOperatorBlock(
+fun BinaryFixedOperatorBlock(
     value: BlockValue.Operator,
     addBlock: (blockValue: Any) -> Unit
 ) {
@@ -43,6 +43,27 @@ fun FixedOperatorBlock(
         OperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow()
         SupportingFlow(modifier = Modifier.align(Alignment.BottomStart))
+        SupportingFlow(modifier = Modifier.align(Alignment.CenterEnd))
+    }
+}
+
+@Composable
+fun UnaryFixedOperatorBlock(
+    value: BlockValue.Operator,
+    addBlock: (blockValue: Any) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .height(BlockHeight)
+            .clip(BlockShape)
+            .background(OperatorBlockColor)
+            .fillMaxWidth()
+            .clickable(onClick = {
+                addBlock(value)
+            })
+    ) {
+        OperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
+        SupportingFlow(modifier = Modifier.align(Alignment.CenterStart))
         SupportingFlow(modifier = Modifier.align(Alignment.CenterEnd))
     }
 }
