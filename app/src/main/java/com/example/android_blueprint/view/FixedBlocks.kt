@@ -27,7 +27,7 @@ import com.example.android_blueprint.ui.theme.OperatorBlockColor
 
 @Composable
 fun BinaryFixedOperatorBlock(
-    value: BlockValue.Operator,
+    value: BlockValue.BinaryOperator,
     addBlock: (blockValue: Any) -> Unit
 ) {
     Box(
@@ -49,7 +49,7 @@ fun BinaryFixedOperatorBlock(
 
 @Composable
 fun UnaryFixedOperatorBlock(
-    value: BlockValue.Operator,
+    value: BlockValue.UnaryOperator,
     addBlock: (blockValue: Any) -> Unit
 ) {
     Box(

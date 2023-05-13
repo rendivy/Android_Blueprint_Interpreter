@@ -37,6 +37,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import block.BinaryModOperatorBlock
+import block.BlockEntity
+import block.IBinaryOperatorBlock
+import block.IUnaryOperatorBlock
+import block.InitializationAndSetVariableBlock
+import block.PrintBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
@@ -47,7 +53,10 @@ import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import kotlin.math.roundToInt
 
 @Composable
-fun BinaryMovableOperatorBlock(value: BlockValue.Operator) {
+fun <T> BinaryMovableOperatorBlock(
+    value: BlockValue.BinaryOperator,
+    block: T
+) where T : BlockEntity, T : IBinaryOperatorBlock {
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     Box(
@@ -73,7 +82,10 @@ fun BinaryMovableOperatorBlock(value: BlockValue.Operator) {
 }
 
 @Composable
-fun UnaryMovableOperatorBlock(value: BlockValue.Operator) {
+fun <T> UnaryMovableOperatorBlock(
+    value: BlockValue.UnaryOperator,
+    block: T
+) where T : BlockEntity, T : IUnaryOperatorBlock {
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     Box(
@@ -98,7 +110,10 @@ fun UnaryMovableOperatorBlock(value: BlockValue.Operator) {
 }
 
 @Composable
-fun MovablePrintBlock(value: BlockValue.PrintBlock) {
+fun MovablePrintBlock(
+    value: BlockValue.PrintBlock,
+    block: PrintBlock
+) {
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     Column(
@@ -181,7 +196,8 @@ fun MovableInitializationBlock(
     value: BlockValue.InitializationBlock,
     addVariable: (list: List<String>) -> List<String>,
     removeAtIndex: (list: List<String>, indexToRemove: Int) -> List<String>,
-    valueChange: (list: List<String>, index: Int, value: String) -> List<String>
+    valueChange: (list: List<String>, index: Int, value: String) -> List<String>,
+    block: InitializationAndSetVariableBlock
 ) {
     var variableInformation by rememberSaveable { mutableStateOf(listOf<String>()) }
     var offsetX by rememberSaveable { mutableStateOf(0f) }

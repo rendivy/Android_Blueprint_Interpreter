@@ -11,13 +11,11 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.AdaptiveWidth
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.BlockListPadding
 import com.example.android_blueprint.ui.theme.BottomBarPadding
-import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -28,18 +26,18 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
         BlockValue.InitializationBlock,
         BlockValue.PrintBlock,
         BlockValue.BranchBlock,
-        BlockValue.Operator.ADDITION,
-        BlockValue.Operator.SUBTRACTION,
-        BlockValue.Operator.MULTIPLICATION,
-        BlockValue.Operator.DIVISION,
-        BlockValue.Operator.REMAINDER,
-        BlockValue.Operator.EQUALITY,
-        BlockValue.Operator.INVERSION,
-        BlockValue.Operator.NOT_EQUAL,
-        BlockValue.Operator.GREATER,
-        BlockValue.Operator.LESS,
-        BlockValue.Operator.GREATER_OR_EQUAL,
-        BlockValue.Operator.LESS_OR_EQUAL
+        BlockValue.BinaryOperator.ADDITION,
+        BlockValue.BinaryOperator.SUBTRACTION,
+        BlockValue.BinaryOperator.MULTIPLICATION,
+        BlockValue.BinaryOperator.DIVISION,
+        BlockValue.BinaryOperator.REMAINDER,
+        BlockValue.BinaryOperator.EQUALITY,
+        BlockValue.UnaryOperator.INVERSION,
+        BlockValue.BinaryOperator.NOT_EQUAL,
+        BlockValue.BinaryOperator.GREATER,
+        BlockValue.BinaryOperator.LESS,
+        BlockValue.BinaryOperator.GREATER_OR_EQUAL,
+        BlockValue.BinaryOperator.LESS_OR_EQUAL
     )
 
     LazyVerticalStaggeredGrid(

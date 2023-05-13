@@ -32,22 +32,42 @@ fun SetBlock(
     val infiniteFieldViewModel: InfiniteFieldViewModel = viewModel()
     if (addBlock == null) {
         when (value) {
-            BlockValue.Operator.INVERSION -> UnaryMovableOperatorBlock(value = value as BlockValue.Operator)
-            is BlockValue.Operator -> BinaryMovableOperatorBlock(value = value)
+            is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
+                value = value,
+                block = infiniteFieldViewModel.createUnaryOperatorBlockInstance(value)
+            )
+
+            is BlockValue.BinaryOperator -> BinaryMovableOperatorBlock(
+                value = value,
+                block = infiniteFieldViewModel.createBinaryOperatorBlockInstance(value)
+            )
+
             is BlockValue.InitializationBlock -> MovableInitializationBlock(
                 value = value,
                 addVariable = infiniteFieldViewModel::addVariable,
                 removeAtIndex = infiniteFieldViewModel::removeAtIndex,
-                valueChange = infiniteFieldViewModel::valueChange
+                valueChange = infiniteFieldViewModel::valueChange,
+                block = infiniteFieldViewModel.createInitializationBlock()
             )
 
             is BlockValue.BranchBlock -> MovableBranchBlock(value = value)
-            is BlockValue.PrintBlock -> MovablePrintBlock(value = value)
+            is BlockValue.PrintBlock -> MovablePrintBlock(
+                value = value,
+                block = infiniteFieldViewModel.createPrintBlock()
+            )
         }
     } else {
         when (value) {
-            BlockValue.Operator.INVERSION -> UnaryFixedOperatorBlock(value = value as BlockValue.Operator, addBlock = addBlock)
-            is BlockValue.Operator -> BinaryFixedOperatorBlock(value = value, addBlock = addBlock)
+            is BlockValue.UnaryOperator -> UnaryFixedOperatorBlock(
+                value = value,
+                addBlock = addBlock
+            )
+
+            is BlockValue.BinaryOperator -> BinaryFixedOperatorBlock(
+                value = value,
+                addBlock = addBlock
+            )
+
             is BlockValue.InitializationBlock -> FixedInitializationBlock(
                 value,
                 addBlock = addBlock

@@ -13,19 +13,22 @@ sealed class BlockValue(
     val text: String,
     val modifier: Modifier,
 ) {
-    enum class Operator(val text: String) {
+    enum class BinaryOperator(val text: String) {
         SUBTRACTION("-"),
         MULTIPLICATION("×"),
         DIVISION("÷"),
         REMAINDER("%"),
         ADDITION("+"),
         EQUALITY("=="),
-        INVERSION("Not"),
         NOT_EQUAL("!="),
         GREATER(">"),
         LESS("<"),
         GREATER_OR_EQUAL(">="),
         LESS_OR_EQUAL("<=")
+    }
+
+    enum class UnaryOperator(val text: String) {
+        INVERSION("Not"),
     }
 
     object InitializationBlock : BlockValue(
