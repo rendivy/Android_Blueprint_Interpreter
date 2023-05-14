@@ -1,17 +1,28 @@
 package com.example.android_blueprint.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.IntOffset
 import com.example.android_blueprint.model.BlockValue
+import com.example.android_blueprint.model.FieldBlock
+import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.ComplexBlockTextSize
 import com.example.android_blueprint.ui.theme.DefaultPadding
@@ -23,74 +34,99 @@ import com.example.android_blueprint.ui.theme.OperatorsTextSize
 import com.example.android_blueprint.ui.theme.TextPaddingForFlow
 import com.example.android_blueprint.ui.theme.neueMedium
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
+import kotlin.math.roundToInt
 
 @Composable
-fun SetBlock(
-    value: Any,
-    addBlock: ((blockValue: Any) -> Unit)? = null,
+fun SetMovableBlock(
+    fieldBlock: FieldBlock,
+    infiniteFieldViewModel: InfiniteFieldViewModel
 ) {
-    val infiniteFieldViewModel: InfiniteFieldViewModel = viewModel()
-    if (addBlock == null) {
-        when (value) {
-            is BlockValue.StartBlock -> StartBlock(
-                value = value,
-                block = infiniteFieldViewModel.startBlock
-            )
+    if (fieldBlock.value == -1) return
 
-            is BlockValue.EndBlock -> EndBLock(
-                value = value,
-                block = infiniteFieldViewModel.endBlock
-            )
+    var offsetX by rememberSaveable { mutableStateOf(0f) }
+    var offsetY by rememberSaveable { mutableStateOf(0f) }
 
-            is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
-                value = value,
-                block = infiniteFieldViewModel.createUnaryOperatorBlockInstance(value)
-            )
-
-            is BlockValue.BinaryOperator -> BinaryMovableOperatorBlock(
-                value = value,
-                block = infiniteFieldViewModel.createBinaryOperatorBlockInstance(value)
-            )
-
-            is BlockValue.InitializationBlock -> MovableInitializationBlock(
-                value = value,
-                addVariable = infiniteFieldViewModel::addVariable,
-                removeAtIndex = infiniteFieldViewModel::removeAtIndex,
-                valueChange = infiniteFieldViewModel::valueChange,
-                block = infiniteFieldViewModel.createInitializationBlock()
-            )
-
-            is BlockValue.IfBlock -> MovableBranchBlock(
-                ifBlockValue = value,
-                ifBlock = infiniteFieldViewModel.createIfBlock(),
-                endIfBlock = infiniteFieldViewModel.createEndifBlock()
-            )
-
-            is BlockValue.PrintBlock -> MovablePrintBlock(
-                value = value,
-                block = infiniteFieldViewModel.createPrintBlock()
-            )
+    val modifier = Modifier
+        .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+        .pointerInput(Unit) {
+            detectDragGestures { change, dragAmount ->
+                change.consume()
+                offsetX += dragAmount.x
+                offsetY += dragAmount.y
+            }
         }
-    } else {
-        when (value) {
-            is BlockValue.UnaryOperator -> UnaryFixedOperatorBlock(
-                value = value,
-                addBlock = addBlock
-            )
-
-            is BlockValue.BinaryOperator -> BinaryFixedOperatorBlock(
-                value = value,
-                addBlock = addBlock
-            )
-
-            is BlockValue.InitializationBlock -> FixedInitializationBlock(
-                value,
-                addBlock = addBlock
-            )
-
-            is BlockValue.IfBlock -> FixedBranchBlock(value = value, addBlock = addBlock)
-            is BlockValue.PrintBlock -> FixedPrintBlock(value = value, addBlock = addBlock)
+        .heightIn(min = BlockHeight)
+        .clip(BlockShape)
+        .clickable(enabled = infiniteFieldViewModel.deleteMode) {
+            infiniteFieldViewModel.deleteMovableBlock(fieldBlock.index)
         }
+
+    when (fieldBlock.value) {
+
+        is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
+            value = fieldBlock.value,
+            block = infiniteFieldViewModel.createUnaryOperatorBlockInstance(fieldBlock.value),
+            modifier = modifier
+        )
+
+        is BlockValue.BinaryOperator -> BinaryMovableOperatorBlock(
+            value = fieldBlock.value,
+            block = infiniteFieldViewModel.createBinaryOperatorBlockInstance(fieldBlock.value),
+            modifier = modifier
+        )
+
+        is BlockValue.InitializationBlock -> MovableInitializationBlock(
+            value = fieldBlock.value,
+            addVariable = infiniteFieldViewModel::addVariable,
+            removeAtIndex = infiniteFieldViewModel::removeAtIndex,
+            valueChange = infiniteFieldViewModel::valueChange,
+            block = infiniteFieldViewModel.createInitializationBlock(),
+            modifier = modifier
+        )
+
+        is BlockValue.IfBlock -> MovableIfBlock(
+            value = fieldBlock.value,
+            block = infiniteFieldViewModel.createIfBlock(),
+            modifier = modifier
+        )
+
+        is BlockValue.EndifBlock -> MovableEndifBLock(
+            value = fieldBlock.value,
+            block = infiniteFieldViewModel.createEndifBlock(),
+            modifier = modifier
+        )
+
+        is BlockValue.PrintBlock -> MovablePrintBlock(
+            value = fieldBlock.value,
+            block = infiniteFieldViewModel.createPrintBlock(),
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+fun SetFixedBlock(
+    value: Any,
+    addBlock: ((blockValue: Any) -> Unit)
+) {
+    when (value) {
+        is BlockValue.UnaryOperator -> UnaryFixedOperatorBlock(
+            value = value,
+            addBlock = addBlock
+        )
+
+        is BlockValue.BinaryOperator -> BinaryFixedOperatorBlock(
+            value = value,
+            addBlock = addBlock
+        )
+
+        is BlockValue.InitializationBlock -> FixedInitializationBlock(
+            value,
+            addBlock = addBlock
+        )
+
+        is BlockValue.IfBlock -> FixedBranchBlock(value = value, addBlock = addBlock)
+        is BlockValue.PrintBlock -> FixedPrintBlock(value = value, addBlock = addBlock)
     }
 }
 

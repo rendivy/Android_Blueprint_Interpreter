@@ -17,11 +17,7 @@ class BottomNavGraphViewModel : ViewModel() {
         val infiniteFieldViewModel: InfiniteFieldViewModel = viewModel()
         NavHost(navController = navController, startDestination = BottomBarModel.Field.route) {
             composable(route = BottomBarModel.Field.route) {
-                FieldScreen(
-                    blocks = infiniteFieldViewModel.blocks,
-                    infiniteFieldViewModel.transform,
-                    infiniteFieldViewModel::changeTransform
-                )
+                FieldScreen(infiniteFieldViewModel = infiniteFieldViewModel)
             }
             composable(route = BottomBarModel.Console.route) {
                 ConsoleScreen()

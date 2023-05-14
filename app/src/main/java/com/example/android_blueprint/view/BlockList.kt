@@ -52,7 +52,7 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
     ) {
 
         items(blocks) { item ->
-            SetBlock(value = item, addBlock = addBlock)
+            SetFixedBlock(value = item, addBlock = addBlock)
         }
     }
 }

@@ -10,6 +10,7 @@ val FlowTextSize = 12.sp
 val OperatorsTextSize = 40.sp
 val ComplexBlockTextSize = 17.sp
 
+val DeleteButtonSize = 50.dp
 val FlowSize = 12.dp
 val BlockWidth = 180.dp
 val BlockHeight = 80.dp

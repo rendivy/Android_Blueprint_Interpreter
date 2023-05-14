@@ -9,21 +9,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.android_blueprint.model.FieldBlock
 import com.example.android_blueprint.model.Transform
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.actionColor
 import com.example.android_blueprint.ui.theme.neueMedium
+import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 @Composable
 fun FieldScreen(
-    blocks: MutableList<Any>,
-    transform: Transform,
-    changeTransform: (zoomChange: Float, offsetChange: Offset) -> Unit
+    infiniteFieldViewModel: InfiniteFieldViewModel
 ) {
-    InfiniteField(blocks, transform, changeTransform)
+    InfiniteField(infiniteFieldViewModel = infiniteFieldViewModel)
 }
 
 @Composable

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import block.BinaryDivOperatorBlock
 import block.BinaryEqualOperatorBlock
@@ -28,17 +29,41 @@ import block.PrintBlock
 import block.StartBlock
 import block.UnaryNotOperatorBlock
 import com.example.android_blueprint.model.BlockValue
+import com.example.android_blueprint.model.FieldBlock
 import com.example.android_blueprint.model.Transform
 import com.example.android_blueprint.ui.theme.InitialOffset
 import com.example.android_blueprint.ui.theme.InitialScale
 
 class InfiniteFieldViewModel : ViewModel() {
+    private var currentIndex = 0
     val startBlock = StartBlock()
     val endBlock = EndBlock()
-    val blocks = mutableStateListOf<Any>()
+    val blocks = mutableStateListOf<FieldBlock>()
+    var deleteMode by mutableStateOf(false)
     var transform by mutableStateOf(Transform(InitialScale, InitialOffset))
     fun addBlock(blockValue: Any) {
-        blocks.add(blockValue)
+        if (blockValue == BlockValue.IfBlock) {
+            blocks.add(FieldBlock(value = blockValue, index = currentIndex++))
+            blocks.add(FieldBlock(value = BlockValue.EndifBlock, index = currentIndex++))
+        } else {
+            blocks.add(FieldBlock(value = blockValue, index = currentIndex++))
+        }
+    }
+
+    fun deleteMovableBlock(index: Int) {
+        blocks[index] = FieldBlock()
+    }
+
+    fun getDeleteButtonColor(): Color {
+        return if (deleteMode) {
+            Color.Red
+        } else {
+            Color.Gray
+        }
+    }
+
+    fun changeMode() {
+        deleteMode = !deleteMode
     }
 
     fun createIfBlock(): IfBlock {
