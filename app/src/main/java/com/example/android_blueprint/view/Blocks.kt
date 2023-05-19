@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -182,11 +183,67 @@ fun SupportingFlow(
 fun MainFlow(
     modifier: Modifier = Modifier,
 ) {
+
     Box(
         modifier = modifier
             .padding(DefaultPadding)
             .clip(MainFlowShape)
             .size(FlowSize)
             .background(Color.White)
+            .clickable(onClick = {})
+
+    )
+}
+
+
+
+val blockViewModel = BlockViewModel()
+
+@Composable
+fun MainFlowTest(
+    modifier: Modifier = Modifier, connectionCoordinate: MutableList<MutableState<Float>>
+) {
+
+    Box(
+        modifier = modifier
+            .padding(DefaultPadding)
+            .clip(MainFlowShape)
+            .size(FlowSize)
+            .background(Color.White)
+            .clickable(onClick = {
+                blockViewModel.currentPath.add(Pair(1, connectionCoordinate))
+                isConnectorClicked.value = true
+
+            })
+    )
+
+
+}
+
+
+@Composable
+fun MainFlowTest2(
+    modifier: Modifier = Modifier, connectorPath: MutableList<MutableState<Float>>,
+    blockIsConnected: MutableState<Boolean>
+) {
+
+    Box(modifier = modifier
+        .padding(DefaultPadding)
+        .clip(MainFlowShape)
+        .size(FlowSize)
+        .background(Color.White)
+        .clickable(onClick = {
+            isConnectorClicked.value = false
+            blockIsConnected.value = true
+            if (connectorPath.isNotEmpty()) {
+                updatePathInMap(
+                    connectorPath[0].value, connectorPath[2].value,
+                    connectorPath[1].value, connectorPath[3].value, 1
+                )
+                blockViewModel.currentPath.clear()
+                blockViewModel.currentPath.add(Pair(1, connectorPath))
+            }
+        })
+
     )
 }

@@ -22,8 +22,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.currentCompositionErrors
+import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,9 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
 import block.BlockEntity
@@ -57,6 +63,10 @@ import com.example.android_blueprint.ui.theme.InitializationBlockWidth
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import kotlin.math.log
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
+
+
+var isConnectorClicked: MutableState<Boolean> = mutableStateOf(false)
 
 
 @Composable
@@ -64,17 +74,36 @@ fun StartBlock(
     value: BlockValue.StartBlock,
     block: StartBlock,
 ) {
+    var connectionCoordinate = remember {
+        mutableListOf(
+            mutableStateOf(0f), mutableStateOf(0f),
+            mutableStateOf(0f), mutableStateOf(0f)
+        )
+    }
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
-
+    var boxHeight by remember { mutableStateOf(0f) }
+    var boxWidth by remember { mutableStateOf(0f) }
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .onGloballyPositioned { coordinates ->
+                boxHeight = coordinates.size.height.toFloat()
+                boxWidth = coordinates.size.width.toFloat()
+            }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
+                    connectionCoordinate[0].value = offsetX + boxWidth
+                    connectionCoordinate[1].value = offsetY + sqrt(boxHeight)
+                    if (isConnectorClicked.value) {
+                        updatePathInMap(
+                            connectionCoordinate[0].value, connectionCoordinate[2].value,
+                            connectionCoordinate[1].value, connectionCoordinate[3].value, 1
+                        )
+                    }
                 }
             }
             .heightIn(min = BlockHeight)
@@ -83,7 +112,7 @@ fun StartBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
-        MainFlow(modifier = Modifier.align(Alignment.CenterEnd))
+        MainFlowTest(modifier = Modifier.align(Alignment.CenterEnd), connectionCoordinate)
     }
 }
 
@@ -94,14 +123,41 @@ fun EndBlock(
 ) {
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
+    var boxHeight by remember { mutableStateOf(0f) }
+    var boxWidth by remember { mutableStateOf(0f) }
+
+    var connectorPath: MutableList<MutableState<Float>> = mutableListOf()
+    if (isConnectorClicked.value) {
+        connectorPath = blockViewModel.currentPath[0].second
+    }
+
+    var blockIsConnected: MutableState<Boolean> = remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .onGloballyPositioned { coordinates ->
+                boxHeight = coordinates.size.height.toFloat()
+                boxWidth = coordinates.size.width.toFloat()
+            }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
+                    if (isConnectorClicked.value && connectorPath.isNotEmpty()) {
+                        connectorPath[2].value = offsetX + boxWidth
+                        connectorPath[3].value = offsetY + sqrt(boxHeight)
+                    }
+
+                    if (blockIsConnected.value && connectorPath.isNotEmpty()) {
+                        updatePathInMap(
+                            connectorPath[0].value, connectorPath[2].value,
+                            connectorPath[1].value, connectorPath[3].value, 1
+                        )
+                    }
+
+
                 }
             }
             .heightIn(min = BlockHeight)
@@ -110,7 +166,11 @@ fun EndBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
-        MainFlow(modifier = Modifier.align(Alignment.CenterStart))
+        MainFlowTest2(
+            modifier = Modifier.align(Alignment.CenterStart),
+            connectorPath,
+            blockIsConnected
+        )
     }
 }
 
