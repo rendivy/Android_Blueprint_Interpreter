@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
+import com.example.android_blueprint.model.PathModel
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.ComplexBlockTextSize
@@ -196,12 +197,11 @@ fun MainFlow(
 }
 
 
-
-val blockViewModel = BlockViewModel()
-
 @Composable
 fun MainFlowTest(
-    modifier: Modifier = Modifier, connectionCoordinate: MutableList<MutableState<Float>>
+    modifier: Modifier = Modifier,
+    pathModel: PathModel,
+    flag: MutableState<Boolean>
 ) {
 
     Box(
@@ -211,39 +211,42 @@ fun MainFlowTest(
             .size(FlowSize)
             .background(Color.White)
             .clickable(onClick = {
-                blockViewModel.currentPath.add(Pair(1, connectionCoordinate))
+                flag.value = true
                 isConnectorClicked.value = true
+                pathModel.isPathConnected = true
+                buttonPressedBlockId = 1
 
             })
     )
-
-
 }
 
 
 @Composable
 fun MainFlowTest2(
-    modifier: Modifier = Modifier, connectorPath: MutableList<MutableState<Float>>,
-    blockIsConnected: MutableState<Boolean>
+    modifier: Modifier = Modifier, flag: MutableState<Boolean>,
+    offsetX: Float, offsetY: Float, boxHeight: Float
 ) {
 
-    Box(modifier = modifier
-        .padding(DefaultPadding)
-        .clip(MainFlowShape)
-        .size(FlowSize)
-        .background(Color.White)
-        .clickable(onClick = {
-            isConnectorClicked.value = false
-            blockIsConnected.value = true
-            if (connectorPath.isNotEmpty()) {
-                updatePathInMap(
-                    connectorPath[0].value, connectorPath[2].value,
-                    connectorPath[1].value, connectorPath[3].value, 1
-                )
-                blockViewModel.currentPath.clear()
-                blockViewModel.currentPath.add(Pair(1, connectorPath))
-            }
-        })
+    Box(
+        modifier = modifier
+            .padding(DefaultPadding)
+            .clip(MainFlowShape)
+            .size(FlowSize)
+            .background(Color.White)
+            .clickable(onClick = {
+                if (isConnectorClicked.value){
+                    isConnectorClicked.value = false
+                    flag.value = true
+                    pathHashMap[buttonPressedBlockId]!!.pathList[2].value = offsetX
+                    pathHashMap[buttonPressedBlockId]!!.pathList[3].value = offsetY + boxHeight / 2
+                    updatePathInMap(pathHashMap[buttonPressedBlockId]!!, buttonPressedBlockId)
+                }
+                else{
+                    pathHashMap[buttonPressedBlockId]!!.pathList[2].value = pathHashMap[buttonPressedBlockId]!!.pathList[0].value
+                    pathHashMap[buttonPressedBlockId]!!.pathList[1].value = pathHashMap[buttonPressedBlockId]!!.pathList[3].value
+                    updatePathInMap(pathHashMap[buttonPressedBlockId]!!, buttonPressedBlockId)
+                }
+            })
 
     )
 }

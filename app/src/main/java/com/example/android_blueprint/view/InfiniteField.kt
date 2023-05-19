@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.example.android_blueprint.model.BlockValue
+import com.example.android_blueprint.model.PathModel
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.DeleteButtonSize
@@ -38,15 +39,14 @@ var pathData = mutableStateMapOf<Int, Path>()
 
 
 fun updatePathInMap(
-    xStart: Float, xFinish: Float, yStart: Float,
-    yFinish: Float, pathNumber: Int
+    pathModel: PathModel, pathNumber: Int
 ) {
     val path = Path()
-    path.moveTo(xStart, yStart)
+    path.moveTo(pathModel.pathList[0].value, pathModel.pathList[1].value)
     path.cubicTo(
-        (xStart + xFinish) / 2,
-        yStart, (xStart + xFinish) / 2,
-        yFinish, xFinish, yFinish
+        (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
+        pathModel.pathList[1].value, (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
+        pathModel.pathList[3].value, pathModel.pathList[2].value, pathModel.pathList[3].value
     )
 
     if (pathNumber !in pathData) {
