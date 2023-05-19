@@ -15,16 +15,47 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.example.android_blueprint.model.BlockValue
+import com.example.android_blueprint.model.PathModel
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.DeleteButtonSize
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
+
+var pathData = mutableStateMapOf<Int, Path>()
+
+
+fun updatePathInMap(
+    pathModel: PathModel, pathNumber: Int
+) {
+    val path = Path()
+    path.moveTo(pathModel.pathList[0].value, pathModel.pathList[1].value)
+    path.cubicTo(
+        (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
+        pathModel.pathList[1].value, (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
+        pathModel.pathList[3].value, pathModel.pathList[2].value, pathModel.pathList[3].value
+    )
+
+    if (pathNumber !in pathData) {
+        pathData[pathNumber] = path
+    } else {
+        pathData.put(pathNumber, path)
+    }
+}
+
 
 @Composable
 fun InfiniteField(
@@ -38,7 +69,6 @@ fun InfiniteField(
     val state = rememberTransformableState { zoomChange, offsetChange, _ ->
         changeTransform(zoomChange, offsetChange)
     }
-
     Box(
         modifier = Modifier
             .transformable(state = state)
@@ -50,12 +80,18 @@ fun InfiniteField(
                 translationX = transform.offset.x,
                 translationY = transform.offset.y
             )
+            .drawBehind {
+                for (value in pathData.values) {
+                    drawPath(value, Color.White, style = Stroke(width = 10f))
+
+                }
+            }
     )
     {
-        Row(modifier = Modifier.align(Alignment.Center)) {
-            StartBlock(value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock)
-            EndBlock(value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock)
-        }
+
+        EndBlock(value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock)
+        StartBlock(value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock)
+
 
         for (block in blocks) {
             SetMovableBlock(fieldBlock = block, infiniteFieldViewModel = infiniteFieldViewModel)
