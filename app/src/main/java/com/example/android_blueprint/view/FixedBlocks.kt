@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +20,7 @@ import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
+import com.example.android_blueprint.ui.theme.ComplexBlockTextSize
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 
@@ -40,7 +39,7 @@ fun BinaryFixedOperatorBlock(
                 addBlock(value)
             })
     ) {
-        OperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
+        BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow()
         SupportingFlow(modifier = Modifier.align(Alignment.BottomStart))
         SupportingFlow(modifier = Modifier.align(Alignment.CenterEnd))
@@ -62,7 +61,7 @@ fun UnaryFixedOperatorBlock(
                 addBlock(value)
             })
     ) {
-        OperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
+        UnaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(modifier = Modifier.align(Alignment.CenterStart))
         SupportingFlow(modifier = Modifier.align(Alignment.CenterEnd))
     }
@@ -164,14 +163,39 @@ fun FixedInitializationBlock(
             MainFlow()
             MainFlow()
         }
-        Icon(
-            Icons.Rounded.Add,
-            contentDescription = null,
+        Row(
             modifier = Modifier
-                .padding(DefaultPadding)
-                .clip(BlockShape)
-                .background(Color.Gray)
-                .align(Alignment.End)
-        )
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "name",
+                fontSize = ComplexBlockTextSize,
+                color = Color.White,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = DefaultPadding)
+            )
+            SupportingFlow(modifier = Modifier.align(Alignment.CenterVertically))
+        }
+    }
+}
+
+@Composable
+fun FixedLoopBlock(
+    value: BlockValue.InitializationBlock,
+    addBlock: (blockValue: Any) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .heightIn(min = BlockHeight)
+            .clip(BlockShape)
+            .background(ComplexBlockColor)
+            .fillMaxWidth()
+            .clickable(onClick = {
+                addBlock(value)
+            })
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+
     }
 }

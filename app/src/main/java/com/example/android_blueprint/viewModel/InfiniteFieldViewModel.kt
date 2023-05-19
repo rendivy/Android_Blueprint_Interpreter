@@ -101,6 +101,7 @@ class InfiniteFieldViewModel : ViewModel() {
     fun <T> createUnaryOperatorBlockInstance(unaryOperator: BlockValue.UnaryOperator): T where T : BlockEntity, T : IUnaryOperatorBlock {
         return when (unaryOperator) {
             BlockValue.UnaryOperator.INVERSION -> UnaryNotOperatorBlock() as T
+            else -> UnaryNotOperatorBlock() as T
         }
     }
 
@@ -110,17 +111,4 @@ class InfiniteFieldViewModel : ViewModel() {
             offset = transform.offset + offsetChange
         )
     }
-
-    fun addVariable(list: List<String>): List<String> {
-        return list + listOf("")
-    }
-
-    fun removeAtIndex(list: List<String>, indexToRemove: Int): List<String> {
-        return list.filterIndexed { index, _ -> index != indexToRemove }
-    }
-
-    fun valueChange(list: List<String>, index: Int, value: String): List<String> {
-        return list.mapIndexed { i, old -> if (i == index) value else old }
-    }
-
 }

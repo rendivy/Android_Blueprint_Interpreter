@@ -32,12 +32,21 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
         BlockValue.BinaryOperator.DIVISION,
         BlockValue.BinaryOperator.REMAINDER,
         BlockValue.BinaryOperator.EQUALITY,
-        BlockValue.UnaryOperator.INVERSION,
         BlockValue.BinaryOperator.NOT_EQUAL,
         BlockValue.BinaryOperator.GREATER,
         BlockValue.BinaryOperator.LESS,
         BlockValue.BinaryOperator.GREATER_OR_EQUAL,
-        BlockValue.BinaryOperator.LESS_OR_EQUAL
+        BlockValue.BinaryOperator.LESS_OR_EQUAL,
+        BlockValue.UnaryOperator.INVERSION,
+        BlockValue.UnaryOperator.ABS,
+        BlockValue.UnaryOperator.SIN,
+        BlockValue.UnaryOperator.COS,
+        BlockValue.UnaryOperator.TG,
+        BlockValue.UnaryOperator.CTG,
+        BlockValue.UnaryOperator.ARCSIN,
+        BlockValue.UnaryOperator.ARCCOS,
+        BlockValue.UnaryOperator.ARCTG,
+        BlockValue.UnaryOperator.ARCCTG
     )
 
     LazyVerticalStaggeredGrid(

@@ -28,7 +28,16 @@ sealed class BlockValue(
     }
 
     enum class UnaryOperator(val text: String) {
-        INVERSION("Not"),
+        INVERSION("not"),
+        ABS("abs"),
+        SIN("sin"),
+        COS("cos"),
+        TG("tg"),
+        CTG("ctg"),
+        ARCSIN("arcsin"),
+        ARCCOS("arccos"),
+        ARCTG("arctg"),
+        ARCCTG("arcctg")
     }
 
     object InitializationBlock : BlockValue(
@@ -108,4 +117,31 @@ sealed class BlockValue(
                 )
             )
     )
+
+    object ForBlock : BlockValue(
+        text = "End",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
+
+    object WhileBlock : BlockValue(
+        text = "End",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
+
 }

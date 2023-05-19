@@ -1,37 +1,50 @@
 package com.example.android_blueprint.view
 
+import androidx.compose.foundation.Indication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.sp
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
+import com.example.android_blueprint.ui.theme.BinaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
+import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.ComplexBlockTextSize
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.FlowSize
 import com.example.android_blueprint.ui.theme.FlowTextSize
 import com.example.android_blueprint.ui.theme.MainFlowShape
 import com.example.android_blueprint.ui.theme.OperatorsTextColor
-import com.example.android_blueprint.ui.theme.OperatorsTextSize
 import com.example.android_blueprint.ui.theme.TextPaddingForFlow
+import com.example.android_blueprint.ui.theme.UnaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.neueMedium
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 import kotlin.math.roundToInt
@@ -57,8 +70,13 @@ fun SetMovableBlock(
         }
         .heightIn(min = BlockHeight)
         .clip(BlockShape)
-        .clickable(enabled = infiniteFieldViewModel.deleteMode) {
-            infiniteFieldViewModel.deleteMovableBlock(fieldBlock.index)
+        .clickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() }
+        ) {
+            if (infiniteFieldViewModel.deleteMode) {
+                infiniteFieldViewModel.deleteMovableBlock(fieldBlock.index)
+            }
         }
 
     when (fieldBlock.value) {
@@ -77,9 +95,6 @@ fun SetMovableBlock(
 
         is BlockValue.InitializationBlock -> MovableInitializationBlock(
             value = fieldBlock.value,
-            addVariable = infiniteFieldViewModel::addVariable,
-            removeAtIndex = infiniteFieldViewModel::removeAtIndex,
-            valueChange = infiniteFieldViewModel::valueChange,
             block = infiniteFieldViewModel.createInitializationBlock(),
             modifier = modifier
         )
@@ -142,15 +157,27 @@ fun TextForFlow(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun OperatorText(modifier: Modifier, text: String) {
+fun BinaryOperatorText(modifier: Modifier, text: String) {
     Text(
         text = text,
         fontFamily = neueMedium,
-        fontSize = OperatorsTextSize,
+        fontSize = BinaryOperatorsTextSize,
         color = OperatorsTextColor,
         modifier = modifier
     )
 }
+
+@Composable
+fun UnaryOperatorText(modifier: Modifier, text: String) {
+    Text(
+        text = text,
+        fontFamily = neueMedium,
+        fontSize = UnaryOperatorsTextSize,
+        color = OperatorsTextColor,
+        modifier = modifier
+    )
+}
+
 
 @Composable
 fun ComplexBlockText(modifier: Modifier, text: String) {
@@ -188,5 +215,30 @@ fun MainFlow(
             .clip(MainFlowShape)
             .size(FlowSize)
             .background(Color.White)
+    )
+}
+
+@Composable
+fun TextFieldForVariable(value: String, modifier: Modifier) {
+    val focusManager = LocalFocusManager.current
+    var text by rememberSaveable { mutableStateOf(value) }
+    TextField(
+        value = text,
+        onValueChange = {
+            text = it
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { focusManager.clearFocus() }),
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = Color.White,
+            backgroundColor = ComplexBlockColor,
+            cursorColor = Color.White,
+            focusedIndicatorColor = ComplexBlockColor
+        ),
+        textStyle = TextStyle(fontSize = ComplexBlockTextSize),
+        modifier = modifier
     )
 }
