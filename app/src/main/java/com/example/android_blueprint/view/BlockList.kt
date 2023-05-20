@@ -24,8 +24,13 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
 
     val blocks = listOf(
         BlockValue.InitializationBlock,
+        BlockValue.ForBlock,
+        BlockValue.WhileBlock,
+        BlockValue.GetValueBlock,
         BlockValue.PrintBlock,
         BlockValue.IfBlock,
+        BlockValue.FunctionBlock,
+        BlockValue.ReturnBlock,
         BlockValue.BinaryOperator.ADDITION,
         BlockValue.BinaryOperator.SUBTRACTION,
         BlockValue.BinaryOperator.MULTIPLICATION,
@@ -46,7 +51,7 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
         BlockValue.UnaryOperator.ARCSIN,
         BlockValue.UnaryOperator.ARCCOS,
         BlockValue.UnaryOperator.ARCTG,
-        BlockValue.UnaryOperator.ARCCTG
+        BlockValue.UnaryOperator.ARCCTG,
     )
 
     LazyVerticalStaggeredGrid(

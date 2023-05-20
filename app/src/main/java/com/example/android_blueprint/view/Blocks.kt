@@ -1,11 +1,11 @@
 package com.example.android_blueprint.view
 
-import androidx.compose.foundation.Indication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -30,7 +30,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.sp
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
 import com.example.android_blueprint.ui.theme.BinaryOperatorsTextSize
@@ -43,6 +42,8 @@ import com.example.android_blueprint.ui.theme.FlowSize
 import com.example.android_blueprint.ui.theme.FlowTextSize
 import com.example.android_blueprint.ui.theme.MainFlowShape
 import com.example.android_blueprint.ui.theme.OperatorsTextColor
+import com.example.android_blueprint.ui.theme.PaddingForPlaceholderText
+import com.example.android_blueprint.ui.theme.PlaceholderTextColor
 import com.example.android_blueprint.ui.theme.TextPaddingForFlow
 import com.example.android_blueprint.ui.theme.UnaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.neueMedium
@@ -80,6 +81,26 @@ fun SetMovableBlock(
         }
 
     when (fieldBlock.value) {
+
+        is BlockValue.ReturnBlock -> MovableReturnBlock(
+            value = fieldBlock.value,
+            modifier = modifier
+        )
+
+        is BlockValue.FunctionBlock -> MovableFunctionBlock(
+            value = fieldBlock.value,
+            modifier = modifier
+        )
+
+        is BlockValue.GetValueBlock -> MovableGetValueBlock(
+            value = fieldBlock.value,
+            modifier = modifier
+        )
+
+        is BlockValue.ForBlock, BlockValue.WhileBlock -> MovableLoopBlock(
+            value = fieldBlock.value as BlockValue,
+            modifier = modifier
+        )
 
         is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
             value = fieldBlock.value,
@@ -124,24 +145,45 @@ fun SetFixedBlock(
     value: Any,
     addBlock: ((blockValue: Any) -> Unit)
 ) {
+
+    val modifier = Modifier
+        .clip(BlockShape)
+        .background(ComplexBlockColor)
+        .fillMaxWidth()
+        .clickable(onClick = {
+            addBlock(value)
+        })
+
     when (value) {
+
+        is BlockValue.ReturnBlock -> FixedReturnBlock(value = value, modifier = modifier)
+
+        is BlockValue.FunctionBlock -> FixedFunctionBlock(value = value, modifier = modifier)
+
+        is BlockValue.GetValueBlock -> FixedGetValueBlock(value = value, modifier = modifier)
+
+        is BlockValue.WhileBlock, BlockValue.ForBlock -> FixedLoopBlock(
+            value = value as BlockValue,
+            modifier = modifier
+        )
+
         is BlockValue.UnaryOperator -> UnaryFixedOperatorBlock(
             value = value,
-            addBlock = addBlock
+            modifier = modifier
         )
 
         is BlockValue.BinaryOperator -> BinaryFixedOperatorBlock(
             value = value,
-            addBlock = addBlock
+            modifier = modifier
         )
 
         is BlockValue.InitializationBlock -> FixedInitializationBlock(
             value,
-            addBlock = addBlock
+            modifier = modifier
         )
 
-        is BlockValue.IfBlock -> FixedBranchBlock(value = value, addBlock = addBlock)
-        is BlockValue.PrintBlock -> FixedPrintBlock(value = value, addBlock = addBlock)
+        is BlockValue.IfBlock -> FixedBranchBlock(value = value, modifier = modifier)
+        is BlockValue.PrintBlock -> FixedPrintBlock(value = value, modifier = modifier)
     }
 }
 
@@ -221,7 +263,7 @@ fun MainFlow(
 @Composable
 fun TextFieldForVariable(value: String, modifier: Modifier) {
     val focusManager = LocalFocusManager.current
-    var text by rememberSaveable { mutableStateOf(value) }
+    var text by rememberSaveable { mutableStateOf("") }
     TextField(
         value = text,
         onValueChange = {
@@ -230,15 +272,31 @@ fun TextFieldForVariable(value: String, modifier: Modifier) {
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done
         ),
+        placeholder = { placeholderText(text = value) },
         keyboardActions = KeyboardActions(
             onDone = { focusManager.clearFocus() }),
         colors = TextFieldDefaults.textFieldColors(
             textColor = Color.White,
             backgroundColor = ComplexBlockColor,
             cursorColor = Color.White,
-            focusedIndicatorColor = ComplexBlockColor
+            focusedIndicatorColor = ComplexBlockColor,
+            unfocusedIndicatorColor = ComplexBlockColor,
+            disabledIndicatorColor = ComplexBlockColor,
         ),
         textStyle = TextStyle(fontSize = ComplexBlockTextSize),
         modifier = modifier
+    )
+}
+
+@Composable
+fun placeholderText(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        fontFamily = neueMedium,
+        fontSize = ComplexBlockTextSize,
+        color = PlaceholderTextColor,
+        textAlign = TextAlign.Center,
+        modifier = modifier
+            .padding(top = PaddingForPlaceholderText)
     )
 }

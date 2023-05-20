@@ -1,7 +1,5 @@
 package com.example.android_blueprint.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,35 +7,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockHeight
-import com.example.android_blueprint.ui.theme.BlockShape
-import com.example.android_blueprint.ui.theme.ComplexBlockColor
-import com.example.android_blueprint.ui.theme.ComplexBlockTextSize
-import com.example.android_blueprint.ui.theme.DefaultPadding
-import com.example.android_blueprint.ui.theme.OperatorBlockColor
+import com.example.android_blueprint.ui.theme.HeightOfSmallBlocks
 
 @Composable
 fun BinaryFixedOperatorBlock(
     value: BlockValue.BinaryOperator,
-    addBlock: (blockValue: Any) -> Unit
+    modifier: Modifier
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .height(BlockHeight)
-            .clip(BlockShape)
-            .background(OperatorBlockColor)
-            .fillMaxWidth()
-            .clickable(onClick = {
-                addBlock(value)
-            })
     ) {
         BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow()
@@ -49,17 +33,11 @@ fun BinaryFixedOperatorBlock(
 @Composable
 fun UnaryFixedOperatorBlock(
     value: BlockValue.UnaryOperator,
-    addBlock: (blockValue: Any) -> Unit
+    modifier: Modifier
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .height(BlockHeight)
-            .clip(BlockShape)
-            .background(OperatorBlockColor)
-            .fillMaxWidth()
-            .clickable(onClick = {
-                addBlock(value)
-            })
     ) {
         UnaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(modifier = Modifier.align(Alignment.CenterStart))
@@ -70,17 +48,11 @@ fun UnaryFixedOperatorBlock(
 @Composable
 fun FixedPrintBlock(
     value: BlockValue.PrintBlock,
-    addBlock: (blockValue: Any) -> Unit
+    modifier: Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .heightIn(min = BlockHeight)
-            .clip(BlockShape)
-            .background(ComplexBlockColor)
-            .fillMaxWidth()
-            .clickable(onClick = {
-                addBlock(value)
-            })
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row(
@@ -98,17 +70,11 @@ fun FixedPrintBlock(
 @Composable
 fun FixedBranchBlock(
     value: BlockValue.IfBlock,
-    addBlock: (blockValue: Any) -> Unit
+    modifier: Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .heightIn(min = BlockHeight)
-            .clip(BlockShape)
-            .background(ComplexBlockColor)
-            .fillMaxWidth()
-            .clickable(onClick = {
-                addBlock(value)
-            })
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Box(
@@ -142,17 +108,11 @@ fun FixedBranchBlock(
 @Composable
 fun FixedInitializationBlock(
     value: BlockValue.InitializationBlock,
-    addBlock: (blockValue: Any) -> Unit
+    modifier: Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .heightIn(min = BlockHeight)
-            .clip(BlockShape)
-            .background(ComplexBlockColor)
-            .fillMaxWidth()
-            .clickable(onClick = {
-                addBlock(value)
-            })
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row(
@@ -167,13 +127,9 @@ fun FixedInitializationBlock(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Text(
-                text = "name",
-                fontSize = ComplexBlockTextSize,
-                color = Color.White,
-                modifier = Modifier
+            placeholderText(
+                text = "name = value", modifier = Modifier
                     .weight(1f)
-                    .padding(start = DefaultPadding)
             )
             SupportingFlow(modifier = Modifier.align(Alignment.CenterVertically))
         }
@@ -182,20 +138,83 @@ fun FixedInitializationBlock(
 
 @Composable
 fun FixedLoopBlock(
-    value: BlockValue.InitializationBlock,
-    addBlock: (blockValue: Any) -> Unit
+    value: BlockValue,
+    modifier: Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .heightIn(min = BlockHeight)
-            .clip(BlockShape)
-            .background(ComplexBlockColor)
-            .fillMaxWidth()
-            .clickable(onClick = {
-                addBlock(value)
-            })
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            MainFlow()
+            Row(modifier = Modifier.align(Alignment.TopEnd)) {
+                TextForFlow(text = "loop")
+                MainFlow()
+            }
+        }
+        placeholderText(text = "conditional", modifier = Modifier.fillMaxWidth())
+        Row(modifier = Modifier.align(Alignment.End)) {
+            TextForFlow(text = "endloop")
+            MainFlow()
+        }
+    }
+}
 
+@Composable
+fun FixedGetValueBlock(
+    value: BlockValue.GetValueBlock,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .heightIn(min = HeightOfSmallBlocks)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Row {
+            placeholderText(text = "expression", modifier = Modifier.weight(1f))
+            SupportingFlow()
+        }
+    }
+}
+
+@Composable
+fun FixedFunctionBlock(
+    value: BlockValue.FunctionBlock,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .heightIn(min = HeightOfSmallBlocks)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Row {
+            placeholderText(text = "name(args)", modifier = Modifier.weight(1f))
+            MainFlow()
+        }
+    }
+}
+
+@Composable
+fun FixedReturnBlock(
+    value: BlockValue.ReturnBlock,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .heightIn(min = BlockHeight)
+    ) {
+        MainFlow()
+        ComplexBlockText(
+            modifier = value.modifier.align(Alignment.CenterHorizontally),
+            text = value.text
+        )
+        Row {
+            SupportingFlow()
+            TextForFlow(text = "value")
+        }
     }
 }

@@ -119,7 +119,7 @@ sealed class BlockValue(
     )
 
     object ForBlock : BlockValue(
-        text = "End",
+        text = "For",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -132,7 +132,7 @@ sealed class BlockValue(
     )
 
     object WhileBlock : BlockValue(
-        text = "End",
+        text = "While",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -142,6 +142,38 @@ sealed class BlockValue(
                     end = Offset(100f, 0f)
                 )
             )
+    )
+
+    object GetValueBlock : BlockValue(
+        text = "Get value",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
+
+    object FunctionBlock : BlockValue(
+        text = "Function",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
+
+    object ReturnBlock : BlockValue(
+        text = "Return",
+        modifier = Modifier
+            .fillMaxWidth()
     )
 
 }

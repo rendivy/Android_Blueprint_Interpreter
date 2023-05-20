@@ -35,9 +35,8 @@ import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BlockWidth
 import com.example.android_blueprint.ui.theme.BorderBlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
-import com.example.android_blueprint.ui.theme.DefaultPadding
-import com.example.android_blueprint.ui.theme.InitializationBlockWidth
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
+import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
 import kotlin.math.roundToInt
 
 
@@ -220,7 +219,7 @@ fun MovableInitializationBlock(
 
     Column(
         modifier = modifier
-            .width(InitializationBlockWidth)
+            .width(TextFieldBlockWidth)
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
@@ -236,8 +235,96 @@ fun MovableInitializationBlock(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            TextFieldForVariable(value = "name", modifier = Modifier.weight(1f))
+            TextFieldForVariable(value = "name = value", modifier = Modifier.weight(1f))
             SupportingFlow(modifier = Modifier.align(Alignment.CenterVertically))
+        }
+    }
+}
+
+@Composable
+fun MovableLoopBlock(
+    value: BlockValue,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .width(TextFieldBlockWidth)
+            .background(ComplexBlockColor)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            MainFlow()
+            Row(modifier = Modifier.align(Alignment.TopEnd)) {
+                TextForFlow(text = "loop")
+                MainFlow()
+            }
+        }
+        TextFieldForVariable(value = "conditional", modifier = Modifier.fillMaxWidth())
+        Row(modifier = Modifier.align(Alignment.End)) {
+            TextForFlow(text = "endloop")
+            MainFlow()
+        }
+    }
+}
+
+
+@Composable
+fun MovableGetValueBlock(
+    value: BlockValue.GetValueBlock,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .width(TextFieldBlockWidth)
+            .background(ComplexBlockColor)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Row {
+            TextFieldForVariable(value = "expression", modifier = Modifier.weight(1f))
+            SupportingFlow(modifier = Modifier.align(Alignment.CenterVertically))
+        }
+    }
+}
+
+@Composable
+fun MovableFunctionBlock(
+    value: BlockValue.FunctionBlock,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .width(TextFieldBlockWidth)
+            .background(ComplexBlockColor)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Row {
+            TextFieldForVariable(value = "name(args)", modifier = Modifier.weight(1f))
+            MainFlow(modifier = Modifier.align(Alignment.CenterVertically))
+        }
+    }
+}
+
+@Composable
+fun MovableReturnBlock(
+    value: BlockValue.ReturnBlock,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .width(BorderBlockWidth)
+            .background(ComplexBlockColor)
+    ) {
+        MainFlow()
+        ComplexBlockText(
+            modifier = value.modifier.align(Alignment.CenterHorizontally),
+            text = value.text
+        )
+        Row {
+            SupportingFlow()
+            TextForFlow(text = "value")
         }
     }
 }
