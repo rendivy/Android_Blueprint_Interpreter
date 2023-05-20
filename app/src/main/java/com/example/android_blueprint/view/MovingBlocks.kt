@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.IntOffset
 import block.BlockEntity
 import block.EndBlock
 import block.EndIfBlock
+import block.ForBlock
 import block.IBinaryOperatorBlock
 import block.IUnaryOperatorBlock
 import block.IfBlock
@@ -37,6 +38,7 @@ import com.example.android_blueprint.ui.theme.BorderBlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
+import com.example.android_blueprint.viewModel.ConsoleViewModel
 import kotlin.math.roundToInt
 
 
@@ -134,7 +136,7 @@ fun <T> UnaryMovableOperatorBlock(
 fun MovablePrintBlock(
     value: BlockValue.PrintBlock,
     block: PrintBlock,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     Column(
         modifier = modifier

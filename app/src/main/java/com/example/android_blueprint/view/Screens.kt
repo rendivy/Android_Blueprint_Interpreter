@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.actionColor
 import com.example.android_blueprint.ui.theme.neueMedium
+import com.example.android_blueprint.viewModel.ConsoleViewModel
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
 @Composable
@@ -39,7 +40,7 @@ fun ConsoleScreen() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Здесь будет наша консоль с выводом, планирую сюда перекидывать пользователя, либо по клику, либо по нажанию кнопки компиляции на главном ",
+            text = ConsoleViewModel.consoleText,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = neueMedium,

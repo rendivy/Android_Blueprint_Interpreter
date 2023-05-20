@@ -1,6 +1,7 @@
 package block
 
 import Instruction
+import com.example.android_blueprint.viewModel.ConsoleViewModel
 import exceptions.NullPointerExceptionInOperator
 import memory.Valuable
 
@@ -12,7 +13,7 @@ class StartBlock(
 
     override fun validate() {
         if (nextMainFlowBlocks == null) {
-            throw NullPointerExceptionInOperator("Start block must have next block")
+            ConsoleViewModel.consoleText += "Start block must have next block"
         }
     }
 }
@@ -36,15 +37,17 @@ class PrintBlock(
     override var valuable: BlockEntity? = null
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
-
     private fun printValue() {
         val curr = (valuable as IGetValuable).getValue()
         if (curr.array.isEmpty()) {
+            ConsoleViewModel.consoleText += curr.value  + '\n'
             println(curr.value)
         } else {
             for (i in curr.array.indices) {
+                ConsoleViewModel.consoleText += curr.array[i].value + " "
                 print(curr.array[i].value + " ")
             }
+            ConsoleViewModel.consoleText += '\n'
             println()
         }
     }

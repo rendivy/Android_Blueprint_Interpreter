@@ -404,7 +404,7 @@ class Interpret(private var blocks: List<BlockEntity>) {
                 null
             }
 
-            (Regex("\\b(${functionName.joinToString("|")})\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()])*\\))*\\))*\\))*\\))*\\)(?!\\))").containsMatchIn(data)) -> {
+            (!functionName.isEmpty() && Regex("\\b(${functionName.joinToString("|")})\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()])*\\))*\\))*\\))*\\))*\\)(?!\\))").containsMatchIn(data)) -> {
                 runFunction(data)
             }
 

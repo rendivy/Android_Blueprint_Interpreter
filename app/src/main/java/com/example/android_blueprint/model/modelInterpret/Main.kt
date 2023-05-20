@@ -1,6 +1,7 @@
 import block.*
 
 fun main() {
+    println(BlockEntity.getBlocks())
     val startBlock = StartBlock()
     val endBlock = EndBlock()
 

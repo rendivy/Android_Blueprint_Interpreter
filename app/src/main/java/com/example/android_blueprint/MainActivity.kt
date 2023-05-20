@@ -4,12 +4,15 @@ package com.example.android_blueprint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.android_blueprint.ui.theme.Android_BlueprintTheme
+import com.example.android_blueprint.viewModel.ConsoleViewModel
+import main
 
 
 class MainActivity : ComponentActivity() {
@@ -26,8 +29,6 @@ class MainActivity : ComponentActivity() {
                     MainScreen()
                 }
             }
-
-
         }
     }
 }
