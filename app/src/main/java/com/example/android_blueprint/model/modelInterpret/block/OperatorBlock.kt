@@ -7,7 +7,7 @@ import memory.Valuable
 class InitializationAndSetVariableBlock(
     instruction: Instruction = Instruction.INIT_AND_SET,
     override var parsed: String = ""
-) : BlockEntity(instruction), IWorkingWithVariables, IMainFLowBlock, IGetValuable {
+) : BlockEntity(instruction), IWorkingWithVariables, IMainFLowBlock, IGetValuable, IHaveUserInput {
     private var rawInput: String = ""
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
@@ -25,9 +25,8 @@ class InitializationAndSetVariableBlock(
         return rawInput
     }
 
-    fun setRawInput(rawInput: String) {
-        this.rawInput = rawInput
-        validate()
+    override fun setUserInput(input: String) {
+        this.rawInput = input
     }
 
     fun addNewField(): InitializationAndSetVariableBlock{
@@ -45,7 +44,7 @@ class InitializationAndSetVariableBlock(
 
 class GetVariableBlock(
     instruction: Instruction = Instruction.GET_VALUABLE
-) : BlockEntity(instruction), IGetValuable {
+) : BlockEntity(instruction), IGetValuable, IHaveUserInput {
     private var rawInput: String = ""
     private var variable: Valuable = Valuable(0, Type.INT)
 
@@ -53,9 +52,8 @@ class GetVariableBlock(
         return rawInput
     }
 
-    fun setRawInput(rawInput: String) {
-        this.rawInput = rawInput
-        validate()
+    override fun setUserInput(input: String) {
+        this.rawInput = input
     }
 
     override fun getValue(): Valuable {

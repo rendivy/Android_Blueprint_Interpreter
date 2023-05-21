@@ -160,7 +160,7 @@ class EndIfBlock(
 
 class ForBlock(
     instruction: Instruction = Instruction.FOR
-) : BlockEntity(instruction), IMainFLowBlock, IBranchesBlock {
+) : BlockEntity(instruction), IMainFLowBlock, IBranchesBlock, IHaveUserInput {
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
 
@@ -169,10 +169,9 @@ class ForBlock(
 
     private var rawInput = ""
 
-    fun setRawInput(rawInput: String) {
-        this.rawInput = rawInput
+    override fun setUserInput(input: String) {
+        this.rawInput = input
     }
-
     fun getRawInput(): String {
         return rawInput
     }
@@ -189,7 +188,7 @@ class ForBlock(
 
 class WhileBlock(
     instruction: Instruction = Instruction.WHILE
-) : BlockEntity(instruction), IMainFLowBlock, IBranchesBlock {
+) : BlockEntity(instruction), IMainFLowBlock, IBranchesBlock, IHaveUserInput {
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
 
@@ -198,8 +197,8 @@ class WhileBlock(
 
     private var rawInput = ""
 
-    fun setRawInput(rawInput: String) {
-        this.rawInput = rawInput
+    override fun setUserInput(input: String) {
+        this.rawInput = input
     }
 
     fun getRawInput(): String {
@@ -218,14 +217,14 @@ class WhileBlock(
 
 class FunctionBlock(
     instruction: Instruction = Instruction.FUNC
-) : BlockEntity(instruction), IMainFLowBlock {
+) : BlockEntity(instruction), IMainFLowBlock, IHaveUserInput {
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
 
     private var rawInput = ""
 
-    fun setRawInput(rawInput: String) {
-        this.rawInput = rawInput
+    override fun setUserInput(input: String) {
+        this.rawInput = input
     }
 
     fun getRawInput(): String {
@@ -268,14 +267,14 @@ class EndFunctionBlock(
 
 class CallFunctionBlock(
     instruction: Instruction = Instruction.FUNC_CALL
-) : BlockEntity(instruction), IMainFLowBlock {
+) : BlockEntity(instruction), IMainFLowBlock, IHaveUserInput {
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
 
     private var rawInput = ""
 
-    fun setRawInput(rawInput: String) {
-        this.rawInput = rawInput
+    override fun setUserInput(input: String) {
+        this.rawInput = input
     }
 
     fun getRawInput(): String {
