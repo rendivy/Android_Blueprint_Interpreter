@@ -28,32 +28,43 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import block.BlockEntity
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.PathModel
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.DeleteButtonSize
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
+import com.example.android_blueprint.viewModel.PathViewModel
+import main
 
-var pathData = mutableStateMapOf<Int, Path>()
+
 
 
 fun updatePathInMap(
     pathModel: PathModel, pathNumber: Int
 ) {
     val path = Path()
-    path.moveTo(pathModel.pathList[0].value, pathModel.pathList[1].value)
-    path.cubicTo(
-        (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
-        pathModel.pathList[1].value, (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
-        pathModel.pathList[3].value, pathModel.pathList[2].value, pathModel.pathList[3].value
-    )
-
-    if (pathNumber !in pathData) {
-        pathData[pathNumber] = path
+    if (pathModel.pathList.isNotEmpty()) {
+        path.moveTo(pathModel.pathList[0].value, pathModel.pathList[1].value)
+        path.cubicTo(
+            (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
+            pathModel.pathList[1].value,
+            (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
+            pathModel.pathList[3].value,
+            pathModel.pathList[2].value,
+            pathModel.pathList[3].value
+        )
     } else {
-        pathData.put(pathNumber, path)
+        path.moveTo(0f, 0f)
     }
+    if (pathNumber !in PathViewModel.pathData) {
+        PathViewModel.pathData[pathNumber] = path
+    } else {
+        PathViewModel.pathData.put(pathNumber, path)
+    }
+
+
 }
 
 
@@ -81,7 +92,7 @@ fun InfiniteField(
                 translationY = transform.offset.y
             )
             .drawBehind {
-                for (value in pathData.values) {
+                for (value in PathViewModel.pathData.values) {
                     drawPath(value, Color.White, style = Stroke(width = 10f))
 
                 }
@@ -113,6 +124,21 @@ fun InfiniteField(
                 modifier = Modifier.align(Alignment.Center)
             )
         }
+    }
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .padding(DefaultPadding)
+                .align(Alignment.TopStart)
+                .size(DeleteButtonSize)
+                .clip(CircleShape)
+                .background(getDeleteButtonColor())
+                .clickable {
+                    main()
+                }
+        )
+
     }
 }
 

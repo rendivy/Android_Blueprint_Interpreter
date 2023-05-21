@@ -11,14 +11,18 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import block.BlockEntity
 import block.EndBlock
@@ -31,6 +35,7 @@ import block.InitializationAndSetVariableBlock
 import block.PrintBlock
 import block.StartBlock
 import com.example.android_blueprint.model.BlockValue
+import com.example.android_blueprint.model.PathModel
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BlockWidth
@@ -39,6 +44,7 @@ import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
 import com.example.android_blueprint.viewModel.ConsoleViewModel
+import com.example.android_blueprint.viewModel.PathViewModel
 import kotlin.math.roundToInt
 
 
@@ -47,17 +53,41 @@ fun StartBlock(
     value: BlockValue.StartBlock,
     block: StartBlock,
 ) {
+    val connectionCoordinate: MutableList<MutableState<Float>> = remember {
+        mutableListOf(
+            mutableStateOf(0f), mutableStateOf(0f),
+            mutableStateOf(0f), mutableStateOf(0f)
+        )
+    }
+    var firstPathIsConnected = false
+    val pathModel: PathModel = PathModel(1, connectionCoordinate, firstPathIsConnected)
+
+
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
+    var boxHeight by remember { mutableStateOf(0f) }
+    var boxWidth by remember { mutableStateOf(0f) }
+    var isPathInConnector: MutableState<Boolean> = remember { mutableStateOf(false) }
+    var blockId: Int = 1
 
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .onGloballyPositioned { coordinates ->
+                boxHeight = coordinates.size.height.toFloat()
+                boxWidth = coordinates.size.width.toFloat()
+            }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
+                    if (isPathInConnector.value && PathViewModel.pathHashMap[blockId]!!.pathList.isNotEmpty()) {
+                        PathViewModel.pathHashMap[blockId]!!.pathList[0].value = offsetX + boxWidth
+                        PathViewModel.pathHashMap[blockId]!!.pathList[1].value =
+                            offsetY + boxHeight / 2
+                        updatePathInMap(PathViewModel.pathHashMap[blockId]!!, 1)
+                    }
                 }
             }
             .heightIn(min = BlockHeight)
@@ -66,7 +96,11 @@ fun StartBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
-        MainFlow(modifier = Modifier.align(Alignment.CenterEnd))
+        MainFlowTest(
+            modifier = Modifier.align(Alignment.CenterEnd), pathModel, isPathInConnector,
+            offsetX, offsetY, boxHeight = boxHeight, boxWidth = boxWidth,
+            blockId
+        )
     }
 }
 
@@ -77,14 +111,34 @@ fun EndBlock(
 ) {
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
+    var boxHeight by remember { mutableStateOf(0f) }
+    var boxWidth by remember { mutableStateOf(0f) }
+    var isPathInConnector: MutableState<Boolean> = remember { mutableStateOf(false) }
+
+
     Box(
         modifier = Modifier
             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+            .onGloballyPositioned { coordinates ->
+                boxHeight = coordinates.size.height.toFloat()
+                boxWidth = coordinates.size.width.toFloat()
+            }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
+                    if (isPathInConnector.value && PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList.isNotEmpty()) {
+                        PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[2].value =
+                            offsetX
+                        PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[3].value =
+                            offsetY + boxHeight / 2
+                        updatePathInMap(
+                            PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!,
+                            PathViewModel.buttonPressedBlockId
+                        )
+                    }
+
                 }
             }
             .heightIn(min = BlockHeight)
@@ -93,7 +147,10 @@ fun EndBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
-        MainFlow(modifier = Modifier.align(Alignment.CenterStart))
+        MainFlowTest2(
+            modifier = Modifier.align(Alignment.CenterStart), isPathInConnector,
+            offsetX, offsetY, boxHeight
+        )
     }
 }
 
@@ -137,7 +194,23 @@ fun MovablePrintBlock(
     value: BlockValue.PrintBlock,
     block: PrintBlock,
     modifier: Modifier,
+    flag: MutableState<Boolean>,
+    offsetX: Float,
+    offsetY: Float,
+    boxHeight: Float,
+    boxWidth: Float
 ) {
+    var isPathInConnector: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val blockId: Int = 2
+    val connectionCoordinate: MutableList<MutableState<Float>> = remember {
+        mutableListOf(
+            mutableStateOf(0f), mutableStateOf(0f),
+            mutableStateOf(0f), mutableStateOf(0f)
+        )
+    }
+    var firstPathIsConnected = false
+    val pathModel: PathModel = PathModel(blockId, connectionCoordinate, firstPathIsConnected)
+
     Column(
         modifier = modifier
             .width(BlockWidth)
@@ -148,8 +221,11 @@ fun MovablePrintBlock(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MainFlow()
-            MainFlow()
+            MainFlowTest2(modifier = Modifier, flag, offsetX, offsetY, boxHeight)
+            MainFlowTest(
+                modifier = Modifier, pathModel, isPathInConnector, offsetX,
+                offsetY, boxHeight, boxWidth, blockId
+            )
         }
         SupportingFlow(modifier = Modifier.align(Alignment.Start))
     }

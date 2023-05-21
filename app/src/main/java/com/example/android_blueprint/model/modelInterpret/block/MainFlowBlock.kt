@@ -26,7 +26,7 @@ class EndBlock(
 
     override fun validate() {
         if (previousMainFlowBlocks == null) {
-            throw NullPointerExceptionInOperator("End block must have previous block")
+            ConsoleViewModel.consoleText = "End block must have previous block"
         }
     }
 }

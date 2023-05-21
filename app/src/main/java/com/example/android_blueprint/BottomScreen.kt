@@ -38,7 +38,7 @@ import com.example.android_blueprint.viewModel.BottomNavGraphViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Preview(
-    showSystemUi = true, device = "id:pixel_5"
+    showSystemUi = true, device = "spec:parent=pixel_5,orientation=landscape"
 )
 @Composable
 fun MainScreen() {
