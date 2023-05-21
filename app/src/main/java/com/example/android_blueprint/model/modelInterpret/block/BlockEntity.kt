@@ -167,6 +167,9 @@ interface IExecutable {
     fun execute()
 }
 
+interface IHaveUserInput{
+    fun setUserInput(input: String)
+}
 interface IBranchesBlock {
     var trueExpressionBranch: BlockEntity?
     var falseExpressionBranch: BlockEntity?
