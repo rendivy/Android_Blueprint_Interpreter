@@ -15,74 +15,10 @@ abstract class BlockEntity(
             return Blocks
         }
 
-        fun updateBlock(block: BlockEntity) {
-            val oldBlock = Blocks.find { it.getId() == block.getId() }
-            when (block.getInstruction()) {
-                Instruction.IF -> {
-                    (oldBlock as IfBlock).previousMainFlowBlocks?.let {
-                        (it as IMainFLowBlock).setNextMainFlowBlock(
-                            block
-                        )
-                    }
-                    oldBlock.getTrueExpressionBranch()?.let { (it as IMainFLowBlock).setPreviousMainFlowBlock(block) }
-                    oldBlock.getFalseExpressionBranch()?.let { (it as IMainFLowBlock).setPreviousMainFlowBlock(block) }
-                }
-
-                Instruction.END_IF -> {
-                    (oldBlock as EndIfBlock).nextMainFlowBlocks?.let {
-                        (it as IMainFLowBlock).setPreviousMainFlowBlock(
-                            block
-                        )
-                    }
-                    oldBlock.getFalseExpressionBranch()?.let { (it as IMainFLowBlock).setNextMainFlowBlock(block) }
-                    oldBlock.getTrueExpressionBranch()?.let { (it as IMainFLowBlock).setNextMainFlowBlock(block) }
-                }
-
-                else -> {
-                    when (oldBlock) {
-                        is IMainFLowBlock -> {
-                            (oldBlock as IMainFLowBlock).nextMainFlowBlocks?.let {
-                                (it as IMainFLowBlock).setPreviousMainFlowBlock(
-                                    block
-                                )
-                            }
-                            (oldBlock as IMainFLowBlock).previousMainFlowBlocks?.let {
-                                (it as IMainFLowBlock).setNextMainFlowBlock(
-                                    block
-                                )
-                            }
-                        }
-
-                        is IUnaryOperatorBlock -> {
-                            updateOperatorBlocks(oldBlock, block)
-                        }
-
-                        is IBinaryOperatorBlock -> {
-                            updateOperatorBlocks(oldBlock, block)
-                        }
-                    }
-                }
-            }
-            Blocks.removeIf { it.getId() == block.getId() }
-            Blocks.add(block)
-            block.validate()
-        }
-
-        private fun updateOperatorBlocks(oldBlock: BlockEntity, newBlock: BlockEntity) {
-            Blocks.forEach() {
-                if (it is IBinaryOperatorBlock) {
-                    if (it.leftValuable == oldBlock) {
-                        it.leftValuable = newBlock
-                    }
-                    if (it.rightValuable == oldBlock) {
-                        it.rightValuable = newBlock
-                    }
-                }
-                if (it is IUnaryOperatorBlock) {
-                    if (it.valuable == oldBlock) {
-                        it.valuable = newBlock
-                    }
-                }
+        fun deletePreviousBlockMainFlowBranch(block: BlockEntity) {
+            if ((block as IMainFLowBlock).previousMainFlowBlocks != null) {
+                (block.previousMainFlowBlocks!! as IMainFLowBlock).nextMainFlowBlocks = null
+                block.previousMainFlowBlocks = null
             }
         }
 
@@ -91,14 +27,17 @@ abstract class BlockEntity(
                 if (it is IBinaryOperatorBlock) {
                     if (it.leftValuable == block) {
                         it.leftValuable = null
+                        return
                     }
                     if (it.rightValuable == block) {
                         it.rightValuable = null
+                        return
                     }
                 }
                 if (it is IUnaryOperatorBlock) {
                     if (it.valuable == block) {
                         it.valuable = null
+                        return
                     }
                 }
             }
@@ -106,8 +45,8 @@ abstract class BlockEntity(
 
         fun deleteBlock(block: BlockEntity) {
             when (block) {
-                is IfBlock -> {
-                    if (block.previousMainFlowBlocks != null) {
+                is IBranchesBlock -> {
+                    if ((block as IMainFLowBlock).previousMainFlowBlocks != null) {
                         (block.previousMainFlowBlocks!! as IMainFLowBlock).nextMainFlowBlocks = null
                     }
                     if (block.getTrueExpressionBranch() != null) {
@@ -139,13 +78,8 @@ abstract class BlockEntity(
                     }
                 }
 
-                is IUnaryOperatorBlock -> {
+                is IUnaryOperatorBlock, is IBinaryOperatorBlock -> {
                     deleteOperatorBlock(block)
-                }
-
-                is IBinaryOperatorBlock -> {
-                    deleteOperatorBlock(block)
-
                 }
             }
             Blocks.removeIf { it.getId() == block.getId() }
@@ -153,6 +87,7 @@ abstract class BlockEntity(
     }
 
     private val id = nextId++
+    private var breakPoint = false
 
     init {
         Blocks.add(this)
@@ -160,6 +95,14 @@ abstract class BlockEntity(
 
     fun getId(): Int {
         return id
+    }
+
+    fun setBreakPoint(breakPoint: Boolean) {
+        this.breakPoint = breakPoint
+    }
+
+    fun getBreakPoint(): Boolean {
+        return breakPoint
     }
 
     fun getInstruction(): Instruction {
@@ -199,17 +142,43 @@ interface IWorkingWithVariables {
 interface IMainFLowBlock {
     var previousMainFlowBlocks: BlockEntity?
     var nextMainFlowBlocks: BlockEntity?
+
     fun setPreviousMainFlowBlock(block: BlockEntity) {
         previousMainFlowBlocks = block
+        (block as IMainFLowBlock).nextMainFlowBlocks = (this as BlockEntity)
     }
 
     fun setNextMainFlowBlock(block: BlockEntity) {
         nextMainFlowBlocks = block
+        (block as IMainFLowBlock).previousMainFlowBlocks = (this as BlockEntity)
     }
 }
 
 interface IExecutable {
     fun execute()
+}
+
+interface IBranchesBlock {
+    var trueExpressionBranch: BlockEntity?
+    var falseExpressionBranch: BlockEntity?
+
+    fun setTrueExpressionBranch(block: BlockEntity) {
+        trueExpressionBranch = block
+        (block as IMainFLowBlock).previousMainFlowBlocks = (this as BlockEntity)
+    }
+
+    fun setFalseExpressionBranch(block: BlockEntity) {
+        falseExpressionBranch = block
+        (block as IMainFLowBlock).previousMainFlowBlocks = (this as BlockEntity)
+    }
+
+    fun getTrueExpressionBranch(): BlockEntity? {
+        return trueExpressionBranch
+    }
+
+    fun getFalseExpressionBranch(): BlockEntity? {
+        return falseExpressionBranch
+    }
 }
 
 fun BlockEntity.getValueFromOperatorBlocks(): Valuable {

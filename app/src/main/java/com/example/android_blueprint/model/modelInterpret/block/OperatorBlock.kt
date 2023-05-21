@@ -339,3 +339,240 @@ class UnaryNotOperatorBlock(
     }
 }
 
+class UnarySinOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IUnaryOperatorBlock {
+    override var valuable: BlockEntity? = null
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                valuable!!.getValueFromOperatorBlocks().sin(), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (valuable == null)
+            throw NullPointerExceptionInOperator("memory.Valuable is null")
+    }
+}
+
+class UnaryCosOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IUnaryOperatorBlock {
+    override var valuable: BlockEntity? = null
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                valuable!!.getValueFromOperatorBlocks().cos(), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (valuable == null)
+            throw NullPointerExceptionInOperator("memory.Valuable is null")
+    }
+}
+
+class UnaryTanOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IUnaryOperatorBlock {
+    override var valuable: BlockEntity? = null
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                valuable!!.getValueFromOperatorBlocks().tan(), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (valuable == null)
+            throw NullPointerExceptionInOperator("memory.Valuable is null")
+    }
+}
+
+class UnaryCotOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IUnaryOperatorBlock {
+    override var valuable: BlockEntity? = null
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                valuable!!.getValueFromOperatorBlocks().cot(), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (valuable == null)
+            throw NullPointerExceptionInOperator("memory.Valuable is null")
+    }
+}
+
+class UnaryArctanOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IUnaryOperatorBlock {
+    override var valuable: BlockEntity? = null
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                valuable!!.getValueFromOperatorBlocks().arctan(), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (valuable == null)
+            throw NullPointerExceptionInOperator("memory.Valuable is null")
+    }
+}
+
+class UnaryArccotOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IUnaryOperatorBlock {
+    override var valuable: BlockEntity? = null
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                valuable!!.getValueFromOperatorBlocks().arccot(), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (valuable == null)
+            throw NullPointerExceptionInOperator("memory.Valuable is null")
+    }
+}
+
+class UnaryArcsinOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IUnaryOperatorBlock {
+    override var valuable: BlockEntity? = null
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                valuable!!.getValueFromOperatorBlocks().arcsin(), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (valuable == null)
+            throw NullPointerExceptionInOperator("memory.Valuable is null")
+    }
+}
+
+class UnaryArccosOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IUnaryOperatorBlock {
+    override var valuable: BlockEntity? = null
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                valuable!!.getValueFromOperatorBlocks().arccos(), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (valuable == null)
+            throw NullPointerExceptionInOperator("memory.Valuable is null")
+    }
+}
+
+class UnaryAbsOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IUnaryOperatorBlock {
+    override var valuable: BlockEntity? = null
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                valuable!!.getValueFromOperatorBlocks().absolute(), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (valuable == null)
+            throw NullPointerExceptionInOperator("memory.Valuable is null")
+    }
+}
+
+class BinaryLogOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IBinaryOperatorBlock {
+    override var leftValuable: BlockEntity? = null
+    override var rightValuable: BlockEntity? = null
+
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                leftValuable!!.getValueFromOperatorBlocks()
+                    .log(rightValuable!!.getValueFromOperatorBlocks()), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (leftValuable == null || rightValuable == null)
+            throw NullPointerExceptionInOperator("Left or right valuable is null ${this.getId()}")
+    }
+}
+
+class BinaryPowOperatorBlock(
+    instruction: Instruction = Instruction.OPERATOR_BLOCK
+) : BlockEntity(instruction), IBinaryOperatorBlock {
+    override var leftValuable: BlockEntity? = null
+    override var rightValuable: BlockEntity? = null
+
+    override fun getValue(): Valuable {
+        try {
+            validate()
+            return Valuable(
+                leftValuable!!.getValueFromOperatorBlocks()
+                    .pow(rightValuable!!.getValueFromOperatorBlocks()), Type.DOUBLE
+            )
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override fun validate() {
+        if (leftValuable == null || rightValuable == null)
+            throw NullPointerExceptionInOperator("Left or right valuable is null ${this.getId()}")
+    }
+}
+

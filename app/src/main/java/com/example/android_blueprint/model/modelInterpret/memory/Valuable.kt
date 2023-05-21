@@ -3,9 +3,7 @@ package memory
 import Instruction
 import Type
 import exceptions.TypeError
-import kotlin.math.floor
-import kotlin.math.abs
-import kotlin.math.exp
+import kotlin.math.*
 
 class Valuable (varValue: Any, var type: Type): MemoryArea(Instruction.VAL){
     var value: String = varValue.toString()
@@ -299,6 +297,84 @@ class Valuable (varValue: Any, var type: Type): MemoryArea(Instruction.VAL){
             return this
         }
         throw TypeError("Expected LIST but found $type")
+    }
+
+    fun sin(): Valuable {
+        return when(type in numericTypes) {
+            true -> Valuable(sin(value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+    }
+
+    fun cos(): Valuable {
+        return when(type in numericTypes) {
+            true -> Valuable(cos(value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+    }
+
+    fun tan(): Valuable {
+        return when(type in numericTypes) {
+            true -> Valuable(tan(value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+    }
+
+    fun cot(): Valuable {
+        return when(type in numericTypes) {
+            true -> Valuable(1/tan(value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+    }
+
+    fun arcsin(): Valuable {
+        return when(type in numericTypes) {
+            true -> Valuable(asin(value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+    }
+
+    fun arccos(): Valuable {
+        return when(type in numericTypes) {
+            true -> Valuable(acos(value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+    }
+
+    fun arctan(): Valuable {
+        return when(type in numericTypes) {
+            true -> Valuable(atan(value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+    }
+
+    fun arccot(): Valuable {
+        return when(type in numericTypes) {
+            true -> Valuable(1/atan(value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+    }
+
+    fun log(valuable: Valuable): Valuable {
+        if(type !in numericTypes && valuable.type !in numericTypes) {
+            throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+
+        if(valuable.value.toDouble() <= 0 && valuable.value.toDouble() == 1.0 && value.toDouble() <= 0){
+            throw TypeError("Does not satisfy the logarithm condition: base ${valuable.value} - number ${value}")
+        }
+
+        return when(type in numericTypes) {
+            true -> Valuable(log(value.toDouble(), valuable.value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
+    }
+
+    fun pow(valuable: Valuable): Valuable {
+        return when(type in numericTypes) {
+            true -> Valuable(value.toDouble().pow(valuable.value.toDouble()), Type.DOUBLE)
+            else -> throw TypeError("Expected INT or DOUBLE but found $type")
+        }
     }
 
     override fun hashCode(): Int {

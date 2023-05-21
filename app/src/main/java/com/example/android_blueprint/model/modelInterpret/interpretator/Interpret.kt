@@ -15,12 +15,16 @@ import memory.Valuable
 import memory.Variable
 import java.util.*
 import kotlin.collections.HashMap
+import kotlinx.coroutines.*
 
 class Interpret(private var blocks: List<BlockEntity>) {
     var input = ""
     var output = ""
     var waitingForInput = false
+
     var debug = false
+    var stepInto = false
+    var stepTo = true
 
     private var memory = Memory(null, "GLOBAL_SCOPE")
 
@@ -294,10 +298,43 @@ class Interpret(private var blocks: List<BlockEntity>) {
                         || (currentBlock as IMainFLowBlock).nextMainFlowBlocks == loopStack.peek())){
                 currentBlock = skipLoop()
             } else{
+                if(debug){
+                    debugging(currentBlock)
+                }
                 currentBlock = (currentBlock as IMainFLowBlock).nextMainFlowBlocks!!
             }
         }
         return null
+    }
+
+    private fun debugging(currentBlock: BlockEntity){
+        when{
+            stepInto -> {
+                stepInto = false
+                printMemory()
+                runBlocking {
+                    suspensionUser()
+                }
+            }
+            stepTo -> {
+                if(currentBlock.getBreakPoint()){
+                    stepTo = false
+                    printMemory()
+                    runBlocking {
+                        suspensionUser()
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun suspensionUser() {
+        while (true) {
+            if (stepTo || stepInto) {
+                break
+            }
+            delay(1000)
+        }
     }
 
     private fun initGetVariableBlock(startBlockToBypassTree: IGetValuable) {
@@ -306,7 +343,6 @@ class Interpret(private var blocks: List<BlockEntity>) {
         postOrderDFS(tempStack)
     }
 
-    //TODO: переписать под что-то адекватное
     private fun postOrderDFS(
         stack: Stack<IGetValuable>,
         visited: MutableSet<IGetValuable> = mutableSetOf()
@@ -404,12 +440,13 @@ class Interpret(private var blocks: List<BlockEntity>) {
                 null
             }
 
-            (!functionName.isEmpty() && Regex("\\b(${functionName.joinToString("|")})\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()])*\\))*\\))*\\))*\\))*\\)(?!\\))").containsMatchIn(data)) -> {
-                runFunction(data)
-            }
-
             data == "rand()" -> {
                 Valuable(Math.random(), Type.DOUBLE)
+            }
+
+
+            (Regex("\\b(${functionName.joinToString("|")})\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()])*\\))*\\))*\\))*\\))*\\)(?!\\))").containsMatchIn(data)) -> {
+                runFunction(data)
             }
 
             data in listOf("true", "false") -> {

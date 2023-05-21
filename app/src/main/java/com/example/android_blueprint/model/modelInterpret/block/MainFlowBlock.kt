@@ -1,9 +1,9 @@
 package block
 
 import Instruction
-import com.example.android_blueprint.viewModel.ConsoleViewModel
 import exceptions.NullPointerExceptionInOperator
 import memory.Valuable
+import com.example.android_blueprint.viewModel.ConsoleViewModel
 
 class StartBlock(
     instruction: Instruction = Instruction.START_POINT
@@ -13,7 +13,7 @@ class StartBlock(
 
     override fun validate() {
         if (nextMainFlowBlocks == null) {
-            ConsoleViewModel.consoleText += "Start block must have next block"
+            throw NullPointerExceptionInOperator("Start block must have next block")
         }
     }
 }
@@ -26,7 +26,7 @@ class EndBlock(
 
     override fun validate() {
         if (previousMainFlowBlocks == null) {
-            ConsoleViewModel.consoleText = "End block must have previous block"
+            throw NullPointerExceptionInOperator("End block must have previous block")
         }
     }
 }
@@ -78,31 +78,14 @@ class PrintBlock(
 
 class IfBlock(
     instruction: Instruction = Instruction.IF
-) : BlockEntity(instruction), IUnaryOperatorBlock, IExecutable, IMainFLowBlock {
+) : BlockEntity(instruction), IUnaryOperatorBlock, IExecutable, IMainFLowBlock, IBranchesBlock {
     override var valuable: BlockEntity? = null
 
-    //не задавать это значение
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
 
-    private var trueExpressionBranch: BlockEntity? = null
-    private var falseExpressionBranch: BlockEntity? = null
-
-    fun setTrueExpressionBranch(block: BlockEntity) {
-        trueExpressionBranch = block
-    }
-
-    fun setFalseExpressionBranch(block: BlockEntity) {
-        falseExpressionBranch = block
-    }
-
-    fun getFalseExpressionBranch(): BlockEntity? {
-        return falseExpressionBranch
-    }
-
-    fun getTrueExpressionBranch(): BlockEntity? {
-        return trueExpressionBranch
-    }
+    override var falseExpressionBranch: BlockEntity? = null
+    override var trueExpressionBranch: BlockEntity? = null
 
     override fun getValue(): Valuable {
         return (valuable as IGetValuable).getValue()
@@ -132,7 +115,6 @@ class EndIfBlock(
 ) : BlockEntity(instruction), IMainFLowBlock {
     override var nextMainFlowBlocks: BlockEntity? = null
 
-    //не использовать!!!
     override var previousMainFlowBlocks: BlockEntity? = null
 
     data class EndIfBlock(
@@ -158,10 +140,17 @@ class EndIfBlock(
         return endIfBlock.trueExpressionBranch
     }
 
+    fun deleteTrueExpressionBranch() {
+        (endIfBlock.trueExpressionBranch as IMainFLowBlock).nextMainFlowBlocks = null
+        endIfBlock.trueExpressionBranch = null
+    }
+
+    fun deleteFalseExpressionBranch() {
+        (endIfBlock.falseExpressionBranch as IMainFLowBlock).nextMainFlowBlocks = null
+        endIfBlock.falseExpressionBranch = null
+    }
+
     override fun validate() {
-/*        if (nextMainFlowBlocks == null) {
-            throw NullPointerExceptionInOperator("EndIf block must have next block")
-        }*/
         if (endIfBlock.trueExpressionBranch == null || endIfBlock.falseExpressionBranch == null) {
             throw NullPointerExceptionInOperator("EndIf block must have two expression branches")
         }
@@ -170,12 +159,12 @@ class EndIfBlock(
 
 class ForBlock(
     instruction: Instruction = Instruction.FOR
-) : BlockEntity(instruction), IMainFLowBlock {
+) : BlockEntity(instruction), IMainFLowBlock, IBranchesBlock {
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
 
-    private var trueExpressionBranch: BlockEntity? = null
-    private var falseExpressionBranch: BlockEntity? = null
+    override var falseExpressionBranch: BlockEntity? = null
+    override var trueExpressionBranch: BlockEntity? = null
 
     private var rawInput = ""
 
@@ -187,29 +176,10 @@ class ForBlock(
         return rawInput
     }
 
-    fun setTrueExpressionBranch(block: BlockEntity) {
-        trueExpressionBranch = block
-    }
-
-    fun setFalseExpressionBranch(block: BlockEntity) {
-        falseExpressionBranch = block
-    }
-
-    fun getFalseExpressionBranch(): BlockEntity? {
-        return falseExpressionBranch
-    }
-
-    fun getTrueExpressionBranch(): BlockEntity? {
-        return trueExpressionBranch
-    }
-
     override fun validate() {
         if (previousMainFlowBlocks == null) {
             throw NullPointerExceptionInOperator("For block must have previous block")
         }
-/*        if (trueExpressionBranch == null || falseExpressionBranch == null) {
-            throw NullPointerExceptionInOperator("For block must have two expression branches")
-        }*/
         if (rawInput == "") {
             throw NullPointerExceptionInOperator("For block must have expression")
         }
@@ -218,12 +188,12 @@ class ForBlock(
 
 class WhileBlock(
     instruction: Instruction = Instruction.WHILE
-) : BlockEntity(instruction), IMainFLowBlock {
+) : BlockEntity(instruction), IMainFLowBlock, IBranchesBlock {
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
 
-    private var trueExpressionBranch: BlockEntity? = null
-    private var falseExpressionBranch: BlockEntity? = null
+    override var falseExpressionBranch: BlockEntity? = null
+    override var trueExpressionBranch: BlockEntity? = null
 
     private var rawInput = ""
 
@@ -235,29 +205,10 @@ class WhileBlock(
         return rawInput
     }
 
-    fun setTrueExpressionBranch(block: BlockEntity) {
-        trueExpressionBranch = block
-    }
-
-    fun setFalseExpressionBranch(block: BlockEntity) {
-        falseExpressionBranch = block
-    }
-
-    fun getFalseExpressionBranch(): BlockEntity? {
-        return falseExpressionBranch
-    }
-
-    fun getTrueExpressionBranch(): BlockEntity? {
-        return trueExpressionBranch
-    }
-
     override fun validate() {
         if (previousMainFlowBlocks == null) {
             throw NullPointerExceptionInOperator("While block must have previous block")
         }
-/*        if (trueExpressionBranch == null || falseExpressionBranch == null) {
-            throw NullPointerExceptionInOperator("While block must have two expression branches")
-        }*/
         if (rawInput == "") {
             throw NullPointerExceptionInOperator("While block must have expression")
         }

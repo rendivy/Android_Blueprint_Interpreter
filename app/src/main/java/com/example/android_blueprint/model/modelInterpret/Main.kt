@@ -4,50 +4,76 @@ fun main() {
     val startBlock = StartBlock()
     val endBlock = EndBlock()
 
-    val getVariableBlock1 = GetVariableBlock()
-    getVariableBlock1.setRawInput("1")
-    val getVariableBlock2 = GetVariableBlock()
-    getVariableBlock2.setRawInput("2")
+    val initializationVariableBlock1 = InitializationAndSetVariableBlock()
+    startBlock.setNextMainFlowBlock(initializationVariableBlock1)
+    initializationVariableBlock1.setRawInput("n=5000,*arr[n]")
+
+
+
+    val forBlock1 = ForBlock()
+    initializationVariableBlock1.setNextMainFlowBlock(forBlock1)
+    forBlock1.setRawInput("i=0,i<n,i+=1")
+    forBlock1.setPreviousMainFlowBlock(initializationVariableBlock1)
+
+    val variableChangeBlock1 = InitializationAndSetVariableBlock()
+    forBlock1.setTrueExpressionBranch(variableChangeBlock1)
+    variableChangeBlock1.setRawInput("arr[i]=(1000*rand()-50).toInt()")
+    variableChangeBlock1.setPreviousMainFlowBlock(forBlock1)
+
+    val forBlock2 = ForBlock()
+    forBlock2.setRawInput("i=0,i<n,i+=1")
+
+    val printBlock2 = PrintBlock()
+    forBlock1.setFalseExpressionBranch(printBlock2)
     val getVariableBlock3 = GetVariableBlock()
-    getVariableBlock3.setRawInput("4")
+    getVariableBlock3.setRawInput("arr")
+    printBlock2.setOperator(getVariableBlock3)
+    printBlock2.setPreviousMainFlowBlock(forBlock1)
+    printBlock2.setNextMainFlowBlock(forBlock2)
+    forBlock2.setPreviousMainFlowBlock(printBlock2)
 
-    val binarySumOperatorBlock1 = BinarySumOperatorBlock()
-    binarySumOperatorBlock1.setLeftOperator(getVariableBlock1)
-    binarySumOperatorBlock1.setRightOperator(getVariableBlock2)
-
-    val binarySubOperatorBlock1 = BinarySubOperatorBlock()
-    binarySubOperatorBlock1.setLeftOperator(binarySumOperatorBlock1)
-    binarySubOperatorBlock1.setRightOperator(getVariableBlock3)
-
-    val binaryMulOperatorBlock1 = BinaryMulOperatorBlock()
-    binaryMulOperatorBlock1.setLeftOperator(binarySumOperatorBlock1)
-    binaryMulOperatorBlock1.setRightOperator(binarySubOperatorBlock1)
+    val forBlock3 = ForBlock()
+    forBlock3.setPreviousMainFlowBlock(forBlock2)
+    forBlock2.setTrueExpressionBranch(forBlock3)
+    forBlock3.setRawInput("j=i+1,j<n,j+=1")
 
     val ifBlock1 = IfBlock()
-    ifBlock1.setOperator(binaryMulOperatorBlock1)
-    ifBlock1.setPreviousMainFlowBlock(startBlock)
+    ifBlock1.setPreviousMainFlowBlock(forBlock3)
+    forBlock3.setTrueExpressionBranch(ifBlock1)
 
-    val printBlock1 = PrintBlock()
-    printBlock1.setOperator(binaryMulOperatorBlock1)
-    printBlock1.setPreviousMainFlowBlock(ifBlock1)
+    val getVariableBlock1 = GetVariableBlock()
+    getVariableBlock1.setRawInput("arr[i]>arr[j]")
+    ifBlock1.setOperator(getVariableBlock1)
+
+    val initializationVariableBlock2 = InitializationAndSetVariableBlock()
+    initializationVariableBlock2.setRawInput("t=arr[i]")
+    ifBlock1.setTrueExpressionBranch(initializationVariableBlock2)
+    initializationVariableBlock2.setPreviousMainFlowBlock(ifBlock1)
+
+    val variableChangeBlock2 = InitializationAndSetVariableBlock()
+    variableChangeBlock2.setRawInput("arr[i]=arr[j],arr[j]=t")
+    initializationVariableBlock2.setNextMainFlowBlock(variableChangeBlock2)
+    variableChangeBlock2.setPreviousMainFlowBlock(initializationVariableBlock2)
 
     val endIfBlock1 = EndIfBlock()
-    endIfBlock1.setTrueExpressionBranch(printBlock1)
-    endIfBlock1.setFalseExpressionBranch(ifBlock1)
-    endIfBlock1.setNextMainFlowBlock(endBlock)
-
-    printBlock1.setNextMainFlowBlock(endIfBlock1)
-    startBlock.setNextMainFlowBlock(ifBlock1)
-    endBlock.setPreviousMainFlowBlock(endIfBlock1)
-
-    ifBlock1.setTrueExpressionBranch(printBlock1)
+    variableChangeBlock2.setNextMainFlowBlock(endIfBlock1)
     ifBlock1.setFalseExpressionBranch(endIfBlock1)
+    endIfBlock1.setTrueExpressionBranch(variableChangeBlock2)
+    endIfBlock1.setFalseExpressionBranch(ifBlock1)
+
+    val printBlock1 = PrintBlock()
+    forBlock2.setFalseExpressionBranch(printBlock1)
+    printBlock1.setPreviousMainFlowBlock(forBlock2)
+    printBlock1.setNextMainFlowBlock(endBlock)
+
+    val getVariableBlock2 = GetVariableBlock()
+    getVariableBlock2.setRawInput("arr")
+    printBlock1.setOperator(getVariableBlock2)
+    endBlock.setPreviousMainFlowBlock(printBlock1)
 
     val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
     interpreter.run(startBlock)
 }
-
-
 
 /*
     val startBlock = StartBlock()
