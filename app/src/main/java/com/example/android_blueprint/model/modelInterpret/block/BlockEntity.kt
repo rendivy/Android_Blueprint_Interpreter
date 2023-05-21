@@ -18,7 +18,7 @@ abstract class BlockEntity(
         fun deletePreviousBlockMainFlowBranch(block: BlockEntity) {
             if ((block as IMainFLowBlock).previousMainFlowBlocks != null) {
                 if(block.previousMainFlowBlocks is IBranchesBlock) {
-                    if (block == (block.previousMainFlowBlocks as IBranchesBlock).getTrueExpressionBranch()) {
+                    if (block == (block.previousMainFlowBlocks as IBranchesBlock).getTrueBranchExpression()) {
                         (block.previousMainFlowBlocks as IBranchesBlock).trueExpressionBranch = null
                     } else {
                         (block.previousMainFlowBlocks as IBranchesBlock).falseExpressionBranch = null
@@ -58,11 +58,11 @@ abstract class BlockEntity(
                     if ((block as IMainFLowBlock).previousMainFlowBlocks != null) {
                         (block.previousMainFlowBlocks!! as IMainFLowBlock).nextMainFlowBlocks = null
                     }
-                    if (block.getTrueExpressionBranch() != null) {
-                        (block.getTrueExpressionBranch()!! as IMainFLowBlock).previousMainFlowBlocks = null
+                    if (block.getTrueBranchExpression() != null) {
+                        (block.getTrueBranchExpression()!! as IMainFLowBlock).previousMainFlowBlocks = null
                     }
-                    if (block.getFalseExpressionBranch() != null) {
-                        (block.getFalseExpressionBranch()!! as IMainFLowBlock).previousMainFlowBlocks = null
+                    if (block.getFalseBranchExpression() != null) {
+                        (block.getFalseBranchExpression()!! as IMainFLowBlock).previousMainFlowBlocks = null
                     }
                 }
 
@@ -171,21 +171,21 @@ interface IBranchesBlock {
     var trueExpressionBranch: BlockEntity?
     var falseExpressionBranch: BlockEntity?
 
-    fun setTrueExpressionBranch(block: BlockEntity) {
+    fun setTrueBranchExpression(block: BlockEntity) {
         trueExpressionBranch = block
         (block as IMainFLowBlock).previousMainFlowBlocks = (this as BlockEntity)
     }
 
-    fun setFalseExpressionBranch(block: BlockEntity) {
+    fun setFalseBranchExpression(block: BlockEntity) {
         falseExpressionBranch = block
         (block as IMainFLowBlock).previousMainFlowBlocks = (this as BlockEntity)
     }
 
-    fun getTrueExpressionBranch(): BlockEntity? {
+    fun getTrueBranchExpression(): BlockEntity? {
         return trueExpressionBranch
     }
 
-    fun getFalseExpressionBranch(): BlockEntity? {
+    fun getFalseBranchExpression(): BlockEntity? {
         return falseExpressionBranch
     }
 }

@@ -6,8 +6,7 @@ fun main() {
 
     val initializationVariableBlock1 = InitializationAndSetVariableBlock()
     startBlock.setNextMainFlowBlock(initializationVariableBlock1)
-    initializationVariableBlock1.setRawInput("n=5000,*arr[n]")
-
+    initializationVariableBlock1.setRawInput("n=30,*arr[n]")
 
 
     val forBlock1 = ForBlock()
@@ -16,7 +15,7 @@ fun main() {
     forBlock1.setPreviousMainFlowBlock(initializationVariableBlock1)
 
     val variableChangeBlock1 = InitializationAndSetVariableBlock()
-    forBlock1.setTrueExpressionBranch(variableChangeBlock1)
+    forBlock1.setTrueBranchExpression(variableChangeBlock1)
     variableChangeBlock1.setRawInput("arr[i]=(1000*rand()-50).toInt()")
     variableChangeBlock1.setPreviousMainFlowBlock(forBlock1)
 
@@ -24,7 +23,7 @@ fun main() {
     forBlock2.setRawInput("i=0,i<n,i+=1")
 
     val printBlock2 = PrintBlock()
-    forBlock1.setFalseExpressionBranch(printBlock2)
+    forBlock1.setFalseBranchExpression(printBlock2)
     val getVariableBlock3 = GetVariableBlock()
     getVariableBlock3.setRawInput("arr")
     printBlock2.setOperator(getVariableBlock3)
@@ -34,12 +33,12 @@ fun main() {
 
     val forBlock3 = ForBlock()
     forBlock3.setPreviousMainFlowBlock(forBlock2)
-    forBlock2.setTrueExpressionBranch(forBlock3)
+    forBlock2.setTrueBranchExpression(forBlock3)
     forBlock3.setRawInput("j=i+1,j<n,j+=1")
 
     val ifBlock1 = IfBlock()
     ifBlock1.setPreviousMainFlowBlock(forBlock3)
-    forBlock3.setTrueExpressionBranch(ifBlock1)
+    forBlock3.setTrueBranchExpression(ifBlock1)
 
     val getVariableBlock1 = GetVariableBlock()
     getVariableBlock1.setRawInput("arr[i]>arr[j]")
@@ -47,7 +46,7 @@ fun main() {
 
     val initializationVariableBlock2 = InitializationAndSetVariableBlock()
     initializationVariableBlock2.setRawInput("t=arr[i]")
-    ifBlock1.setTrueExpressionBranch(initializationVariableBlock2)
+    ifBlock1.setTrueBranchExpression(initializationVariableBlock2)
     initializationVariableBlock2.setPreviousMainFlowBlock(ifBlock1)
 
     val variableChangeBlock2 = InitializationAndSetVariableBlock()
@@ -57,12 +56,12 @@ fun main() {
 
     val endIfBlock1 = EndIfBlock()
     variableChangeBlock2.setNextMainFlowBlock(endIfBlock1)
-    ifBlock1.setFalseExpressionBranch(endIfBlock1)
+    ifBlock1.setFalseBranchExpression(endIfBlock1)
     endIfBlock1.setTrueExpressionBranch(variableChangeBlock2)
     endIfBlock1.setFalseExpressionBranch(ifBlock1)
 
     val printBlock1 = PrintBlock()
-    forBlock2.setFalseExpressionBranch(printBlock1)
+    forBlock2.setFalseBranchExpression(printBlock1)
     printBlock1.setPreviousMainFlowBlock(forBlock2)
     printBlock1.setNextMainFlowBlock(endBlock)
 
