@@ -9,6 +9,7 @@ fun main() {
     initializationVariableBlock1.setRawInput("n=30,*arr[n]")
 
 
+
     val forBlock1 = ForBlock()
     initializationVariableBlock1.setNextMainFlowBlock(forBlock1)
     forBlock1.setRawInput("i=0,i<n,i+=1")

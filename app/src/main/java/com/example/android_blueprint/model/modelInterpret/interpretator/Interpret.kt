@@ -24,7 +24,7 @@ class Interpret(private var blocks: List<BlockEntity>) {
 
     var debug = false
     var stepInto = false
-    var stepTo = true
+    var stepTo = false
 
     private var memory = Memory(null, "GLOBAL_SCOPE")
 
@@ -221,12 +221,12 @@ class Interpret(private var blocks: List<BlockEntity>) {
                         parseExpressionString(parse[0], true)
                     }
                     if (parseExpressionString(parse[1]).value == "true") {
-                        (currentBlock as ForBlock).nextMainFlowBlocks = currentBlock.getTrueExpressionBranch()!!
+                        (currentBlock as ForBlock).nextMainFlowBlocks = currentBlock.getTrueBranchExpression()!!
                     } else {
-                        if((currentBlock as ForBlock).getFalseExpressionBranch() == null && !loopStack.isEmpty()){
+                        if((currentBlock as ForBlock).getFalseBranchExpression() == null && !loopStack.isEmpty()){
                             currentBlock.nextMainFlowBlocks = (loopStack.peek() as IMainFLowBlock).previousMainFlowBlocks
                         }else{
-                            currentBlock.nextMainFlowBlocks = currentBlock.getFalseExpressionBranch()!!
+                            currentBlock.nextMainFlowBlocks = currentBlock.getFalseBranchExpression()!!
                         }
                         memory = memory.previousMemory!!
                         loopStack.pop()
@@ -239,12 +239,12 @@ class Interpret(private var blocks: List<BlockEntity>) {
                         memory = Memory(memory, "WHILE SCOPE")
                     }
                     if (parseExpressionString((currentBlock as WhileBlock).getRawInput()).value == "true") {
-                        currentBlock.nextMainFlowBlocks = currentBlock.getTrueExpressionBranch()!!
+                        currentBlock.nextMainFlowBlocks = currentBlock.getTrueBranchExpression()!!
                     } else {
-                        if(currentBlock.getFalseExpressionBranch() == null && !loopStack.isEmpty()){
+                        if(currentBlock.getFalseBranchExpression() == null && !loopStack.isEmpty()){
                             currentBlock.nextMainFlowBlocks = (loopStack.peek() as IMainFLowBlock).previousMainFlowBlocks
                         }else{
-                            currentBlock.nextMainFlowBlocks = currentBlock.getFalseExpressionBranch()!!
+                            currentBlock.nextMainFlowBlocks = currentBlock.getFalseBranchExpression()!!
                         }
                         memory = memory.previousMemory!!
                         loopStack.pop()
@@ -281,9 +281,9 @@ class Interpret(private var blocks: List<BlockEntity>) {
                     }
                     currentBlock = skipLoop()
                     if(currentBlock is ForBlock){
-                        currentBlock.nextMainFlowBlocks = currentBlock.getFalseExpressionBranch()!!
+                        currentBlock.nextMainFlowBlocks = currentBlock.getFalseBranchExpression()!!
                     }else if(currentBlock is WhileBlock){
-                        currentBlock.nextMainFlowBlocks = currentBlock.getFalseExpressionBranch()!!
+                        currentBlock.nextMainFlowBlocks = currentBlock.getFalseBranchExpression()!!
                         memory = memory.previousMemory!!
                         loopStack.pop()
                     }

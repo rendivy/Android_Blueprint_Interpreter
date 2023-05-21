@@ -2,8 +2,8 @@ package block
 
 import Instruction
 import exceptions.NullPointerExceptionInOperator
-import memory.Valuable
 import com.example.android_blueprint.viewModel.ConsoleViewModel
+import memory.Valuable
 
 class StartBlock(
     instruction: Instruction = Instruction.START_POINT
@@ -75,6 +75,7 @@ class PrintBlock(
         }
     }
 }
+
 
 class IfBlock(
     instruction: Instruction = Instruction.IF
