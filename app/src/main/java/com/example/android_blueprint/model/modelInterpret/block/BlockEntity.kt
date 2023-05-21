@@ -17,6 +17,15 @@ abstract class BlockEntity(
 
         fun deletePreviousBlockMainFlowBranch(block: BlockEntity) {
             if ((block as IMainFLowBlock).previousMainFlowBlocks != null) {
+                if(block.previousMainFlowBlocks is IBranchesBlock) {
+                    if (block == (block.previousMainFlowBlocks as IBranchesBlock).getTrueExpressionBranch()) {
+                        (block.previousMainFlowBlocks as IBranchesBlock).trueExpressionBranch = null
+                    } else {
+                        (block.previousMainFlowBlocks as IBranchesBlock).falseExpressionBranch = null
+                    }
+                    block.previousMainFlowBlocks = null
+                    return
+                }
                 (block.previousMainFlowBlocks!! as IMainFLowBlock).nextMainFlowBlocks = null
                 block.previousMainFlowBlocks = null
             }
