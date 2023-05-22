@@ -124,12 +124,34 @@ class EndIfBlock(
 
     var endIfBlock = EndIfBlock(null, null)
 
-    fun setTrueExpressionBranch(block: BlockEntity) {
+    fun setTrueExpressionBranch(block: BlockEntity, flag: Boolean) {
+        if (block is IBranchesBlock) {
+            if (flag) {
+                endIfBlock.trueExpressionBranch = block.trueExpressionBranch
+                block.trueExpressionBranch = block.trueExpressionBranch
+            } else {
+                endIfBlock.trueExpressionBranch = block.falseExpressionBranch
+                block.falseExpressionBranch = block.falseExpressionBranch
+            }
+            return
+        }
         endIfBlock.trueExpressionBranch = block
+        (block as IMainFLowBlock).nextMainFlowBlocks = this
     }
 
-    fun setFalseExpressionBranch(block: BlockEntity) {
+    fun setFalseExpressionBranch(block: BlockEntity, flag: Boolean) {
+        if (block is IBranchesBlock) {
+            if (flag) {
+                endIfBlock.falseExpressionBranch = block.trueExpressionBranch
+                block.trueExpressionBranch = this
+            } else {
+                endIfBlock.falseExpressionBranch = block.falseExpressionBranch
+                block.falseExpressionBranch = this
+            }
+            return
+        }
         endIfBlock.falseExpressionBranch = block
+        (block as IMainFLowBlock).nextMainFlowBlocks = this
     }
 
     fun getFalseExpressionBranch(): BlockEntity? {
