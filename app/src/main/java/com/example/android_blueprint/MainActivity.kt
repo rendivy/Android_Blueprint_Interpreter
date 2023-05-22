@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.android_blueprint.ui.theme.Android_BlueprintTheme
 import com.example.android_blueprint.viewModel.ConsoleViewModel
-import main
 
 
 class MainActivity : ComponentActivity() {

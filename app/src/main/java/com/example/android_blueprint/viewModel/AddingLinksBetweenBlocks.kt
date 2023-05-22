@@ -1,7 +1,7 @@
 package com.example.android_blueprint.viewModel
 
 import block.BlockEntity
-import block.BlockEntity.Companion.getBlocks
+import block.EndIfBlock
 import block.IBinaryOperatorBlock
 import block.IBranchesBlock
 import block.IMainFLowBlock
@@ -41,6 +41,37 @@ fun setMainFlow(block: IMainFLowBlock) {
     }
     InfiniteFieldViewModel.previousBlocks = PreviousBlocks()
 }
+
+fun setEndifTopFlow(block: EndIfBlock) {
+    if (InfiniteFieldViewModel.previousBlocks.previousMainFlowTrueBlock != null) {
+        block.setTrueExpressionBranch(
+            InfiniteFieldViewModel.previousBlocks.previousMainFlowTrueBlock!!,
+            flag = true
+        )
+    } else if (InfiniteFieldViewModel.previousBlocks.previousMainFlowFalseBlock != null) {
+        block.setTrueExpressionBranch(
+            InfiniteFieldViewModel.previousBlocks.previousMainFlowFalseBlock!!,
+            flag = false
+        )
+    }
+    InfiniteFieldViewModel.previousBlocks = PreviousBlocks()
+}
+
+fun setEndifBottomFlow(block: EndIfBlock) {
+    if (InfiniteFieldViewModel.previousBlocks.previousMainFlowTrueBlock != null) {
+        block.setFalseExpressionBranch(
+            InfiniteFieldViewModel.previousBlocks.previousMainFlowTrueBlock!!,
+            flag = true
+        )
+    } else if (InfiniteFieldViewModel.previousBlocks.previousMainFlowFalseBlock != null) {
+        block.setFalseExpressionBranch(
+            InfiniteFieldViewModel.previousBlocks.previousMainFlowFalseBlock!!,
+            flag = false
+        )
+    }
+    InfiniteFieldViewModel.previousBlocks = PreviousBlocks()
+}
+
 
 fun setPreviousMainFlowTrueBlock(block: BlockEntity) {
     InfiniteFieldViewModel.previousBlocks = PreviousBlocks(previousMainFlowTrueBlock = block)

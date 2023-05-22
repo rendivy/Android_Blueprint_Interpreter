@@ -41,7 +41,7 @@ class InfiniteFieldViewModel : ViewModel() {
                 FieldBlock(
                     value = BlockValue.EndifBlock,
                     index = currentIndex++,
-                    block = BlockFactory.createObj(blockValue = blockValue) as BlockEntity
+                    block = BlockFactory.createObj(blockValue = BlockValue.EndifBlock) as BlockEntity
                 )
             )
         } else {
@@ -55,8 +55,9 @@ class InfiniteFieldViewModel : ViewModel() {
         }
     }
 
-    fun deleteMovableBlock(index: Int) {
+    fun deleteMovableBlock(index: Int, block: BlockEntity) {
         valueChange(index = index, value = FieldBlock())
+        BlockEntity.deleteBlock(block)
     }
 
     fun getDeleteButtonColor(): Color {

@@ -38,7 +38,6 @@ import com.example.android_blueprint.ui.theme.DeleteButtonSize
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 import com.example.android_blueprint.viewModel.PathViewModel
 import com.example.android_blueprint.viewModel.start
-import main
 
 
 fun updatePathInMap(

@@ -49,6 +49,8 @@ import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
 import com.example.android_blueprint.viewModel.PathViewModel
 import com.example.android_blueprint.viewModel.setBottomFlowOperator
+import com.example.android_blueprint.viewModel.setEndifBottomFlow
+import com.example.android_blueprint.viewModel.setEndifTopFlow
 import com.example.android_blueprint.viewModel.setMainFlow
 import com.example.android_blueprint.viewModel.setPreviousMainFlowFalseBlock
 import com.example.android_blueprint.viewModel.setPreviousMainFlowTrueBlock
@@ -306,10 +308,10 @@ fun MovableEndifBLock(
         ComplexBlockText(modifier = value.modifier, text = value.text)
         MainFlow(modifier = Modifier
             .align(Alignment.CenterStart)
-            .clickable { setMainFlow(block) })
+            .clickable { setEndifTopFlow(block) })
         MainFlow(modifier = Modifier
             .align(Alignment.BottomStart)
-            .clickable { setMainFlow(block) })
+            .clickable { setEndifBottomFlow(block) })
         MainFlow(
             modifier = Modifier
                 .align(Alignment.CenterEnd)

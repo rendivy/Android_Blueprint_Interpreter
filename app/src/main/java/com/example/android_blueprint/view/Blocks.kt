@@ -114,7 +114,7 @@ fun SetMovableBlock(
             interactionSource = remember { MutableInteractionSource() }
         ) {
             if (infiniteFieldViewModel.deleteMode) {
-                infiniteFieldViewModel.deleteMovableBlock(fieldBlock.index)
+                infiniteFieldViewModel.deleteMovableBlock(fieldBlock.index, fieldBlock.block!!)
             }
         }
 
