@@ -65,7 +65,6 @@ class PrintBlock(
             else -> {
                 throw NullPointerExceptionInOperator("Print block must have valuable")
             }
-
         }
     }
 

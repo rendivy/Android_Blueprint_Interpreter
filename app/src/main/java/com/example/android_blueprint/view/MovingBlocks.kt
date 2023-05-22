@@ -1,6 +1,7 @@
 package com.example.android_blueprint.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -26,14 +26,18 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import block.BlockEntity
 import block.EndBlock
+import block.EndFunctionBlock
 import block.EndIfBlock
 import block.ForBlock
+import block.FunctionBlock
+import block.GetVariableBlock
 import block.IBinaryOperatorBlock
 import block.IUnaryOperatorBlock
 import block.IfBlock
 import block.InitializationAndSetVariableBlock
 import block.PrintBlock
 import block.StartBlock
+import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.PathModel
 import com.example.android_blueprint.ui.theme.BlockHeight
@@ -43,8 +47,14 @@ import com.example.android_blueprint.ui.theme.BorderBlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
-import com.example.android_blueprint.viewModel.ConsoleViewModel
 import com.example.android_blueprint.viewModel.PathViewModel
+import com.example.android_blueprint.viewModel.setBottomFlowOperator
+import com.example.android_blueprint.viewModel.setMainFlow
+import com.example.android_blueprint.viewModel.setPreviousMainFlowFalseBlock
+import com.example.android_blueprint.viewModel.setPreviousMainFlowTrueBlock
+import com.example.android_blueprint.viewModel.setPreviousSupportFlowBlock
+import com.example.android_blueprint.viewModel.setTopFlowOperator
+import com.example.android_blueprint.viewModel.setUnaryOperatorFlow
 import kotlin.math.roundToInt
 
 
@@ -96,11 +106,10 @@ fun StartBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
-        MainFlowTest(
-            modifier = Modifier.align(Alignment.CenterEnd), pathModel, isPathInConnector,
-            offsetX, offsetY, boxHeight = boxHeight, boxWidth = boxWidth,
-            blockId
-        )
+        MainFlow(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .clickable { setPreviousMainFlowTrueBlock(block) })
     }
 }
 
@@ -147,45 +156,56 @@ fun EndBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
-        MainFlowTest2(
-            modifier = Modifier.align(Alignment.CenterStart), isPathInConnector,
-            offsetX, offsetY, boxHeight
-        )
+        MainFlow(modifier = Modifier
+            .align(Alignment.CenterStart)
+            .clickable { setMainFlow(block) })
     }
 }
 
 @Composable
-fun <T> BinaryMovableOperatorBlock(
+fun BinaryMovableOperatorBlock(
     value: BlockValue.BinaryOperator,
-    block: T,
+    block: IBinaryOperatorBlock,
     modifier: Modifier
-) where T : BlockEntity, T : IBinaryOperatorBlock {
+) {
     Box(
         modifier = modifier
             .width(BlockWidth)
             .background(OperatorBlockColor)
     ) {
         BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
-        SupportingFlow()
-        SupportingFlow(modifier = Modifier.align(Alignment.BottomStart))
-        SupportingFlow(modifier = Modifier.align(Alignment.CenterEnd))
+        SupportingFlow(modifier = Modifier.clickable { setTopFlowOperator(block) })
+        SupportingFlow(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .clickable { setBottomFlowOperator(block) })
+        SupportingFlow(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .clickable { setPreviousSupportFlowBlock(block as BlockEntity) })
     }
 }
 
 @Composable
-fun <T> UnaryMovableOperatorBlock(
+fun UnaryMovableOperatorBlock(
     value: BlockValue.UnaryOperator,
-    block: T,
+    block: IUnaryOperatorBlock,
     modifier: Modifier
-) where T : BlockEntity, T : IUnaryOperatorBlock {
+) {
     Box(
         modifier = modifier
             .width(BlockWidth)
             .background(OperatorBlockColor)
     ) {
         UnaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
-        SupportingFlow(modifier = Modifier.align(Alignment.CenterStart))
-        SupportingFlow(modifier = Modifier.align(Alignment.CenterEnd))
+        SupportingFlow(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .clickable { setUnaryOperatorFlow(block) })
+        SupportingFlow(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .clickable { setPreviousSupportFlowBlock(block as BlockEntity) })
     }
 }
 
@@ -221,13 +241,13 @@ fun MovablePrintBlock(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MainFlowTest2(modifier = Modifier, flag, offsetX, offsetY, boxHeight)
-            MainFlowTest(
-                modifier = Modifier, pathModel, isPathInConnector, offsetX,
-                offsetY, boxHeight, boxWidth, blockId
-            )
+            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
+            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
         }
-        SupportingFlow(modifier = Modifier.align(Alignment.Start))
+        SupportingFlow(
+            modifier = Modifier
+                .align(Alignment.Start)
+                .clickable { setUnaryOperatorFlow(block) })
     }
 }
 
@@ -247,10 +267,12 @@ fun MovableIfBlock(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            MainFlow(modifier = Modifier.align(Alignment.TopStart))
+            MainFlow(modifier = Modifier
+                .align(Alignment.TopStart)
+                .clickable { setMainFlow(block) })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 TextForFlow(text = "True")
-                MainFlow()
+                MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
             }
         }
         Box(
@@ -258,12 +280,12 @@ fun MovableIfBlock(
                 .fillMaxWidth()
         ) {
             Row(modifier = Modifier.align(Alignment.TopStart)) {
-                SupportingFlow()
+                SupportingFlow(modifier = Modifier.clickable { setUnaryOperatorFlow(block) })
                 TextForFlow(text = "Condition")
             }
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 TextForFlow(text = "False")
-                MainFlow()
+                MainFlow(modifier = Modifier.clickable { setPreviousMainFlowFalseBlock(block) })
             }
         }
 
@@ -282,9 +304,16 @@ fun MovableEndifBLock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
-        MainFlow(modifier = Modifier.align(Alignment.CenterStart))
-        MainFlow(modifier = Modifier.align(Alignment.BottomStart))
-        MainFlow(modifier = Modifier.align(Alignment.CenterEnd))
+        MainFlow(modifier = Modifier
+            .align(Alignment.CenterStart)
+            .clickable { setMainFlow(block) })
+        MainFlow(modifier = Modifier
+            .align(Alignment.BottomStart)
+            .clickable { setMainFlow(block) })
+        MainFlow(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .clickable { setPreviousMainFlowTrueBlock(block) })
     }
 }
 
@@ -306,23 +335,31 @@ fun MovableInitializationBlock(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            MainFlow()
-            MainFlow()
+            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
+            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            TextFieldForVariable(value = "name = value", modifier = Modifier.weight(1f))
-            SupportingFlow(modifier = Modifier.align(Alignment.CenterVertically))
+            TextFieldForVariable(
+                value = "name = value",
+                modifier = Modifier.weight(1f),
+                block = block
+            )
+            SupportingFlow(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .clickable { setPreviousSupportFlowBlock(block) })
         }
     }
 }
 
 @Composable
-fun MovableLoopBlock(
-    value: BlockValue,
-    modifier: Modifier
+fun MovableForBlock(
+    value: BlockValue.ForBlock,
+    modifier: Modifier,
+    block: ForBlock
 ) {
     Column(
         modifier = modifier
@@ -334,16 +371,54 @@ fun MovableLoopBlock(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            MainFlow()
+            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 TextForFlow(text = "loop")
-                MainFlow()
+                MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
             }
         }
-        TextFieldForVariable(value = "conditional", modifier = Modifier.fillMaxWidth())
+        TextFieldForVariable(
+            value = "conditional",
+            modifier = Modifier.fillMaxWidth(),
+            block = block
+        )
         Row(modifier = Modifier.align(Alignment.End)) {
             TextForFlow(text = "endloop")
-            MainFlow()
+            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowFalseBlock(block) })
+        }
+    }
+}
+
+@Composable
+fun MovableWhileBlock(
+    value: BlockValue.WhileBlock,
+    modifier: Modifier,
+    block: WhileBlock
+) {
+    Column(
+        modifier = modifier
+            .width(TextFieldBlockWidth)
+            .background(ComplexBlockColor)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
+            Row(modifier = Modifier.align(Alignment.TopEnd)) {
+                TextForFlow(text = "loop")
+                MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
+            }
+        }
+        TextFieldForVariable(
+            value = "conditional",
+            modifier = Modifier.fillMaxWidth(),
+            block = block
+        )
+        Row(modifier = Modifier.align(Alignment.End)) {
+            TextForFlow(text = "endloop")
+            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowFalseBlock(block) })
         }
     }
 }
@@ -352,7 +427,8 @@ fun MovableLoopBlock(
 @Composable
 fun MovableGetValueBlock(
     value: BlockValue.GetValueBlock,
-    modifier: Modifier
+    modifier: Modifier,
+    block: GetVariableBlock
 ) {
     Column(
         modifier = modifier
@@ -361,8 +437,15 @@ fun MovableGetValueBlock(
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row {
-            TextFieldForVariable(value = "expression", modifier = Modifier.weight(1f))
-            SupportingFlow(modifier = Modifier.align(Alignment.CenterVertically))
+            TextFieldForVariable(
+                value = "expression",
+                modifier = Modifier.weight(1f),
+                block = block
+            )
+            SupportingFlow(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .clickable { setPreviousSupportFlowBlock(block) })
         }
     }
 }
@@ -370,7 +453,8 @@ fun MovableGetValueBlock(
 @Composable
 fun MovableFunctionBlock(
     value: BlockValue.FunctionBlock,
-    modifier: Modifier
+    modifier: Modifier,
+    block: FunctionBlock
 ) {
     Column(
         modifier = modifier
@@ -379,8 +463,15 @@ fun MovableFunctionBlock(
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row {
-            TextFieldForVariable(value = "name(args)", modifier = Modifier.weight(1f))
-            MainFlow(modifier = Modifier.align(Alignment.CenterVertically))
+            TextFieldForVariable(
+                value = "name(args)",
+                modifier = Modifier.weight(1f),
+                block = block
+            )
+            MainFlow(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .clickable { setPreviousMainFlowTrueBlock(block) })
         }
     }
 }
@@ -388,20 +479,21 @@ fun MovableFunctionBlock(
 @Composable
 fun MovableReturnBlock(
     value: BlockValue.ReturnBlock,
-    modifier: Modifier
+    modifier: Modifier,
+    block: EndFunctionBlock
 ) {
     Column(
         modifier = modifier
             .width(BorderBlockWidth)
             .background(ComplexBlockColor)
     ) {
-        MainFlow()
+        MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
         ComplexBlockText(
             modifier = value.modifier.align(Alignment.CenterHorizontally),
             text = value.text
         )
         Row {
-            SupportingFlow()
+            SupportingFlow(modifier = Modifier.clickable { setUnaryOperatorFlow(block) })
             TextForFlow(text = "value")
         }
     }

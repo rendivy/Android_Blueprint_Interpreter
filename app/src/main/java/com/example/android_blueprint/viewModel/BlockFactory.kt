@@ -36,43 +36,43 @@ import com.example.android_blueprint.model.BlockValue
 
 object BlockFactory {
 
-    fun createWhileBlock(): WhileBlock {
+    private fun createWhileBlock(): WhileBlock {
         return WhileBlock()
     }
 
-    fun createForBlock(): ForBlock {
+    private fun createForBlock(): ForBlock {
         return ForBlock()
     }
 
-    fun createGetValueBlock(): GetVariableBlock {
+    private fun createGetValueBlock(): GetVariableBlock {
         return GetVariableBlock()
     }
 
-    fun createFunctionBlock(): FunctionBlock {
+    private fun createFunctionBlock(): FunctionBlock {
         return FunctionBlock()
     }
 
-    fun createReturnBlock(): EndFunctionBlock {
+    private fun createReturnBlock(): EndFunctionBlock {
         return EndFunctionBlock()
     }
 
-    fun createIfBlock(): IfBlock {
+    private fun createIfBlock(): IfBlock {
         return IfBlock()
     }
 
-    fun createEndifBlock(): EndIfBlock {
+    private fun createEndifBlock(): EndIfBlock {
         return EndIfBlock()
     }
 
-    fun createInitializationBlock(): InitializationAndSetVariableBlock {
+    private fun createInitializationBlock(): InitializationAndSetVariableBlock {
         return InitializationAndSetVariableBlock()
     }
 
-    fun createPrintBlock(): PrintBlock {
+    private fun createPrintBlock(): PrintBlock {
         return PrintBlock()
     }
 
-    fun createBinaryOperatorBlock(binaryOperator: BlockValue.BinaryOperator): IBinaryOperatorBlock {
+    private fun createBinaryOperatorBlock(binaryOperator: BlockValue.BinaryOperator): IBinaryOperatorBlock {
         return when (binaryOperator) {
             BlockValue.BinaryOperator.ADDITION -> BinarySumOperatorBlock()
             BlockValue.BinaryOperator.SUBTRACTION -> BinarySubOperatorBlock()
@@ -88,7 +88,7 @@ object BlockFactory {
         }
     }
 
-    fun createUnaryOperatorBlock(unaryOperator: BlockValue.UnaryOperator): IUnaryOperatorBlock {
+    private fun createUnaryOperatorBlock(unaryOperator: BlockValue.UnaryOperator): IUnaryOperatorBlock {
         return when (unaryOperator) {
             BlockValue.UnaryOperator.INVERSION -> UnaryNotOperatorBlock()
             BlockValue.UnaryOperator.ARCCTG -> UnaryArctanOperatorBlock()
@@ -102,4 +102,33 @@ object BlockFactory {
             BlockValue.UnaryOperator.ABS -> UnaryAbsOperatorBlock()
         }
     }
+
+    fun createObj(blockValue: Any): Any? {
+        return when (blockValue) {
+
+            is BlockValue.ReturnBlock -> BlockFactory.createReturnBlock()
+
+            is BlockValue.FunctionBlock -> BlockFactory.createFunctionBlock()
+
+            is BlockValue.GetValueBlock -> BlockFactory.createGetValueBlock()
+
+            is BlockValue.ForBlock -> BlockFactory.createForBlock()
+
+            is BlockValue.WhileBlock -> BlockFactory.createWhileBlock()
+
+            is BlockValue.UnaryOperator -> BlockFactory.createUnaryOperatorBlock(unaryOperator = blockValue)
+
+            is BlockValue.BinaryOperator -> BlockFactory.createBinaryOperatorBlock(binaryOperator = blockValue)
+
+            is BlockValue.InitializationBlock -> BlockFactory.createInitializationBlock()
+
+            is BlockValue.IfBlock -> BlockFactory.createIfBlock()
+
+            is BlockValue.EndifBlock -> BlockFactory.createEndifBlock()
+
+            is BlockValue.PrintBlock -> BlockFactory.createPrintBlock()
+            else -> null
+        }
+    }
+
 }

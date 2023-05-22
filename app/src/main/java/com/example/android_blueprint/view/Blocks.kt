@@ -17,6 +17,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
+import block.EndFunctionBlock
+import block.EndIfBlock
+import block.ForBlock
+import block.FunctionBlock
+import block.GetVariableBlock
+import block.IBinaryOperatorBlock
+import block.IHaveUserInput
+import block.IUnaryOperatorBlock
+import block.IfBlock
+import block.InitializationAndSetVariableBlock
+import block.PrintBlock
+import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
 import com.example.android_blueprint.model.PathModel
@@ -50,6 +63,8 @@ import com.example.android_blueprint.ui.theme.PlaceholderTextColor
 import com.example.android_blueprint.ui.theme.TextPaddingForFlow
 import com.example.android_blueprint.ui.theme.UnaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.neueMedium
+import com.example.android_blueprint.viewModel.BlockFactory
+import com.example.android_blueprint.viewModel.ConsoleViewModel
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 import com.example.android_blueprint.viewModel.PathViewModel
 import kotlin.math.roundToInt
@@ -60,7 +75,6 @@ fun SetMovableBlock(
     infiniteFieldViewModel: InfiniteFieldViewModel
 ) {
     if (fieldBlock.value == -1) return
-
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     var boxHeight by remember { mutableStateOf(0f) }
@@ -108,57 +122,67 @@ fun SetMovableBlock(
 
         is BlockValue.ReturnBlock -> MovableReturnBlock(
             value = fieldBlock.value,
-            modifier = modifier
+            modifier = modifier,
+            block = fieldBlock.block as EndFunctionBlock
         )
 
         is BlockValue.FunctionBlock -> MovableFunctionBlock(
             value = fieldBlock.value,
-            modifier = modifier
+            modifier = modifier,
+            block = fieldBlock.block as FunctionBlock
         )
 
         is BlockValue.GetValueBlock -> MovableGetValueBlock(
             value = fieldBlock.value,
-            modifier = modifier
+            modifier = modifier,
+            block = fieldBlock.block as GetVariableBlock
         )
 
-        is BlockValue.ForBlock, BlockValue.WhileBlock -> MovableLoopBlock(
-            value = fieldBlock.value as BlockValue,
-            modifier = modifier
+        is BlockValue.ForBlock -> MovableForBlock(
+            value = fieldBlock.value,
+            modifier = modifier,
+            block =  fieldBlock.block as ForBlock
+        )
+
+        is BlockValue.WhileBlock -> MovableWhileBlock(
+            value = fieldBlock.value,
+            modifier = modifier,
+            block =  fieldBlock.block as WhileBlock
         )
 
         is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
             value = fieldBlock.value,
-            block = infiniteFieldViewModel.createUnaryOperatorBlockInstance(fieldBlock.value),
+            block = fieldBlock.block as IUnaryOperatorBlock,
             modifier = modifier
         )
 
         is BlockValue.BinaryOperator -> BinaryMovableOperatorBlock(
             value = fieldBlock.value,
-            block = infiniteFieldViewModel.createBinaryOperatorBlockInstance(fieldBlock.value),
+            block = fieldBlock.block as IBinaryOperatorBlock,
             modifier = modifier
         )
 
         is BlockValue.InitializationBlock -> MovableInitializationBlock(
             value = fieldBlock.value,
-            block = infiniteFieldViewModel.createInitializationBlock(),
+            block = fieldBlock.block as InitializationAndSetVariableBlock,
             modifier = modifier
         )
 
         is BlockValue.IfBlock -> MovableIfBlock(
             value = fieldBlock.value,
-            block = infiniteFieldViewModel.createIfBlock(),
+            block = fieldBlock.block as IfBlock,
             modifier = modifier
         )
 
         is BlockValue.EndifBlock -> MovableEndifBLock(
             value = fieldBlock.value,
-            block = infiniteFieldViewModel.createEndifBlock(),
+            block =  fieldBlock.block as EndIfBlock,
             modifier = modifier
         )
 
         is BlockValue.PrintBlock -> MovablePrintBlock(
             value = fieldBlock.value,
-            block = infiniteFieldViewModel.createPrintBlock(),
+            block =  fieldBlock.block as PrintBlock,
             modifier = modifier,
             flag = isPathInConnectorTest,
             offsetX = offsetX,
@@ -361,13 +385,14 @@ fun MainFlow(
 }
 
 @Composable
-fun TextFieldForVariable(value: String, modifier: Modifier) {
+fun TextFieldForVariable(value: String, modifier: Modifier, block: IHaveUserInput) {
     val focusManager = LocalFocusManager.current
     var text by rememberSaveable { mutableStateOf("") }
     TextField(
         value = text,
         onValueChange = {
             text = it
+            block.setUserInput(text)
         },
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done

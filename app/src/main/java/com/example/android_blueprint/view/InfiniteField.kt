@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -36,9 +37,8 @@ import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.DeleteButtonSize
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 import com.example.android_blueprint.viewModel.PathViewModel
+import com.example.android_blueprint.viewModel.start
 import main
-
-
 
 
 fun updatePathInMap(
@@ -63,8 +63,6 @@ fun updatePathInMap(
     } else {
         PathViewModel.pathData.put(pathNumber, path)
     }
-
-
 }
 
 
@@ -110,36 +108,40 @@ fun InfiniteField(
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
-        Box(
+        Row(
             modifier = Modifier
-                .padding(DefaultPadding)
                 .align(Alignment.TopEnd)
-                .size(DeleteButtonSize)
-                .clip(CircleShape)
-                .background(getDeleteButtonColor())
-                .clickable { changeMode() }
         ) {
-            Icon(
-                Icons.Rounded.Delete, contentDescription = null,
-                modifier = Modifier.align(Alignment.Center)
-            )
+            Box(
+                modifier = Modifier
+                    .padding(DefaultPadding)
+                    .size(DeleteButtonSize)
+                    .clip(CircleShape)
+                    .background(Color.Gray)
+                    .clickable { start(infiniteFieldViewModel.startBlock) }
+            ) {
+                Icon(
+                    Icons.Rounded.Build, contentDescription = null,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .padding(DefaultPadding)
+                    .size(DeleteButtonSize)
+                    .clip(CircleShape)
+                    .background(getDeleteButtonColor())
+                    .clickable { changeMode() }
+            ) {
+                Icon(
+                    Icons.Rounded.Delete, contentDescription = null,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
     }
 
-    Box(modifier = Modifier.fillMaxWidth()) {
-        Box(
-            modifier = Modifier
-                .padding(DefaultPadding)
-                .align(Alignment.TopStart)
-                .size(DeleteButtonSize)
-                .clip(CircleShape)
-                .background(getDeleteButtonColor())
-                .clickable {
-                    main()
-                }
-        )
-
-    }
 }
 
 
