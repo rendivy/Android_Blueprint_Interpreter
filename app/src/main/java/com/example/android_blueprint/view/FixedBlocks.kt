@@ -123,6 +123,31 @@ fun FixedInitializationBlock(
             MainFlow()
             MainFlow()
         }
+        placeholderText(
+            text = "name or *name[n]", modifier = Modifier
+                .fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+fun FixedSetBlock(
+    value: BlockValue.SetBlock,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .heightIn(min = BlockHeight)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            MainFlow()
+            MainFlow()
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -135,6 +160,7 @@ fun FixedInitializationBlock(
         }
     }
 }
+
 
 @Composable
 fun FixedLoopBlock(
@@ -216,5 +242,22 @@ fun FixedReturnBlock(
             SupportingFlow()
             TextForFlow(text = "value")
         }
+    }
+}
+
+@Composable
+fun FixedContinueOrBreakBlock(
+    value: BlockValue,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .heightIn(min = BlockHeight)
+    ) {
+        MainFlow()
+        ComplexBlockText(
+            modifier = value.modifier.align(Alignment.CenterHorizontally),
+            text = value.text
+        )
     }
 }

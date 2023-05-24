@@ -24,6 +24,7 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
 
     val blocks = listOf(
         BlockValue.InitializationBlock,
+        BlockValue.SetBlock,
         BlockValue.ForBlock,
         BlockValue.WhileBlock,
         BlockValue.GetValueBlock,
@@ -31,6 +32,8 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
         BlockValue.IfBlock,
         BlockValue.FunctionBlock,
         BlockValue.ReturnBlock,
+        BlockValue.BreakBlock,
+        BlockValue.ContinueBlock,
         BlockValue.BinaryOperator.ADDITION,
         BlockValue.BinaryOperator.SUBTRACTION,
         BlockValue.BinaryOperator.MULTIPLICATION,
@@ -42,6 +45,8 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
         BlockValue.BinaryOperator.LESS,
         BlockValue.BinaryOperator.GREATER_OR_EQUAL,
         BlockValue.BinaryOperator.LESS_OR_EQUAL,
+        BlockValue.BinaryOperator.POW,
+        BlockValue.BinaryOperator.LOG,
         BlockValue.UnaryOperator.INVERSION,
         BlockValue.UnaryOperator.ABS,
         BlockValue.UnaryOperator.SIN,

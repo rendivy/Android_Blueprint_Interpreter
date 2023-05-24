@@ -17,7 +17,6 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,10 +39,12 @@ import block.FunctionBlock
 import block.GetVariableBlock
 import block.IBinaryOperatorBlock
 import block.IHaveUserInput
+import block.IMainFLowBlock
 import block.IUnaryOperatorBlock
 import block.IfBlock
-import block.InitializationAndSetVariableBlock
+import block.InitializationVariableBlock
 import block.PrintBlock
+import block.SetVariableBlock
 import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
@@ -63,8 +64,6 @@ import com.example.android_blueprint.ui.theme.PlaceholderTextColor
 import com.example.android_blueprint.ui.theme.TextPaddingForFlow
 import com.example.android_blueprint.ui.theme.UnaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.neueMedium
-import com.example.android_blueprint.viewModel.BlockFactory
-import com.example.android_blueprint.viewModel.ConsoleViewModel
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 import com.example.android_blueprint.viewModel.PathViewModel
 import kotlin.math.roundToInt
@@ -120,34 +119,46 @@ fun SetMovableBlock(
 
     when (fieldBlock.value) {
 
+        is BlockValue.ContinueBlock, BlockValue.BreakBlock -> MovableContinueOrBreakBlock(
+            value = fieldBlock.value as BlockValue,
+            block = fieldBlock.block as IMainFLowBlock,
+            modifier = modifier
+        )
+
+        is BlockValue.SetBlock -> MovableSetBlock(
+            value = fieldBlock.value,
+            block = fieldBlock.value as SetVariableBlock,
+            modifier = modifier
+        )
+
         is BlockValue.ReturnBlock -> MovableReturnBlock(
             value = fieldBlock.value,
-            modifier = modifier,
-            block = fieldBlock.block as EndFunctionBlock
+            block = fieldBlock.block as EndFunctionBlock,
+            modifier = modifier
         )
 
         is BlockValue.FunctionBlock -> MovableFunctionBlock(
             value = fieldBlock.value,
-            modifier = modifier,
-            block = fieldBlock.block as FunctionBlock
+            block = fieldBlock.block as FunctionBlock,
+            modifier = modifier
         )
 
         is BlockValue.GetValueBlock -> MovableGetValueBlock(
             value = fieldBlock.value,
-            modifier = modifier,
-            block = fieldBlock.block as GetVariableBlock
+            block = fieldBlock.block as GetVariableBlock,
+            modifier = modifier
         )
 
         is BlockValue.ForBlock -> MovableForBlock(
             value = fieldBlock.value,
-            modifier = modifier,
-            block =  fieldBlock.block as ForBlock
+            block = fieldBlock.block as ForBlock,
+            modifier = modifier
         )
 
         is BlockValue.WhileBlock -> MovableWhileBlock(
             value = fieldBlock.value,
-            modifier = modifier,
-            block =  fieldBlock.block as WhileBlock
+            block = fieldBlock.block as WhileBlock,
+            modifier = modifier
         )
 
         is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
@@ -164,7 +175,7 @@ fun SetMovableBlock(
 
         is BlockValue.InitializationBlock -> MovableInitializationBlock(
             value = fieldBlock.value,
-            block = fieldBlock.block as InitializationAndSetVariableBlock,
+            block = fieldBlock.block as InitializationVariableBlock,
             modifier = modifier
         )
 
@@ -176,19 +187,19 @@ fun SetMovableBlock(
 
         is BlockValue.EndifBlock -> MovableEndifBLock(
             value = fieldBlock.value,
-            block =  fieldBlock.block as EndIfBlock,
+            block = fieldBlock.block as EndIfBlock,
             modifier = modifier
         )
 
         is BlockValue.PrintBlock -> MovablePrintBlock(
             value = fieldBlock.value,
-            block =  fieldBlock.block as PrintBlock,
-            modifier = modifier,
+            block = fieldBlock.block as PrintBlock,
             flag = isPathInConnectorTest,
             offsetX = offsetX,
             offsetY = offsetY,
             boxHeight = boxHeight,
-            boxWidth = boxWidth
+            boxWidth = boxWidth,
+            modifier = modifier,
         )
     }
 }
@@ -208,6 +219,13 @@ fun SetFixedBlock(
         })
 
     when (value) {
+
+        is BlockValue.ContinueBlock, BlockValue.BreakBlock -> FixedContinueOrBreakBlock(
+            value = value as BlockValue,
+            modifier = modifier
+        )
+
+        is BlockValue.SetBlock -> FixedSetBlock(value = value, modifier = modifier)
 
         is BlockValue.ReturnBlock -> FixedReturnBlock(value = value, modifier = modifier)
 

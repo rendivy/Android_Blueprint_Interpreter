@@ -32,10 +32,12 @@ import block.ForBlock
 import block.FunctionBlock
 import block.GetVariableBlock
 import block.IBinaryOperatorBlock
+import block.IMainFLowBlock
 import block.IUnaryOperatorBlock
 import block.IfBlock
-import block.InitializationAndSetVariableBlock
+import block.InitializationVariableBlock
 import block.PrintBlock
+import block.SetVariableBlock
 import block.StartBlock
 import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
@@ -322,7 +324,37 @@ fun MovableEndifBLock(
 @Composable
 fun MovableInitializationBlock(
     value: BlockValue.InitializationBlock,
-    block: InitializationAndSetVariableBlock,
+    block: InitializationVariableBlock,
+    modifier: Modifier
+) {
+
+    Column(
+        modifier = modifier
+            .width(TextFieldBlockWidth)
+            .background(ComplexBlockColor)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
+            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
+        }
+            TextFieldForVariable(
+                value = "name or *name[n]",
+                modifier = Modifier.fillMaxWidth(),
+                block = block
+            )
+    }
+}
+
+
+@Composable
+fun MovableSetBlock(
+    value: BlockValue.SetBlock,
+    block: SetVariableBlock,
     modifier: Modifier
 ) {
 
@@ -356,6 +388,7 @@ fun MovableInitializationBlock(
         }
     }
 }
+
 
 @Composable
 fun MovableForBlock(
@@ -500,3 +533,24 @@ fun MovableReturnBlock(
         }
     }
 }
+
+@Composable
+fun MovableContinueOrBreakBlock(
+    value: BlockValue,
+    modifier: Modifier,
+    block: IMainFLowBlock
+) {
+    Column(
+        modifier = modifier
+            .width(BorderBlockWidth)
+            .background(ComplexBlockColor)
+    ) {
+        MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
+        ComplexBlockText(
+            modifier = value.modifier.align(Alignment.CenterHorizontally),
+            text = value.text
+        )
+    }
+}
+
+

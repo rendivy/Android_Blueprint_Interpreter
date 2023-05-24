@@ -24,7 +24,9 @@ sealed class BlockValue(
         GREATER(">"),
         LESS("<"),
         GREATER_OR_EQUAL(">="),
-        LESS_OR_EQUAL("<=")
+        LESS_OR_EQUAL("<="),
+        LOG("log"),
+        POW("pow")
     }
 
     enum class UnaryOperator(val text: String) {
@@ -42,6 +44,19 @@ sealed class BlockValue(
 
     object InitializationBlock : BlockValue(
         text = "Initialization",
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color.LightGray, Color.Gray),
+                    start = Offset(0f, 0f),
+                    end = Offset(100f, 0f)
+                )
+            )
+    )
+
+    object SetBlock : BlockValue(
+        text = "Set",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -169,6 +184,19 @@ sealed class BlockValue(
                 )
             )
     )
+
+    object BreakBlock : BlockValue(
+        text = "Break",
+        modifier = Modifier
+            .fillMaxWidth()
+    )
+
+    object ContinueBlock : BlockValue(
+        text = "Continue",
+        modifier = Modifier
+            .fillMaxWidth()
+    )
+
 
     object ReturnBlock : BlockValue(
         text = "Return",

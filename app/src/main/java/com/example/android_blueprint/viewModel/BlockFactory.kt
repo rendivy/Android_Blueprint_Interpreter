@@ -6,21 +6,27 @@ import block.BinaryGreaterOperatorBlock
 import block.BinaryGreaterOrEqualOperatorBlock
 import block.BinaryLessOperatorBlock
 import block.BinaryLessOrEqualOperatorBlock
+import block.BinaryLogOperatorBlock
 import block.BinaryModOperatorBlock
 import block.BinaryMulOperatorBlock
 import block.BinaryNotEqualOperatorBlock
+import block.BinaryPowOperatorBlock
 import block.BinarySubOperatorBlock
 import block.BinarySumOperatorBlock
+import block.BreakBlock
+import block.ContinueBlock
 import block.EndFunctionBlock
 import block.EndIfBlock
 import block.ForBlock
 import block.FunctionBlock
 import block.GetVariableBlock
 import block.IBinaryOperatorBlock
+import block.IMainFLowBlock
 import block.IUnaryOperatorBlock
 import block.IfBlock
-import block.InitializationAndSetVariableBlock
+import block.InitializationVariableBlock
 import block.PrintBlock
+import block.SetVariableBlock
 import block.UnaryAbsOperatorBlock
 import block.UnaryArccosOperatorBlock
 import block.UnaryArccotOperatorBlock
@@ -64,9 +70,22 @@ object BlockFactory {
         return EndIfBlock()
     }
 
-    private fun createInitializationBlock(): InitializationAndSetVariableBlock {
-        return InitializationAndSetVariableBlock()
+    private fun createInitializationBlock(): InitializationVariableBlock {
+        return InitializationVariableBlock()
     }
+
+    private fun createSetBlock(): SetVariableBlock {
+        return SetVariableBlock()
+    }
+
+    private fun createContinueBlock(): IMainFLowBlock {
+        return ContinueBlock()
+    }
+
+    private fun createBreakBlock(): IMainFLowBlock {
+        return BreakBlock()
+    }
+
 
     private fun createPrintBlock(): PrintBlock {
         return PrintBlock()
@@ -85,6 +104,8 @@ object BlockFactory {
             BlockValue.BinaryOperator.REMAINDER -> BinaryModOperatorBlock()
             BlockValue.BinaryOperator.DIVISION -> BinaryDivOperatorBlock()
             BlockValue.BinaryOperator.MULTIPLICATION -> BinaryMulOperatorBlock()
+            BlockValue.BinaryOperator.LOG -> BinaryLogOperatorBlock()
+            BlockValue.BinaryOperator.POW -> BinaryPowOperatorBlock()
         }
     }
 
@@ -105,6 +126,10 @@ object BlockFactory {
 
     fun createObj(blockValue: Any): Any? {
         return when (blockValue) {
+
+            is BlockValue.ContinueBlock -> BlockFactory.createContinueBlock()
+
+            is BlockValue.BreakBlock -> BlockFactory.createBreakBlock()
 
             is BlockValue.ReturnBlock -> BlockFactory.createReturnBlock()
 
