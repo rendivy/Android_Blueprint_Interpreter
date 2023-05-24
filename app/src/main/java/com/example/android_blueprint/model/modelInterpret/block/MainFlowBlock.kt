@@ -127,11 +127,11 @@ class EndIfBlock(
     fun setTrueExpressionBranch(block: BlockEntity, flag: Boolean) {
         if (block is IBranchesBlock) {
             if (flag) {
-                endIfBlock.trueExpressionBranch = block.trueExpressionBranch
-                block.trueExpressionBranch = block.trueExpressionBranch
+                endIfBlock.trueExpressionBranch = block
+                block.trueExpressionBranch = this
             } else {
-                endIfBlock.trueExpressionBranch = block.falseExpressionBranch
-                block.falseExpressionBranch = block.falseExpressionBranch
+                endIfBlock.trueExpressionBranch = block
+                block.falseExpressionBranch = this
             }
             return
         }
@@ -142,10 +142,10 @@ class EndIfBlock(
     fun setFalseExpressionBranch(block: BlockEntity, flag: Boolean) {
         if (block is IBranchesBlock) {
             if (flag) {
-                endIfBlock.falseExpressionBranch = block.trueExpressionBranch
+                endIfBlock.falseExpressionBranch = block
                 block.trueExpressionBranch = this
             } else {
-                endIfBlock.falseExpressionBranch = block.falseExpressionBranch
+                endIfBlock.falseExpressionBranch = block
                 block.falseExpressionBranch = this
             }
             return
@@ -162,12 +162,30 @@ class EndIfBlock(
         return endIfBlock.trueExpressionBranch
     }
 
-    fun deleteTrueExpressionBranch() {
+    fun deleteTrueExpressionBranch(flag: Boolean) {
+        if (endIfBlock.trueExpressionBranch is IBranchesBlock){
+            if (flag) {
+                (endIfBlock.trueExpressionBranch as IBranchesBlock).trueExpressionBranch = null
+            } else {
+                (endIfBlock.trueExpressionBranch as IBranchesBlock).falseExpressionBranch = null
+            }
+            endIfBlock.trueExpressionBranch = null
+            return
+        }
         (endIfBlock.trueExpressionBranch as IMainFLowBlock).nextMainFlowBlocks = null
         endIfBlock.trueExpressionBranch = null
     }
 
-    fun deleteFalseExpressionBranch() {
+    fun deleteFalseExpressionBranch(flag: Boolean) {
+        if (endIfBlock.falseExpressionBranch is IBranchesBlock){
+            if (flag) {
+                (endIfBlock.falseExpressionBranch as IBranchesBlock).trueExpressionBranch = null
+            } else {
+                (endIfBlock.falseExpressionBranch as IBranchesBlock).falseExpressionBranch = null
+            }
+            endIfBlock.falseExpressionBranch = null
+            return
+        }
         (endIfBlock.falseExpressionBranch as IMainFLowBlock).nextMainFlowBlocks = null
         endIfBlock.falseExpressionBranch = null
     }

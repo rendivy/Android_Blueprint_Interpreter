@@ -1,5 +1,29 @@
 import block.*
+import interpretator.Interpret
 
+fun main() {
+    val startBlock = StartBlock()
+    val endBlock = EndBlock()
+
+    val forBlock1 = ForBlock()
+    forBlock1.setUserInput("i=0,i<10,i+=1")
+    forBlock1.setPreviousMainFlowBlock(startBlock)
+
+    val initializationVariableBlock1 = InitializationAndSetVariableBlock()
+    initializationVariableBlock1.setUserInput("n=10")
+    initializationVariableBlock1.setPreviousMainFlowBlock(forBlock1, true)
+
+    val printBlock1 = PrintBlock()
+    printBlock1.setOperator(initializationVariableBlock1)
+    printBlock1.setPreviousMainFlowBlock(initializationVariableBlock1)
+
+    endBlock.setPreviousMainFlowBlock(forBlock1)
+
+    BlockEntity.deleteBlock(forBlock1)
+
+    val interpret = Interpret(BlockEntity.getBlocks())
+    interpret.run(startBlock)
+}
 
 /*
     val startBlock = StartBlock()

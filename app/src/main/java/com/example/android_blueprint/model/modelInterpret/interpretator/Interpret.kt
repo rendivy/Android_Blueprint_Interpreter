@@ -389,6 +389,9 @@ class Interpret(private var blocks: List<BlockEntity>) {
                     visited.add(current)
                     stack.pop()
                 }
+            } else if (current is IGetValuable) {
+                visited.add(current)
+                stack.pop()
             }
         }
     }

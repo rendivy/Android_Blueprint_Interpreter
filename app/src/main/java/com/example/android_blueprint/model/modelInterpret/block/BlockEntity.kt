@@ -1,6 +1,7 @@
 package block
 
 import Instruction
+import com.example.android_blueprint.model.BottomBarModel
 import memory.Valuable
 import java.io.Serializable
 
@@ -152,7 +153,16 @@ interface IMainFLowBlock {
     var previousMainFlowBlocks: BlockEntity?
     var nextMainFlowBlocks: BlockEntity?
 
-    fun setPreviousMainFlowBlock(block: BlockEntity) {
+    fun setPreviousMainFlowBlock(block: BlockEntity, flag: Boolean = false) {
+        if (block is IBranchesBlock){
+            if (flag){
+                (block as IBranchesBlock).setTrueBranchExpression(this as BlockEntity)
+            }else{
+                (block as IBranchesBlock).setFalseBranchExpression(this as BlockEntity)
+            }
+            previousMainFlowBlocks = block
+            return
+        }
         previousMainFlowBlocks = block
         (block as IMainFLowBlock).nextMainFlowBlocks = (this as BlockEntity)
     }
