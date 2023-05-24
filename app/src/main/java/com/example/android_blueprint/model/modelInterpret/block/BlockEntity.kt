@@ -88,7 +88,7 @@ abstract class BlockEntity(
                     }
                 }
 
-                is IUnaryOperatorBlock, is IBinaryOperatorBlock -> {
+                is IUnaryOperatorBlock, is IBinaryOperatorBlock, is IGetValuable -> {
                     deleteOperatorBlock(block)
                 }
             }

@@ -22,6 +22,8 @@ fun main() {
 
     endBlock.setPreviousMainFlowBlock(forBlock1)
 
+    BlockEntity.deleteBlock(getVariableBlock)
+
     val interpret = Interpret(BlockEntity.getBlocks())
     interpret.run(startBlock)
 }
