@@ -4,8 +4,8 @@ import Instruction
 import exceptions.NullPointerExceptionInOperator
 import memory.Valuable
 
-class InitializationAndSetVariableBlock(
-    instruction: Instruction = Instruction.INIT_AND_SET,
+class SetVariableBlock(
+    instruction: Instruction = Instruction.SET,
     override var parsed: String = ""
 ) : BlockEntity(instruction), IWorkingWithVariables, IMainFLowBlock, IGetValuable, IHaveUserInput {
     private var rawInput: String = ""
@@ -29,8 +29,41 @@ class InitializationAndSetVariableBlock(
         this.rawInput = input
     }
 
-    fun addNewField(): InitializationAndSetVariableBlock{
-        val newNode = InitializationAndSetVariableBlock()
+    fun addNewField(): SetVariableBlock{
+        val newNode = SetVariableBlock()
+        this.setNextMainFlowBlock(newNode)
+        newNode.setPreviousMainFlowBlock(this)
+        return newNode
+    }
+
+    //TODO: validate user input
+    override fun validate() {
+
+    }
+}
+
+class InitializationVariableBlock(
+    instruction: Instruction = Instruction.INITIALIZATION,
+    override var parsed: String = ""
+) : BlockEntity(instruction), IWorkingWithVariables, IMainFLowBlock, IHaveUserInput {
+    private var rawInput: String = ""
+    override var nextMainFlowBlocks: BlockEntity? = null
+    override var previousMainFlowBlocks: BlockEntity? = null
+    private var value: Valuable? = null
+    fun setValue(value: Valuable){
+        this.value = value
+    }
+
+    fun getRawInput(): String {
+        return rawInput
+    }
+
+    override fun setUserInput(input: String) {
+        this.rawInput = input
+    }
+
+    fun addNewField(): InitializationVariableBlock{
+        val newNode = InitializationVariableBlock()
         this.setNextMainFlowBlock(newNode)
         newNode.setPreviousMainFlowBlock(this)
         return newNode

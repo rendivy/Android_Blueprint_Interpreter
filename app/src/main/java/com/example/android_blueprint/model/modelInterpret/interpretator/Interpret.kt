@@ -140,7 +140,6 @@ class Interpret(private var blocks: List<BlockEntity>) {
         for (i in functionEntity.variables.indices) {
             val variable = functionEntity.variables[i]
             val value = callFunctionEntity.variables[i]
-            //TODO: можно добавить ссылочные переменные
             parseExpressionString("$variable=$value", true)
         }
         return parse(functionEntity.block)
@@ -161,17 +160,6 @@ class Interpret(private var blocks: List<BlockEntity>) {
         }
     }
 
-    private fun checkInMemory(name: String): Boolean{
-        var currentMemory = memory
-        while (currentMemory.previousMemory != null) {
-            if (currentMemory.stack.containsKey(name.substringBefore("["))) {
-                return true
-            }
-            currentMemory = currentMemory.previousMemory!!
-        }
-        return currentMemory.stack.containsKey(name.substringBefore("["))
-    }
-
     private fun skipLoop(): BlockEntity{
         val loopBlock = loopStack.peek()
         if (loopBlock.getInstruction() == Instruction.FOR) {
@@ -187,14 +175,17 @@ class Interpret(private var blocks: List<BlockEntity>) {
             when (currentBlock.getInstruction()) {
                 Instruction.START_POINT -> {}
 
-                Instruction.INIT_AND_SET -> {
-                    val parse = splitRawInput((currentBlock as InitializationAndSetVariableBlock).getRawInput())
+                Instruction.INITIALIZATION -> {
+                    val parse = splitRawInput((currentBlock as InitializationVariableBlock).getRawInput())
                     for (raw in parse) {
-                        if(checkInMemory(raw.substringBefore("="))){
-                            currentBlock.setValue(parseExpressionString(raw))
-                        }else{
-                            currentBlock.setValue(parseExpressionString(raw, true))
-                        }
+                        parseExpressionString(raw, true)
+                    }
+                }
+
+                Instruction.SET -> {
+                    val parse = splitRawInput((currentBlock as SetVariableBlock).getRawInput())
+                    for (raw in parse) {
+                        currentBlock.setValue(parseExpressionString(raw))
                     }
                 }
 
