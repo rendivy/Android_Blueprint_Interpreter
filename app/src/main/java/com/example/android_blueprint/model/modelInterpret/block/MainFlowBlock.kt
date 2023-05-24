@@ -337,7 +337,7 @@ class BreakBlock(
     override var previousMainFlowBlocks: BlockEntity? = null
 
     override fun validate() {
-        if (nextMainFlowBlocks == null) {
+        if (previousMainFlowBlocks == null) {
             throw NullPointerExceptionInOperator("Break block must have previous block")
         }
     }
@@ -350,7 +350,7 @@ class ContinueBlock(
     override var previousMainFlowBlocks: BlockEntity? = null
 
     override fun validate() {
-        if (nextMainFlowBlocks == null) {
+        if (previousMainFlowBlocks == null) {
             throw NullPointerExceptionInOperator("Continue block must have previous block")
         }
     }

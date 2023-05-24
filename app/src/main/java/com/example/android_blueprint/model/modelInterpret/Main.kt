@@ -20,9 +20,10 @@ fun main() {
     printBlock1.setOperator(getVariableBlock)
     printBlock1.setPreviousMainFlowBlock(initializationVariableBlock1)
 
-    endBlock.setPreviousMainFlowBlock(forBlock1)
+    val breakBlock = BreakBlock()
+    breakBlock.setPreviousMainFlowBlock(printBlock1)
 
-    BlockEntity.deleteBlock(getVariableBlock)
+    endBlock.setPreviousMainFlowBlock(forBlock1)
 
     val interpret = Interpret(BlockEntity.getBlocks())
     interpret.run(startBlock)
