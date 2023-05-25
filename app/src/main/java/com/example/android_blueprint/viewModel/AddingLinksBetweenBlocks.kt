@@ -1,5 +1,6 @@
 package com.example.android_blueprint.viewModel
 
+import androidx.compose.ui.graphics.Color
 import block.BlockEntity
 import block.EndIfBlock
 import block.IBinaryOperatorBlock
@@ -8,6 +9,10 @@ import block.IMainFLowBlock
 import block.IUnaryOperatorBlock
 import block.StartBlock
 import com.example.android_blueprint.model.PreviousBlocks
+import com.example.android_blueprint.ui.theme.actionColor
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 fun setBottomFlowOperator(block: IBinaryOperatorBlock) {
@@ -85,13 +90,20 @@ fun setPreviousSupportFlowBlock(block: BlockEntity) {
     InfiniteFieldViewModel.previousBlocks = PreviousBlocks(previousSupportFlowBlock = block)
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 fun start(startBlock: StartBlock) {
-    val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
-    ConsoleViewModel.consoleText = ""
-    try{
-        interpreter.run(startBlock)
+    GlobalScope.launch {
+        val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
+        ConsoleViewModel.consoleText = ""
+        ConsoleViewModel.defaultTextColor = actionColor
+        try{
+            interpreter.run(startBlock)
+        }
+        catch (e: Exception){
+            ConsoleViewModel.defaultTextColor = Color.Red
+            ConsoleViewModel.consoleText += e.message.toString()
+        }
+
     }
-    catch (e: Exception){
-        ConsoleViewModel.consoleText += e.message.toString()
-    }
+
 }

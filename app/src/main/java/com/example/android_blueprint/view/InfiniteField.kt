@@ -108,8 +108,6 @@ fun InfiniteField(
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
-        var Bool = remember { mutableStateOf(false)}
-        var color = if (Bool.value) Color.Blue else Color.Red
         Row(
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -119,8 +117,8 @@ fun InfiniteField(
                     .padding(DefaultPadding)
                     .size(DeleteButtonSize)
                     .clip(CircleShape)
-                    .background(color)
-                    .clickable { Bool.value = true; start(infiniteFieldViewModel.startBlock) }
+                    .background(Color.Gray)
+                    .clickable {  start(infiniteFieldViewModel.startBlock) }
             ) {
                 Icon(
                     Icons.Rounded.Build, contentDescription = null,
