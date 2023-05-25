@@ -26,6 +26,18 @@ class Interpret(private var blocks: List<BlockEntity>) {
     var stepInto = false
     var stepTo = false
 
+    fun switchStepInto(){
+        stepInto = !stepInto
+    }
+
+    fun switchStepTo(){
+        stepTo = !stepTo
+    }
+
+    fun switchDebug(){
+        debug = !debug
+    }
+
     private var memory = Memory(null, "GLOBAL_SCOPE")
 
     data class FunctionEntity(
