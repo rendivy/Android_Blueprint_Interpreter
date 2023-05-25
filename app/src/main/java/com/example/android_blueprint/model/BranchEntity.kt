@@ -30,6 +30,7 @@ class BranchEntity(var xStart: MutableState<Float>, var yStart: MutableState<Flo
     }
 
     fun drawBranch() {
+        path.reset()
         path.moveTo(xStart.value, yStart.value)
         path.cubicTo(
             (xStart.value + xFinish.value) / 2,
@@ -47,7 +48,12 @@ class BranchEntity(var xStart: MutableState<Float>, var yStart: MutableState<Flo
     }
 
     private fun updateMap(){
-        pathData[this.id] = this
+        pathData.remove(id)
+        pathData[id] = this
     }
 
+    fun deleteBranch(){
+        path.moveTo(xStart.value, yStart.value)
+        pathData.remove(id)
+    }
 }

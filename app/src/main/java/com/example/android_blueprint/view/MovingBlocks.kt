@@ -63,7 +63,7 @@ import com.example.android_blueprint.viewModel.setUnaryOperatorFlow
 import kotlin.math.roundToInt
 
 
-var blockIsWorkingID = 0
+var branchInWorking: BranchEntity = BranchEntity(mutableStateOf(0f), mutableStateOf(0f))
 
 @Composable
 fun StartBlock(
@@ -91,7 +91,9 @@ fun StartBlock(
                     if (branches.isNotEmpty()){
                         branches[0].xStart.value = offsetX + boxWidth
                         branches[0].yStart.value = offsetY + boxHeight / 2
-                        branches[0].drawBranch()
+                        if (branches[0].getIsConnected()){
+                            branches[0].drawBranch()
+                        }
                     }
                 }
             }
@@ -111,11 +113,10 @@ fun StartBlock(
                         xStart = mutableStateOf(offsetX + boxWidth),
                         yStart = mutableStateOf(offsetY + boxHeight / 2)
                     )
-                    blockIsWorkingID = branch.getId()
+                    branchInWorking = branch
                     branches.add(
                         branch
                     )
-                    branch.putInMap()
                 }
         )
     }
@@ -145,7 +146,7 @@ fun EndBlock(
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
                     if (branches.isNotEmpty() && branches[0].getIsConnected()){
-                        branches[0].xFinish.value = offsetX - boxWidth
+                        branches[0].xFinish.value = offsetX
                         branches[0].yFinish.value = offsetY + boxHeight / 2
                         branches[0].drawBranch()
                     }
@@ -161,12 +162,18 @@ fun EndBlock(
             .align(Alignment.CenterStart)
             .clickable {
                 setMainFlow(block)
-                branches.add(BranchEntity.pathData[blockIsWorkingID]!!)
-                branches[0].xFinish = mutableStateOf(offsetX)
-                branches[0].yFinish = mutableStateOf(offsetY + boxHeight / 2)
-                branches[0].drawBranch()
-                branches[0].switchIsConnected()
-                blockIsWorkingID = 0
+                if(branches.isNotEmpty() && branches[0].getIsConnected()){
+                    branches[0].deleteBranch()
+                    branches.remove(branches[0])
+                }else {
+                    branches.add(branchInWorking)
+                    branches[0].xFinish = mutableStateOf(offsetX)
+                    branches[0].yFinish = mutableStateOf(offsetY + boxHeight / 2)
+                    branches[0].putInMap()
+                    branches[0].drawBranch()
+                    branches[0].switchIsConnected()
+                    branchInWorking = BranchEntity(mutableStateOf(0f), mutableStateOf(0f))
+                }
             })
     }
 }
