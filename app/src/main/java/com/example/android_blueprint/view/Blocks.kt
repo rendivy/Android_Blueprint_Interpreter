@@ -127,7 +127,7 @@ fun SetMovableBlock(
 
         is BlockValue.SetBlock -> MovableSetBlock(
             value = fieldBlock.value,
-            block = fieldBlock.value as SetVariableBlock,
+            block = fieldBlock.block as SetVariableBlock,
             modifier = modifier
         )
 

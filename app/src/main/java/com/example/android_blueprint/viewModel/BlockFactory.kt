@@ -127,6 +127,8 @@ object BlockFactory {
     fun createObj(blockValue: Any): Any? {
         return when (blockValue) {
 
+            is BlockValue.SetBlock -> BlockFactory.createSetBlock()
+
             is BlockValue.ContinueBlock -> BlockFactory.createContinueBlock()
 
             is BlockValue.BreakBlock -> BlockFactory.createBreakBlock()

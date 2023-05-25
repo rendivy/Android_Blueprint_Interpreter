@@ -357,7 +357,6 @@ fun MovableSetBlock(
     block: SetVariableBlock,
     modifier: Modifier
 ) {
-
     Column(
         modifier = modifier
             .width(TextFieldBlockWidth)
