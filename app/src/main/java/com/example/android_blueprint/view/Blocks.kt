@@ -90,20 +90,7 @@ fun SetMovableBlock(
                 change.consume()
                 offsetX += dragAmount.x
                 offsetY += dragAmount.y
-                if (isPathInConnectorTest.value && PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList.isNotEmpty()) {
-                    PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[0].value =
-                        offsetX
-                    PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[1].value =
-                        offsetY + boxHeight / 2
-                    PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[2].value =
-                        offsetX + boxWidth
-                    PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[3].value =
-                        offsetY + boxHeight / 2
-                    updatePathInMap(
-                        PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!,
-                        PathViewModel.buttonPressedBlockId
-                    )
-                }
+
             }
         }
         .heightIn(min = BlockHeight)

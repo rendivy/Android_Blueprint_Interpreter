@@ -113,7 +113,8 @@ fun StartBlock(
         MainFlow(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .clickable { setPreviousMainFlowTrueBlock(block) })
+                .clickable { setPreviousMainFlowTrueBlock(block) },
+            )
     }
 }
 

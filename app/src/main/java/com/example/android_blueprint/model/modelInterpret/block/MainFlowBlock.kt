@@ -43,11 +43,14 @@ class PrintBlock(
             ConsoleViewModel.consoleText += curr.value  + '\n'
             println(curr.value)
         } else {
+            ConsoleViewModel.consoleText += "["
             for (i in curr.array.indices) {
-                ConsoleViewModel.consoleText += curr.array[i].value + " "
-                print(curr.array[i].value + " ")
+                ConsoleViewModel.consoleText += curr.array[i].value + ", "
             }
-            ConsoleViewModel.consoleText += '\n'
+            ConsoleViewModel.consoleText.lastIndex.let {
+                ConsoleViewModel.consoleText = ConsoleViewModel.consoleText.substring(0, it - 1)
+            }
+            ConsoleViewModel.consoleText += "]" + '\n'
             println()
         }
     }
