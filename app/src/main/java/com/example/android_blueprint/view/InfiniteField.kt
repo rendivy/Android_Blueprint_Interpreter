@@ -87,7 +87,7 @@ fun InfiniteField(
                     .size(DeleteButtonSize)
                     .clip(CircleShape)
                     .background(Color.Gray)
-                    .clickable {  start(infiniteFieldViewModel.startBlock) }
+                    .clickable { start(infiniteFieldViewModel.startBlock) }
             ) {
                 Icon(
                     Icons.Rounded.Build, contentDescription = null,

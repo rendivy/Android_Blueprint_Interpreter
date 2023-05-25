@@ -77,19 +77,6 @@ fun SetMovableBlock(
     var boxHeight by remember { mutableStateOf(0f) }
     var boxWidth by remember { mutableStateOf(0f) }
     val modifier = Modifier
-        .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-        .onGloballyPositioned { coordinates ->
-            boxHeight = coordinates.size.height.toFloat()
-            boxWidth = coordinates.size.width.toFloat()
-        }
-        .pointerInput(Unit) {
-            detectDragGestures { change, dragAmount ->
-                change.consume()
-                offsetX += dragAmount.x
-                offsetY += dragAmount.y
-
-            }
-        }
         .heightIn(min = BlockHeight)
         .clip(BlockShape)
         .clickable(
@@ -177,12 +164,7 @@ fun SetMovableBlock(
 
         is BlockValue.PrintBlock -> MovablePrintBlock(
             value = fieldBlock.value,
-            block = fieldBlock.block as PrintBlock,
-            modifier = modifier,
-            offsetX = offsetX,
-            offsetY = offsetY,
-            boxHeight = boxHeight,
-            boxWidth = boxWidth
+            block = fieldBlock.block as PrintBlock
         )
     }
 }
