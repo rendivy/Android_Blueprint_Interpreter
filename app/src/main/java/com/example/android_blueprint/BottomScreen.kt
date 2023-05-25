@@ -32,7 +32,7 @@ import com.example.android_blueprint.model.BottomBarModel
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.actionColor
 import com.example.android_blueprint.ui.theme.actionFontColor
-import com.example.android_blueprint.ui.theme.neueMedium
+import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.ui.theme.unSelectedColor
 import com.example.android_blueprint.viewModel.BottomNavGraphViewModel
 
@@ -119,7 +119,7 @@ fun AddItem(
                         ambientColor = actionColor
                     ) else Modifier
             )
-            Text(text = screen.title, color = textColor, fontFamily = neueMedium)
+            Text(text = screen.title, color = textColor, fontFamily = neuMedium)
         }
     }
 }

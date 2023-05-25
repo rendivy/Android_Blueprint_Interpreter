@@ -20,6 +20,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -107,6 +108,8 @@ fun InfiniteField(
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
+        var Bool = remember { mutableStateOf(false)}
+        var color = if (Bool.value) Color.Blue else Color.Red
         Row(
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -116,8 +119,8 @@ fun InfiniteField(
                     .padding(DefaultPadding)
                     .size(DeleteButtonSize)
                     .clip(CircleShape)
-                    .background(Color.Gray)
-                    .clickable { start(infiniteFieldViewModel.startBlock) }
+                    .background(color)
+                    .clickable { Bool.value = true; start(infiniteFieldViewModel.startBlock) }
             ) {
                 Icon(
                     Icons.Rounded.Build, contentDescription = null,

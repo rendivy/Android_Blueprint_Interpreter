@@ -63,7 +63,7 @@ import com.example.android_blueprint.ui.theme.PaddingForPlaceholderText
 import com.example.android_blueprint.ui.theme.PlaceholderTextColor
 import com.example.android_blueprint.ui.theme.TextPaddingForFlow
 import com.example.android_blueprint.ui.theme.UnaryOperatorsTextSize
-import com.example.android_blueprint.ui.theme.neueMedium
+import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 import com.example.android_blueprint.viewModel.PathViewModel
 import kotlin.math.roundToInt
@@ -273,7 +273,7 @@ fun TextForFlow(text: String, modifier: Modifier = Modifier) {
 fun BinaryOperatorText(modifier: Modifier, text: String) {
     Text(
         text = text,
-        fontFamily = neueMedium,
+        fontFamily = neuMedium,
         fontSize = BinaryOperatorsTextSize,
         color = OperatorsTextColor,
         modifier = modifier
@@ -284,7 +284,7 @@ fun BinaryOperatorText(modifier: Modifier, text: String) {
 fun UnaryOperatorText(modifier: Modifier, text: String) {
     Text(
         text = text,
-        fontFamily = neueMedium,
+        fontFamily = neuMedium,
         fontSize = UnaryOperatorsTextSize,
         color = OperatorsTextColor,
         modifier = modifier
@@ -296,7 +296,7 @@ fun UnaryOperatorText(modifier: Modifier, text: String) {
 fun ComplexBlockText(modifier: Modifier, text: String) {
     Text(
         text = text,
-        fontFamily = neueMedium,
+        fontFamily = neuMedium,
         fontSize = ComplexBlockTextSize,
         color = OperatorsTextColor,
         textAlign = TextAlign.Center,
@@ -435,7 +435,7 @@ fun TextFieldForVariable(value: String, modifier: Modifier, block: IHaveUserInpu
 fun placeholderText(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
-        fontFamily = neueMedium,
+        fontFamily = neuMedium,
         fontSize = ComplexBlockTextSize,
         color = PlaceholderTextColor,
         textAlign = TextAlign.Center,

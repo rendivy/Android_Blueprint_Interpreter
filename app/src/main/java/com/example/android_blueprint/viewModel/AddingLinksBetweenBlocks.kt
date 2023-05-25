@@ -87,5 +87,11 @@ fun setPreviousSupportFlowBlock(block: BlockEntity) {
 
 fun start(startBlock: StartBlock) {
     val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
-    interpreter.run(startBlock)
+    ConsoleViewModel.consoleText = ""
+    try{
+        interpreter.run(startBlock)
+    }
+    catch (e: Exception){
+        ConsoleViewModel.consoleText += e.message.toString()
+    }
 }
