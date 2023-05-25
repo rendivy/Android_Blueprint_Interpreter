@@ -48,7 +48,6 @@ import block.SetVariableBlock
 import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
-import com.example.android_blueprint.model.PathModel
 import com.example.android_blueprint.ui.theme.BinaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
@@ -65,7 +64,6 @@ import com.example.android_blueprint.ui.theme.TextPaddingForFlow
 import com.example.android_blueprint.ui.theme.UnaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
-import com.example.android_blueprint.viewModel.PathViewModel
 import kotlin.math.roundToInt
 
 @Composable
@@ -181,11 +179,7 @@ fun SetMovableBlock(
         is BlockValue.PrintBlock -> MovablePrintBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as PrintBlock,
-            flag = isPathInConnectorTest,
-            offsetX = offsetX,
-            offsetY = offsetY,
-            boxHeight = boxHeight,
-            boxWidth = boxWidth,
+
             modifier = modifier,
         )
     }
@@ -308,70 +302,27 @@ fun SupportingFlow(
 @Composable
 fun MainFlowTest(
     modifier: Modifier = Modifier,
-    pathModel: PathModel,
-    flag: MutableState<Boolean>,
-    offsetX: Float, offsetY: Float, boxHeight: Float,
-    boxWidth: Float,
-    blockId: Int
-
 ) {
-
     Box(
         modifier = modifier
             .padding(DefaultPadding)
             .clip(MainFlowShape)
             .size(FlowSize)
             .background(Color.White)
-            .clickable(onClick = {
-                PathViewModel.pathHashMap[pathModel.pathId] = pathModel
-                flag.value = true
-                PathViewModel.isConnectorClicked.value = true
-                pathModel.isPathConnected = true
-                PathViewModel.buttonPressedBlockId = blockId
-                PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[0].value =
-                    offsetX + boxWidth
-                PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[1].value =
-                    offsetY + boxHeight / 2
-
-
-            })
     )
 }
 
 
 @Composable
 fun MainFlowTest2(
-    modifier: Modifier = Modifier, flag: MutableState<Boolean>,
-    offsetX: Float, offsetY: Float, boxHeight: Float
+    modifier: Modifier = Modifier
 ) {
-    var color = if (flag.value) Color.Blue else Color.White
     Box(
         modifier = modifier
             .padding(DefaultPadding)
             .clip(MainFlowShape)
             .size(FlowSize)
-            .background(color)
-            .clickable(onClick = {
-                if (PathViewModel.isConnectorClicked.value) {
-                    PathViewModel.isConnectorClicked.value = false
-                    flag.value = true
-                    PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[2].value =
-                        offsetX
-                    PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[3].value =
-                        offsetY + boxHeight / 2
-                    updatePathInMap(
-                        PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!,
-                        PathViewModel.buttonPressedBlockId
-                    )
-                } else {
-                    PathViewModel.pathHashMap[1]!!.pathList = mutableListOf()
-                    updatePathInMap(
-                        PathViewModel.pathHashMap[1]!!,
-                        PathViewModel.buttonPressedBlockId
-                    )
-                }
-            })
-
+            .background(Color.White)
     )
 }
 

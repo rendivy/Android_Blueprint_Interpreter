@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
@@ -41,7 +43,7 @@ import block.SetVariableBlock
 import block.StartBlock
 import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
-import com.example.android_blueprint.model.PathModel
+import com.example.android_blueprint.model.BranchEntity
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BlockWidth
@@ -49,7 +51,6 @@ import com.example.android_blueprint.ui.theme.BorderBlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
-import com.example.android_blueprint.viewModel.PathViewModel
 import com.example.android_blueprint.viewModel.setBottomFlowOperator
 import com.example.android_blueprint.viewModel.setEndifBottomFlow
 import com.example.android_blueprint.viewModel.setEndifTopFlow
@@ -62,27 +63,18 @@ import com.example.android_blueprint.viewModel.setUnaryOperatorFlow
 import kotlin.math.roundToInt
 
 
+var blockIsWorkingID = 0
+
 @Composable
 fun StartBlock(
     value: BlockValue.StartBlock,
     block: StartBlock,
 ) {
-    val connectionCoordinate: MutableList<MutableState<Float>> = remember {
-        mutableListOf(
-            mutableStateOf(0f), mutableStateOf(0f),
-            mutableStateOf(0f), mutableStateOf(0f)
-        )
-    }
-    var firstPathIsConnected = false
-    val pathModel: PathModel = PathModel(1, connectionCoordinate, firstPathIsConnected)
-
-
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     var boxHeight by remember { mutableStateOf(0f) }
     var boxWidth by remember { mutableStateOf(0f) }
-    var isPathInConnector: MutableState<Boolean> = remember { mutableStateOf(false) }
-    var blockId: Int = 1
+    val branches: MutableList<BranchEntity> = mutableListOf()
 
     Box(
         modifier = Modifier
@@ -96,11 +88,10 @@ fun StartBlock(
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
-                    if (isPathInConnector.value && PathViewModel.pathHashMap[blockId]!!.pathList.isNotEmpty()) {
-                        PathViewModel.pathHashMap[blockId]!!.pathList[0].value = offsetX + boxWidth
-                        PathViewModel.pathHashMap[blockId]!!.pathList[1].value =
-                            offsetY + boxHeight / 2
-                        updatePathInMap(PathViewModel.pathHashMap[blockId]!!, 1)
+                    if (branches.isNotEmpty()){
+                        branches[0].xStart.value = offsetX + boxWidth
+                        branches[0].yStart.value = offsetY + boxHeight / 2
+                        branches[0].drawBranch()
                     }
                 }
             }
@@ -110,11 +101,23 @@ fun StartBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
-        MainFlow(
+        MainFlowTest(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .clickable { setPreviousMainFlowTrueBlock(block) },
-            )
+                .clickable {
+                    setPreviousMainFlowTrueBlock(block)
+
+                    val branch = BranchEntity(
+                        xStart = mutableStateOf(offsetX + boxWidth),
+                        yStart = mutableStateOf(offsetY + boxHeight / 2)
+                    )
+                    blockIsWorkingID = branch.getId()
+                    branches.add(
+                        branch
+                    )
+                    branch.putInMap()
+                }
+        )
     }
 }
 
@@ -127,8 +130,7 @@ fun EndBlock(
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     var boxHeight by remember { mutableStateOf(0f) }
     var boxWidth by remember { mutableStateOf(0f) }
-    var isPathInConnector: MutableState<Boolean> = remember { mutableStateOf(false) }
-
+    val branches: MutableList<BranchEntity> = mutableListOf()
 
     Box(
         modifier = Modifier
@@ -142,17 +144,11 @@ fun EndBlock(
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
-                    if (isPathInConnector.value && PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList.isNotEmpty()) {
-                        PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[2].value =
-                            offsetX
-                        PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[3].value =
-                            offsetY + boxHeight / 2
-                        updatePathInMap(
-                            PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!,
-                            PathViewModel.buttonPressedBlockId
-                        )
+                    if (branches.isNotEmpty() && branches[0].getIsConnected()){
+                        branches[0].xFinish.value = offsetX - boxWidth
+                        branches[0].yFinish.value = offsetY + boxHeight / 2
+                        branches[0].drawBranch()
                     }
-
                 }
             }
             .heightIn(min = BlockHeight)
@@ -161,9 +157,17 @@ fun EndBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
-        MainFlow(modifier = Modifier
+        MainFlowTest2(modifier = Modifier
             .align(Alignment.CenterStart)
-            .clickable { setMainFlow(block) })
+            .clickable {
+                setMainFlow(block)
+                branches.add(BranchEntity.pathData[blockIsWorkingID]!!)
+                branches[0].xFinish = mutableStateOf(offsetX)
+                branches[0].yFinish = mutableStateOf(offsetY + boxHeight / 2)
+                branches[0].drawBranch()
+                branches[0].switchIsConnected()
+                blockIsWorkingID = 0
+            })
     }
 }
 
@@ -219,22 +223,9 @@ fun MovablePrintBlock(
     value: BlockValue.PrintBlock,
     block: PrintBlock,
     modifier: Modifier,
-    flag: MutableState<Boolean>,
-    offsetX: Float,
-    offsetY: Float,
-    boxHeight: Float,
-    boxWidth: Float
-) {
-    var isPathInConnector: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val blockId: Int = 2
-    val connectionCoordinate: MutableList<MutableState<Float>> = remember {
-        mutableListOf(
-            mutableStateOf(0f), mutableStateOf(0f),
-            mutableStateOf(0f), mutableStateOf(0f)
-        )
-    }
-    var firstPathIsConnected = false
-    val pathModel: PathModel = PathModel(blockId, connectionCoordinate, firstPathIsConnected)
+
+    ) {
+
 
     Column(
         modifier = modifier
@@ -246,8 +237,13 @@ fun MovablePrintBlock(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
-            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
+            MainFlowTest(
+                modifier = Modifier.clickable { setMainFlow(block) },
+
+                )
+            MainFlowTest2(
+                modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) },
+            )
         }
         SupportingFlow(
             modifier = Modifier
@@ -343,11 +339,11 @@ fun MovableInitializationBlock(
             MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
             MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
         }
-            TextFieldForVariable(
-                value = "name or *name[n]",
-                modifier = Modifier.fillMaxWidth(),
-                block = block
-            )
+        TextFieldForVariable(
+            value = "name or *name[n]",
+            modifier = Modifier.fillMaxWidth(),
+            block = block
+        )
     }
 }
 

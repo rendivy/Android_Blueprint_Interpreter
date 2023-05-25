@@ -1,6 +1,7 @@
 import block.*
 import interpretator.Interpret
 
+/*
 fun main() {
     val startBlock = StartBlock()
     val endBlock = EndBlock()
@@ -28,6 +29,7 @@ fun main() {
     val interpret = Interpret(BlockEntity.getBlocks())
     interpret.run(startBlock)
 }
+*/
 
 /*
     val startBlock = StartBlock()
