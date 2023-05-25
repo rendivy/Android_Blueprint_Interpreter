@@ -76,7 +76,6 @@ fun SetMovableBlock(
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     var boxHeight by remember { mutableStateOf(0f) }
     var boxWidth by remember { mutableStateOf(0f) }
-    var isPathInConnectorTest: MutableState<Boolean> = remember { mutableStateOf(false) }
     val modifier = Modifier
         .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
         .onGloballyPositioned { coordinates ->
@@ -179,8 +178,11 @@ fun SetMovableBlock(
         is BlockValue.PrintBlock -> MovablePrintBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as PrintBlock,
-
             modifier = modifier,
+            offsetX = offsetX,
+            offsetY = offsetY,
+            boxHeight = boxHeight,
+            boxWidth = boxWidth
         )
     }
 }

@@ -62,8 +62,80 @@ import com.example.android_blueprint.viewModel.setTopFlowOperator
 import com.example.android_blueprint.viewModel.setUnaryOperatorFlow
 import kotlin.math.roundToInt
 
+val defaultBranch = BranchEntity(mutableStateOf(0f), mutableStateOf(0f))
 
-var branchInWorking: BranchEntity = BranchEntity(mutableStateOf(0f), mutableStateOf(0f))
+var branchInWorking: BranchEntity = defaultBranch
+
+data class CharacteristicsBlock(
+    var offsetX: Float,
+    var offsetY: Float,
+    var boxHeight: Float,
+    var boxWidth: Float,
+)
+
+fun createStartBranch(
+    characteristicsBlock: CharacteristicsBlock
+): BranchEntity {
+    val branch = BranchEntity(
+        xStart = mutableStateOf(characteristicsBlock.offsetX + characteristicsBlock.boxWidth),
+        yStart = mutableStateOf(characteristicsBlock.offsetY + characteristicsBlock.boxHeight / 2)
+    )
+    branchInWorking = branch
+    return branch
+}
+
+fun updateStartBranch(
+    outputBranch: BranchEntity,
+    characteristicsBlock: CharacteristicsBlock
+): BranchEntity {
+    if (outputBranch.getId() != defaultBranch.getId()) {
+        outputBranch.xStart.value = characteristicsBlock.offsetX + characteristicsBlock.boxWidth
+        outputBranch.yStart.value =
+            characteristicsBlock.offsetY + characteristicsBlock.boxHeight / 2
+        if (outputBranch.getIsConnected()) {
+            outputBranch.drawBranch()
+        }
+    }
+    return outputBranch
+
+}
+
+fun createEndBranch(
+    inputBranch: BranchEntity,
+    characteristicsBlock: CharacteristicsBlock
+): BranchEntity {
+    return if (inputBranch.getId() != defaultBranch.getId() && inputBranch.getIsConnected()) {
+        inputBranch.switchIsConnected()
+        inputBranch.deleteBranch()
+        defaultBranch
+    } else if (inputBranch.getId() == branchInWorking.getId()) {
+        defaultBranch
+    } else {
+        val resultBranch = branchInWorking
+        resultBranch.xFinish = mutableStateOf(characteristicsBlock.offsetX)
+        resultBranch.yFinish =
+            mutableStateOf(characteristicsBlock.offsetY + characteristicsBlock.boxHeight / 2)
+        resultBranch.putInMap()
+        resultBranch.drawBranch()
+        resultBranch.switchIsConnected()
+        branchInWorking = defaultBranch
+        resultBranch
+    }
+}
+
+fun updateEndBranch(
+    inputBranch: BranchEntity,
+    characteristicsBlock: CharacteristicsBlock
+): BranchEntity {
+    if (inputBranch.getId() != defaultBranch.getId() && inputBranch.getIsConnected()) {
+        inputBranch.xFinish.value = characteristicsBlock.offsetX
+        inputBranch.yFinish.value =
+            characteristicsBlock.offsetY + characteristicsBlock.boxHeight / 2
+        inputBranch.drawBranch()
+    }
+    return inputBranch
+}
+
 
 @Composable
 fun StartBlock(
@@ -74,7 +146,7 @@ fun StartBlock(
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     var boxHeight by remember { mutableStateOf(0f) }
     var boxWidth by remember { mutableStateOf(0f) }
-    val branches: MutableList<BranchEntity> = mutableListOf()
+    var outputBranch = defaultBranch
 
     Box(
         modifier = Modifier
@@ -88,13 +160,13 @@ fun StartBlock(
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
-                    if (branches.isNotEmpty()){
-                        branches[0].xStart.value = offsetX + boxWidth
-                        branches[0].yStart.value = offsetY + boxHeight / 2
-                        if (branches[0].getIsConnected()){
-                            branches[0].drawBranch()
-                        }
-                    }
+
+                    outputBranch = updateStartBranch(
+                        outputBranch,
+                        CharacteristicsBlock(
+                            offsetX, offsetY, boxHeight, boxWidth
+                        )
+                    )
                 }
             }
             .heightIn(min = BlockHeight)
@@ -109,13 +181,10 @@ fun StartBlock(
                 .clickable {
                     setPreviousMainFlowTrueBlock(block)
 
-                    val branch = BranchEntity(
-                        xStart = mutableStateOf(offsetX + boxWidth),
-                        yStart = mutableStateOf(offsetY + boxHeight / 2)
-                    )
-                    branchInWorking = branch
-                    branches.add(
-                        branch
+                    outputBranch = createStartBranch(
+                        CharacteristicsBlock(
+                            offsetX, offsetY, boxHeight, boxWidth
+                        )
                     )
                 }
         )
@@ -131,7 +200,7 @@ fun EndBlock(
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     var boxHeight by remember { mutableStateOf(0f) }
     var boxWidth by remember { mutableStateOf(0f) }
-    val branches: MutableList<BranchEntity> = mutableListOf()
+    var inputBranch = defaultBranch
 
     Box(
         modifier = Modifier
@@ -145,11 +214,13 @@ fun EndBlock(
                     change.consume()
                     offsetX += dragAmount.x
                     offsetY += dragAmount.y
-                    if (branches.isNotEmpty() && branches[0].getIsConnected()){
-                        branches[0].xFinish.value = offsetX
-                        branches[0].yFinish.value = offsetY + boxHeight / 2
-                        branches[0].drawBranch()
-                    }
+
+                    inputBranch = updateEndBranch(
+                        inputBranch,
+                        CharacteristicsBlock(
+                            offsetX, offsetY, boxHeight, boxWidth
+                        )
+                    )
                 }
             }
             .heightIn(min = BlockHeight)
@@ -162,21 +233,71 @@ fun EndBlock(
             .align(Alignment.CenterStart)
             .clickable {
                 setMainFlow(block)
-                if(branches.isNotEmpty() && branches[0].getIsConnected()){
-                    branches[0].deleteBranch()
-                    branches.remove(branches[0])
-                }else {
-                    branches.add(branchInWorking)
-                    branches[0].xFinish = mutableStateOf(offsetX)
-                    branches[0].yFinish = mutableStateOf(offsetY + boxHeight / 2)
-                    branches[0].putInMap()
-                    branches[0].drawBranch()
-                    branches[0].switchIsConnected()
-                    branchInWorking = BranchEntity(mutableStateOf(0f), mutableStateOf(0f))
-                }
+
+                inputBranch = createEndBranch(
+                    inputBranch,
+                    CharacteristicsBlock(
+                        offsetX, offsetY, boxHeight, boxWidth
+                    )
+                )
             })
     }
 }
+
+@Composable
+fun MovablePrintBlock(
+    value: BlockValue.PrintBlock,
+    block: PrintBlock,
+    modifier: Modifier,
+    offsetX: Float,
+    offsetY: Float,
+    boxHeight: Float,
+    boxWidth: Float,
+    ) {
+    var inputBranch = defaultBranch
+    var outputBranch = defaultBranch
+
+    Column(
+        modifier = modifier
+            .width(BlockWidth)
+            .background(ComplexBlockColor)
+    ) {
+        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            MainFlowTest(
+                modifier = Modifier.clickable {
+                    setMainFlow(block)
+
+                    outputBranch = createStartBranch(
+                        CharacteristicsBlock(
+                            offsetX, offsetY, boxHeight, boxWidth
+                        )
+                    )
+                     },
+
+                )
+            MainFlowTest2(
+                modifier = Modifier.clickable {
+                    setPreviousMainFlowTrueBlock(block)
+                    inputBranch = createEndBranch(
+                        inputBranch,
+                        CharacteristicsBlock(
+                            offsetX, offsetY, boxHeight, boxWidth
+                        )
+                    )
+                                              },
+            )
+        }
+        SupportingFlow(
+            modifier = Modifier
+                .align(Alignment.Start)
+                .clickable { setUnaryOperatorFlow(block) })
+    }
+}
+
 
 @Composable
 fun BinaryMovableOperatorBlock(
@@ -222,40 +343,6 @@ fun UnaryMovableOperatorBlock(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clickable { setPreviousSupportFlowBlock(block as BlockEntity) })
-    }
-}
-
-@Composable
-fun MovablePrintBlock(
-    value: BlockValue.PrintBlock,
-    block: PrintBlock,
-    modifier: Modifier,
-
-    ) {
-
-
-    Column(
-        modifier = modifier
-            .width(BlockWidth)
-            .background(ComplexBlockColor)
-    ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            MainFlowTest(
-                modifier = Modifier.clickable { setMainFlow(block) },
-
-                )
-            MainFlowTest2(
-                modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) },
-            )
-        }
-        SupportingFlow(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .clickable { setUnaryOperatorFlow(block) })
     }
 }
 

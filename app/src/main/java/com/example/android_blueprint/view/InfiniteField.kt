@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import block.PrintBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.BranchEntity
 import com.example.android_blueprint.ui.theme.BackgroundColor
@@ -69,7 +70,6 @@ fun InfiniteField(
 
         EndBlock(value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock)
         StartBlock(value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock)
-
 
         for (block in blocks) {
             SetMovableBlock(fieldBlock = block, infiniteFieldViewModel = infiniteFieldViewModel)
