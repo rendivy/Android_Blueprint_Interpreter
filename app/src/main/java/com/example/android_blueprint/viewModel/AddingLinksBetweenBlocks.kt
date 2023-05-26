@@ -92,18 +92,24 @@ fun setPreviousSupportFlowBlock(block: BlockEntity) {
 }
 
 @OptIn(DelicateCoroutinesApi::class)
-fun start(startBlock: StartBlock, interpreter: Interpret) {
+fun start(
+    startBlock: StartBlock,
+    interpreter: Interpret,
+    openDebugger: () -> Unit,
+    closeDebugger: () -> Unit
+) {
+    if (BlockEntity.checkBreakPointInBlocks()) {
+        openDebugger()
+    }
     GlobalScope.launch {
         ConsoleViewModel.consoleText = ""
         ConsoleViewModel.defaultTextColor = actionColor
-        try{
+        try {
             interpreter.run(startBlock)
-        }
-        catch (e: Exception){
+            closeDebugger()
+        } catch (e: Exception) {
             ConsoleViewModel.defaultTextColor = Color.Red
             ConsoleViewModel.consoleText += e.message.toString()
         }
-
     }
-
 }

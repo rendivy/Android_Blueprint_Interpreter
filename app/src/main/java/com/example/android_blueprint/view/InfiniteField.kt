@@ -14,8 +14,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -83,6 +88,20 @@ fun InfiniteField(
             modifier = Modifier
                 .align(Alignment.TopEnd)
         ) {
+            if (infiniteFieldViewModel.isDebug) {
+                Box(
+                    modifier = Modifier
+                        .padding(DefaultPadding)
+                        .size(DeleteButtonSize)
+                        .clip(CircleShape)
+                        .background(getDeleteButtonColor())
+                ) {
+                    Icon(
+                        Icons.Rounded.Call, contentDescription = null,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
             Box(
                 modifier = Modifier
                     .padding(DefaultPadding)
@@ -91,8 +110,10 @@ fun InfiniteField(
                     .background(Color.Gray)
                     .clickable {
                         start(
-                            infiniteFieldViewModel.startBlock,
-                            infiniteFieldViewModel.interpret
+                            startBlock = infiniteFieldViewModel.startBlock,
+                            interpreter = infiniteFieldViewModel.interpret,
+                            openDebugger = infiniteFieldViewModel::openDebugger,
+                            closeDebugger = infiniteFieldViewModel::closeDebugger
                         )
                     }
             ) {
@@ -117,7 +138,6 @@ fun InfiniteField(
             }
         }
     }
-
 }
 
 

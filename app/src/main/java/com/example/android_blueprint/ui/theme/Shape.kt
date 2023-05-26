@@ -11,3 +11,4 @@ val MainFlowShape = CutCornerShape(
     bottomEnd = 40.dp
 )
 val BlockShape = RoundedCornerShape(15.dp)
+val SheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)

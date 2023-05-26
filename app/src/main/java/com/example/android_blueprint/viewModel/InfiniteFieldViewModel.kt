@@ -29,9 +29,17 @@ class InfiniteFieldViewModel : ViewModel() {
     var blocks by mutableStateOf(listOf<FieldBlock>())
     var deleteMode by mutableStateOf(false)
     var transform by mutableStateOf(Transform(InitialScale, InitialOffset))
-
+    var isDebug by mutableStateOf(false)
     companion object {
         var previousBlocks = PreviousBlocks()
+    }
+
+    fun openDebugger() {
+        isDebug = true
+    }
+
+    fun closeDebugger() {
+        isDebug = false
     }
 
     fun addBlock(blockValue: Any) {
