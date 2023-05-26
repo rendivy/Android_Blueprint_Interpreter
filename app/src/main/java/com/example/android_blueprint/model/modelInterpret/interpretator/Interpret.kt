@@ -197,6 +197,9 @@ class Interpret() {
     private fun parse(startBlock: BlockEntity): Valuable? {
         var currentBlock = startBlock
         while (currentBlock.getInstruction() != Instruction.END_POINT) {
+            if(debug){
+                debugging(currentBlock)
+            }
             when (currentBlock.getInstruction()) {
                 Instruction.START_POINT -> {}
 
@@ -322,9 +325,6 @@ class Interpret() {
                         || (currentBlock as IMainFLowBlock).nextMainFlowBlocks == loopStack.peek())){
                 currentBlock = skipLoop()
             } else{
-                if(debug){
-                    debugging(currentBlock)
-                }
                 currentBlock = (currentBlock as IMainFLowBlock).nextMainFlowBlocks!!
             }
         }
