@@ -18,11 +18,12 @@ abstract class BlockEntity(
 
         fun deletePreviousBlockMainFlowBranch(block: BlockEntity) {
             if ((block as IMainFLowBlock).previousMainFlowBlocks != null) {
-                if(block.previousMainFlowBlocks is IBranchesBlock) {
+                if (block.previousMainFlowBlocks is IBranchesBlock) {
                     if (block == (block.previousMainFlowBlocks as IBranchesBlock).getTrueBranchExpression()) {
                         (block.previousMainFlowBlocks as IBranchesBlock).trueExpressionBranch = null
                     } else {
-                        (block.previousMainFlowBlocks as IBranchesBlock).falseExpressionBranch = null
+                        (block.previousMainFlowBlocks as IBranchesBlock).falseExpressionBranch =
+                            null
                     }
                     block.previousMainFlowBlocks = null
                     return
@@ -60,10 +61,12 @@ abstract class BlockEntity(
                         (block.previousMainFlowBlocks!! as IMainFLowBlock).nextMainFlowBlocks = null
                     }
                     if (block.getTrueBranchExpression() != null) {
-                        (block.getTrueBranchExpression()!! as IMainFLowBlock).previousMainFlowBlocks = null
+                        (block.getTrueBranchExpression()!! as IMainFLowBlock).previousMainFlowBlocks =
+                            null
                     }
                     if (block.getFalseBranchExpression() != null) {
-                        (block.getFalseBranchExpression()!! as IMainFLowBlock).previousMainFlowBlocks = null
+                        (block.getFalseBranchExpression()!! as IMainFLowBlock).previousMainFlowBlocks =
+                            null
                     }
                 }
 
@@ -72,10 +75,12 @@ abstract class BlockEntity(
                         (block.nextMainFlowBlocks!! as IMainFLowBlock).previousMainFlowBlocks = null
                     }
                     if (block.getTrueExpressionBranch() != null) {
-                        (block.getTrueExpressionBranch()!! as IMainFLowBlock).nextMainFlowBlocks = null
+                        (block.getTrueExpressionBranch()!! as IMainFLowBlock).nextMainFlowBlocks =
+                            null
                     }
                     if (block.getFalseExpressionBranch() != null) {
-                        (block.getFalseExpressionBranch()!! as IMainFLowBlock).nextMainFlowBlocks = null
+                        (block.getFalseExpressionBranch()!! as IMainFLowBlock).nextMainFlowBlocks =
+                            null
                     }
                 }
 
@@ -107,8 +112,8 @@ abstract class BlockEntity(
         return id
     }
 
-    fun setBreakPoint(breakPoint: Boolean) {
-        this.breakPoint = breakPoint
+    fun switchBreakPoint(breakPoint: Boolean) {
+        this.breakPoint = !breakPoint
     }
 
     fun getBreakPoint(): Boolean {
@@ -154,14 +159,26 @@ interface IMainFLowBlock {
     var nextMainFlowBlocks: BlockEntity?
 
     fun setPreviousMainFlowBlock(block: BlockEntity, flag: Boolean = false) {
-        if (block is IBranchesBlock){
-            if (flag){
+        if (block is IBranchesBlock) {
+            if (flag) {
+                if((block as IBranchesBlock).trueExpressionBranch != null){
+                    ((block as IBranchesBlock).trueExpressionBranch as IMainFLowBlock).previousMainFlowBlocks =
+                        null
+                }
                 (block as IBranchesBlock).setTrueBranchExpression(this as BlockEntity)
-            }else{
+            } else {
+                if((block as IBranchesBlock).falseExpressionBranch != null){
+                    ((block as IBranchesBlock).falseExpressionBranch as IMainFLowBlock).previousMainFlowBlocks =
+                        null
+                }
                 (block as IBranchesBlock).setFalseBranchExpression(this as BlockEntity)
             }
             previousMainFlowBlocks = block
             return
+        }
+        if((block as IMainFLowBlock).nextMainFlowBlocks != null){
+            ((block as IMainFLowBlock).nextMainFlowBlocks as IMainFLowBlock).previousMainFlowBlocks =
+                null
         }
         previousMainFlowBlocks = block
         (block as IMainFLowBlock).nextMainFlowBlocks = (this as BlockEntity)
@@ -177,9 +194,10 @@ interface IExecutable {
     fun execute()
 }
 
-interface IHaveUserInput{
+interface IHaveUserInput {
     fun setUserInput(input: String)
 }
+
 interface IBranchesBlock {
     var trueExpressionBranch: BlockEntity?
     var falseExpressionBranch: BlockEntity?

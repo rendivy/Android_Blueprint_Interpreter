@@ -16,12 +16,14 @@ fun main() {
     val getVariableBlock = GetVariableBlock()
     getVariableBlock.setUserInput("n+1")
 
+    val getVariableBlock1 = GetVariableBlock()
+    getVariableBlock1.setUserInput("n+2")
+
     val printBlock1 = PrintBlock()
     printBlock1.setOperator(getVariableBlock)
     printBlock1.setPreviousMainFlowBlock(initializationVariableBlock1)
 
-    val breakBlock = BreakBlock()
-    breakBlock.setPreviousMainFlowBlock(printBlock1)
+    printBlock1.setOperator(getVariableBlock1)
 
     endBlock.setPreviousMainFlowBlock(forBlock1)
 
