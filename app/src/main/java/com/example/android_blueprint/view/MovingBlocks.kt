@@ -90,11 +90,13 @@ fun createEndBranch(
     idFinishBlock: Int
 ): BranchEntity {
     return if (branchInWorking.isMainFlowBranch != isMainFlow ||
-        branchInWorking.getId() == defaultBranch.getId() ||
         branchInWorking.idStartBlock == idFinishBlock
     ) {
         defaultBranch
-    } else {
+    } else if(branchInWorking.getId() == defaultBranch.getId()){
+        inputBranch
+    }
+    else {
         tryClearBranches(inputBranch)
         val resultBranch = branchInWorking
         resultBranch.xFinish = mutableStateOf(characteristicsBlock.xResult)
@@ -641,14 +643,14 @@ fun MovableIfBlock(
                         viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 2.15f,
                         )
                     )
                     viewModel.outputBranchTrue = updateStartBranch(
                         viewModel.outputBranchTrue,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 2.15f,
                         )
                     )
                     viewModel.outputBranchFalse = updateStartBranch(
@@ -697,7 +699,7 @@ fun MovableIfBlock(
                         viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 2.15f,
                         ),
                         true,
                         block.getId()
@@ -712,7 +714,7 @@ fun MovableIfBlock(
                         viewModel.outputBranchTrue,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 2.15f,
                         ),
                         idStartBlock = block.getId()
                     )
@@ -788,14 +790,14 @@ fun MovableEndifBLock(
                         viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
                         )
                     )
                     viewModel.inputBranchForEndIf = updateEndBranch(
                         viewModel.inputBranchForEndIf,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                            viewModel.offsetY + viewModel.boxHeight / 1.25f,
                         )
                     )
                     viewModel.outputBranch = updateStartBranch(
@@ -830,7 +832,7 @@ fun MovableEndifBLock(
                     viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 5f,
+                        viewModel.offsetY + viewModel.boxHeight / 2,
                     ),
                     true,
                     block.getId()
@@ -845,7 +847,7 @@ fun MovableEndifBLock(
                     viewModel.inputBranchForEndIf,
                     CharacteristicsBlock(
                         viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        viewModel.offsetY + viewModel.boxHeight / 1.25f,
                     ),
                     true,
                     block.getId()
@@ -996,21 +998,21 @@ fun MovableSetBlock(
                         viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
+                            viewModel.offsetY + viewModel.boxHeight / 2.75f,
                         )
                     )
                     viewModel.outputBranch = updateStartBranch(
                         viewModel.outputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 5,
+                            viewModel.offsetY + viewModel.boxHeight / 2.75f,
                         )
                     )
                     viewModel.outputSupportFLow = updateStartBranch(
                         viewModel.outputSupportFLow,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.4f,
+                            viewModel.offsetY + viewModel.boxHeight / 1.35f,
                         )
                     )
                 }
@@ -1042,7 +1044,7 @@ fun MovableSetBlock(
                     viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 2,
+                        viewModel.offsetY + viewModel.boxHeight / 2.75f,
                     ),
                     true,
                     block.getId()
@@ -1055,7 +1057,7 @@ fun MovableSetBlock(
                     viewModel.outputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX + viewModel.boxWidth,
-                        viewModel.offsetY + viewModel.boxHeight / 5,
+                        viewModel.offsetY + viewModel.boxHeight / 2.75f,
                     ),
                     idStartBlock = block.getId()
                 )
@@ -1080,7 +1082,7 @@ fun MovableSetBlock(
                             viewModel.outputSupportFLow,
                             CharacteristicsBlock(
                                 viewModel.offsetX + viewModel.boxWidth,
-                                viewModel.offsetY + viewModel.boxHeight / 1.4f,
+                                viewModel.offsetY + viewModel.boxHeight / 1.35f,
                             ),
                             false,
                             idStartBlock = block.getId()
@@ -1120,21 +1122,21 @@ fun MovableForBlock(
                         viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
                         )
                     )
                     viewModel.outputBranchTrue = updateStartBranch(
                         viewModel.outputBranchTrue,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
                         )
                     )
                     viewModel.outputBranchFalse = updateStartBranch(
                         viewModel.outputBranchFalse,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                            viewModel.offsetY + viewModel.boxHeight / 1.12f,
                         )
                     )
                 }
@@ -1165,7 +1167,7 @@ fun MovableForBlock(
                     viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 5f,
+                        viewModel.offsetY + viewModel.boxHeight / 3.45f,
                     ),
                     true,
                     block.getId()
@@ -1180,7 +1182,7 @@ fun MovableForBlock(
                         viewModel.outputBranchTrue,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
                         ),
                         idStartBlock = block.getId()
                     )
@@ -1201,7 +1203,7 @@ fun MovableForBlock(
                     viewModel.outputBranchFalse,
                     CharacteristicsBlock(
                         viewModel.offsetX + viewModel.boxWidth,
-                        viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        viewModel.offsetY + viewModel.boxHeight / 1.12f,
                     ),
                     idStartBlock = block.getId()
                 )
@@ -1239,21 +1241,21 @@ fun MovableWhileBlock(
                         viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
                         )
                     )
                     viewModel.outputBranchTrue = updateStartBranch(
                         viewModel.outputBranchTrue,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
                         )
                     )
                     viewModel.outputBranchFalse = updateStartBranch(
                         viewModel.outputBranchFalse,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                            viewModel.offsetY + viewModel.boxHeight / 1.12f,
                         )
                     )
                 }
@@ -1284,7 +1286,7 @@ fun MovableWhileBlock(
                     viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 5f,
+                        viewModel.offsetY + viewModel.boxHeight / 3.45f,
                     ),
                     true,
                     block.getId()
@@ -1299,7 +1301,7 @@ fun MovableWhileBlock(
                         viewModel.outputBranchTrue,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
                         ),
                         idStartBlock = block.getId()
                     )
@@ -1320,7 +1322,7 @@ fun MovableWhileBlock(
                     viewModel.outputBranchFalse,
                     CharacteristicsBlock(
                         viewModel.offsetX + viewModel.boxWidth,
-                        viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        viewModel.offsetY + viewModel.boxHeight / 1.12f,
                     ),
                     idStartBlock = block.getId()
                 )
@@ -1359,7 +1361,7 @@ fun MovableGetValueBlock(
                         viewModel.outputSupportFLow,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
+                            viewModel.offsetY + viewModel.boxHeight / 1.5f,
                         )
                     )
                 }
@@ -1395,7 +1397,7 @@ fun MovableGetValueBlock(
                             viewModel.outputSupportFLow,
                             CharacteristicsBlock(
                                 viewModel.offsetX + viewModel.boxWidth,
-                                viewModel.offsetY + viewModel.boxHeight / 2,
+                                viewModel.offsetY + viewModel.boxHeight / 1.5f,
                             ),
                             false,
                             block.getId()
@@ -1434,7 +1436,7 @@ fun MovableFunctionBlock(
                         viewModel.outputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
+                            viewModel.offsetY + viewModel.boxHeight / 1.5f,
                         )
                     )
                 }
@@ -1470,7 +1472,7 @@ fun MovableFunctionBlock(
                             viewModel.outputBranch,
                             CharacteristicsBlock(
                                 viewModel.offsetX + viewModel.boxWidth,
-                                viewModel.offsetY + viewModel.boxHeight / 2,
+                                viewModel.offsetY + viewModel.boxHeight / 1.5f,
                             ),
                             idStartBlock = block.getId()
                         )
@@ -1515,7 +1517,7 @@ fun MovableReturnBlock(
                         viewModel.inputSupportFLow,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.4f,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
                         )
                     )
                 }
@@ -1559,7 +1561,7 @@ fun MovableReturnBlock(
                     viewModel.inputSupportFLow,
                     CharacteristicsBlock(
                         viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 1.4f,
+                        viewModel.offsetY + viewModel.boxHeight / 1.2f,
                     ),
                     false,
                     (block as BlockEntity).getId()
@@ -1599,7 +1601,7 @@ fun MovableContinueOrBreakBlock(
                         viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
+                            viewModel.offsetY + viewModel.boxHeight / 5,
                         )
                     )
                 }
@@ -1618,7 +1620,7 @@ fun MovableContinueOrBreakBlock(
                     viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 2,
+                        viewModel.offsetY + viewModel.boxHeight / 5,
                     ),
                     true,
                     (block as BlockEntity).getId()
