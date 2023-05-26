@@ -16,23 +16,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.dp
-import block.BlockEntity
 import com.example.android_blueprint.model.BlockValue
-import com.example.android_blueprint.model.PathModel
+import com.example.android_blueprint.model.BranchEntity
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.DeleteButtonSize
@@ -41,35 +33,11 @@ import com.example.android_blueprint.viewModel.PathViewModel
 import com.example.android_blueprint.viewModel.start
 
 
-fun updatePathInMap(
-    pathModel: PathModel, pathNumber: Int
-) {
-    val path = Path()
-    if (pathModel.pathList.isNotEmpty()) {
-        path.moveTo(pathModel.pathList[0].value, pathModel.pathList[1].value)
-        path.cubicTo(
-            (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
-            pathModel.pathList[1].value,
-            (pathModel.pathList[0].value + pathModel.pathList[2].value) / 2,
-            pathModel.pathList[3].value,
-            pathModel.pathList[2].value,
-            pathModel.pathList[3].value
-        )
-    } else {
-        path.moveTo(0f, 0f)
-    }
-    if (pathNumber !in PathViewModel.pathData) {
-        PathViewModel.pathData[pathNumber] = path
-    } else {
-        PathViewModel.pathData.put(pathNumber, path)
-    }
-}
-
-
 @Composable
 fun InfiniteField(
     infiniteFieldViewModel: InfiniteFieldViewModel
 ) {
+
     val blocks = infiniteFieldViewModel.blocks
     val transform = infiniteFieldViewModel.transform
     val changeTransform = infiniteFieldViewModel::changeTransform
@@ -90,17 +58,17 @@ fun InfiniteField(
                 translationY = transform.offset.y
             )
             .drawBehind {
-                for (value in PathViewModel.pathData.values) {
-                    drawPath(value, Color.White, style = Stroke(width = 10f))
-
+                for (value in BranchEntity.pathData.values) {
+                    drawPath(value.path, Color.White, style = Stroke(width = 10f))
                 }
             }
     )
     {
 
-        EndBlock(value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock)
-        StartBlock(value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock)
-
+        EndBlock(value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock,
+        endViewModel = infiniteFieldViewModel.endViewModel)
+        StartBlock(value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock,
+        startViewModel =  infiniteFieldViewModel.startViewModel)
 
         for (block in blocks) {
             SetMovableBlock(fieldBlock = block, infiniteFieldViewModel = infiniteFieldViewModel)
@@ -118,7 +86,7 @@ fun InfiniteField(
                     .size(DeleteButtonSize)
                     .clip(CircleShape)
                     .background(Color.Gray)
-                    .clickable {  start(infiniteFieldViewModel.startBlock) }
+                    .clickable { start(infiniteFieldViewModel.startBlock) }
             ) {
                 Icon(
                     Icons.Rounded.Build, contentDescription = null,

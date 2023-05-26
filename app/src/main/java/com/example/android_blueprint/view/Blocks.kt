@@ -48,7 +48,6 @@ import block.SetVariableBlock
 import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
-import com.example.android_blueprint.model.PathModel
 import com.example.android_blueprint.ui.theme.BinaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
@@ -71,30 +70,14 @@ import kotlin.math.roundToInt
 @Composable
 fun SetMovableBlock(
     fieldBlock: FieldBlock,
-    infiniteFieldViewModel: InfiniteFieldViewModel
+    infiniteFieldViewModel: InfiniteFieldViewModel,
 ) {
     if (fieldBlock.value == -1) return
     var offsetX by rememberSaveable { mutableStateOf(0f) }
     var offsetY by rememberSaveable { mutableStateOf(0f) }
     var boxHeight by remember { mutableStateOf(0f) }
     var boxWidth by remember { mutableStateOf(0f) }
-    var isPathInConnectorTest: MutableState<Boolean> = remember { mutableStateOf(false) }
     val modifier = Modifier
-        .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-        .onGloballyPositioned { coordinates ->
-            boxHeight = coordinates.size.height.toFloat()
-            boxWidth = coordinates.size.width.toFloat()
-        }
-        .pointerInput(Unit) {
-            detectDragGestures { change, dragAmount ->
-                change.consume()
-                offsetX += dragAmount.x
-                offsetY += dragAmount.y
-
-            }
-        }
-        .heightIn(min = BlockHeight)
-        .clip(BlockShape)
         .clickable(
             indication = null,
             interactionSource = remember { MutableInteractionSource() }
@@ -109,84 +92,91 @@ fun SetMovableBlock(
         is BlockValue.ContinueBlock, BlockValue.BreakBlock -> MovableContinueOrBreakBlock(
             value = fieldBlock.value as BlockValue,
             block = fieldBlock.block as IMainFLowBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.SetBlock -> MovableSetBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as SetVariableBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.ReturnBlock -> MovableReturnBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as EndFunctionBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.FunctionBlock -> MovableFunctionBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as FunctionBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.GetValueBlock -> MovableGetValueBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as GetVariableBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.ForBlock -> MovableForBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as ForBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.WhileBlock -> MovableWhileBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as WhileBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as IUnaryOperatorBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.BinaryOperator -> BinaryMovableOperatorBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as IBinaryOperatorBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.InitializationBlock -> MovableInitializationBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as InitializationVariableBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.IfBlock -> MovableIfBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as IfBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.EndifBlock -> MovableEndifBLock(
             value = fieldBlock.value,
             block = fieldBlock.block as EndIfBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.PrintBlock -> MovablePrintBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as PrintBlock,
-            flag = isPathInConnectorTest,
-            offsetX = offsetX,
-            offsetY = offsetY,
-            boxHeight = boxHeight,
-            boxWidth = boxWidth,
-            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
     }
 }
@@ -308,70 +298,27 @@ fun SupportingFlow(
 @Composable
 fun MainFlowTest(
     modifier: Modifier = Modifier,
-    pathModel: PathModel,
-    flag: MutableState<Boolean>,
-    offsetX: Float, offsetY: Float, boxHeight: Float,
-    boxWidth: Float,
-    blockId: Int
-
 ) {
-
     Box(
         modifier = modifier
             .padding(DefaultPadding)
             .clip(MainFlowShape)
             .size(FlowSize)
             .background(Color.White)
-            .clickable(onClick = {
-                PathViewModel.pathHashMap[pathModel.pathId] = pathModel
-                flag.value = true
-                PathViewModel.isConnectorClicked.value = true
-                pathModel.isPathConnected = true
-                PathViewModel.buttonPressedBlockId = blockId
-                PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[0].value =
-                    offsetX + boxWidth
-                PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[1].value =
-                    offsetY + boxHeight / 2
-
-
-            })
     )
 }
 
 
 @Composable
 fun MainFlowTest2(
-    modifier: Modifier = Modifier, flag: MutableState<Boolean>,
-    offsetX: Float, offsetY: Float, boxHeight: Float
+    modifier: Modifier = Modifier
 ) {
-    var color = if (flag.value) Color.Blue else Color.White
     Box(
         modifier = modifier
             .padding(DefaultPadding)
             .clip(MainFlowShape)
             .size(FlowSize)
-            .background(color)
-            .clickable(onClick = {
-                if (PathViewModel.isConnectorClicked.value) {
-                    PathViewModel.isConnectorClicked.value = false
-                    flag.value = true
-                    PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[2].value =
-                        offsetX
-                    PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!.pathList[3].value =
-                        offsetY + boxHeight / 2
-                    updatePathInMap(
-                        PathViewModel.pathHashMap[PathViewModel.buttonPressedBlockId]!!,
-                        PathViewModel.buttonPressedBlockId
-                    )
-                } else {
-                    PathViewModel.pathHashMap[1]!!.pathList = mutableListOf()
-                    updatePathInMap(
-                        PathViewModel.pathHashMap[1]!!,
-                        PathViewModel.buttonPressedBlockId
-                    )
-                }
-            })
-
+            .background(Color.White)
     )
 }
 

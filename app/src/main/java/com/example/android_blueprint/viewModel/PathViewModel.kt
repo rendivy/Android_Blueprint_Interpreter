@@ -1,18 +1,25 @@
 package com.example.android_blueprint.viewModel
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Path
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.android_blueprint.model.PathModel
+import com.example.android_blueprint.view.defaultBranch
 
-class PathViewModel: ViewModel() {
-    companion object{
-        var pathData = mutableStateMapOf<Int, Path>()
-        var pathHashMap = mutableStateMapOf<Int, PathModel>()
-        var isConnectorClicked: MutableState<Boolean> = mutableStateOf(false)
-        var buttonPressedBlockId: Int = 0
-    }
+class PathViewModel : ViewModel() {
+
+    var offsetX by mutableStateOf(0f)
+    var offsetY by mutableStateOf(0f)
+    var boxHeight by mutableStateOf(0f)
+    var boxWidth by mutableStateOf(0f)
+    var outputBranch = defaultBranch
+    var inputBranch = defaultBranch
+    var inputBranchForEndIf = defaultBranch
+    var outputBranchTrue = defaultBranch
+    var outputBranchFalse = defaultBranch
+    var inputSupportFLow = defaultBranch
+    var outputSupportFLow = defaultBranch
+    var inputSupportFLowLeft = defaultBranch
+    var inputSupportFLowRight = defaultBranch
+
 }

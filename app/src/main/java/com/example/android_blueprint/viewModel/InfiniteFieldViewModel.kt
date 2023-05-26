@@ -20,6 +20,8 @@ class InfiniteFieldViewModel : ViewModel() {
     private var currentIndex = 0
     val startBlock = StartBlock()
     val endBlock = EndBlock()
+    val startViewModel = PathViewModel()
+    val endViewModel = PathViewModel()
     var blocks by mutableStateOf(listOf<FieldBlock>())
     var deleteMode by mutableStateOf(false)
     var transform by mutableStateOf(Transform(InitialScale, InitialOffset))
@@ -29,19 +31,24 @@ class InfiniteFieldViewModel : ViewModel() {
     }
 
     fun addBlock(blockValue: Any) {
+        val pathViewModel = PathViewModel()
         if (blockValue == BlockValue.IfBlock) {
+            val pathVIewModelEndif = PathViewModel()
             addVariable(
                 FieldBlock(
                     value = blockValue,
                     index = currentIndex++,
-                    block = BlockFactory.createObj(blockValue = blockValue) as BlockEntity
+                    block = BlockFactory.createObj(blockValue = blockValue) as BlockEntity,
+                    pathViewModel = pathViewModel
                 )
             )
             addVariable(
                 FieldBlock(
                     value = BlockValue.EndifBlock,
                     index = currentIndex++,
-                    block = BlockFactory.createObj(blockValue = BlockValue.EndifBlock) as BlockEntity
+                    block = BlockFactory.createObj(blockValue = BlockValue.EndifBlock) as BlockEntity,
+                    pathViewModel = pathVIewModelEndif
+
                 )
             )
         } else {
@@ -49,7 +56,8 @@ class InfiniteFieldViewModel : ViewModel() {
                 FieldBlock(
                     value = blockValue,
                     index = currentIndex++,
-                    block = BlockFactory.createObj(blockValue = blockValue) as BlockEntity
+                    block = BlockFactory.createObj(blockValue = blockValue) as BlockEntity,
+                    pathViewModel = pathViewModel
                 )
             )
         }

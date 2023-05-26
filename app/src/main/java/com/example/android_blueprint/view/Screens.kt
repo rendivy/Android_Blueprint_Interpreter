@@ -22,12 +22,15 @@ import com.example.android_blueprint.ui.theme.actionColor
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.ConsoleViewModel
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
+import com.example.android_blueprint.viewModel.PathViewModel
 
 @Composable
 fun FieldScreen(
-    infiniteFieldViewModel: InfiniteFieldViewModel
+    infiniteFieldViewModel: InfiniteFieldViewModel,
 ) {
-    InfiniteField(infiniteFieldViewModel = infiniteFieldViewModel)
+    InfiniteField(
+        infiniteFieldViewModel = infiniteFieldViewModel
+    )
 }
 
 @Composable
@@ -49,14 +52,15 @@ fun ConsoleScreen() {
             Modifier
                 .fillMaxSize()
                 .padding(bottom = BottomBarPadding)
-                .verticalScroll(rememberScrollState())){
+                .verticalScroll(rememberScrollState())
+        ) {
             Text(
-            text = ConsoleViewModel.consoleText,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = neuMedium,
-            color = ConsoleViewModel.defaultTextColor
-        )
+                text = ConsoleViewModel.consoleText,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = neuMedium,
+                color = ConsoleViewModel.defaultTextColor
+            )
         }
 
     }
