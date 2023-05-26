@@ -9,6 +9,7 @@ import exceptions.RuntimeError
 import exceptions.StackCorruptionError
 import Type
 import block.*
+import com.example.android_blueprint.viewModel.ConsoleViewModel
 import memory.Memory
 import memory.MemoryArea
 import memory.Valuable
@@ -22,9 +23,9 @@ class Interpret(private var blocks: List<BlockEntity>) {
     var output = ""
     var waitingForInput = false
 
-    var debug = false
+    var debug = true
     var stepInto = false
-    var stepTo = false
+    var stepTo = true
 
     fun switchStepInto(){
         stepInto = !stepInto
@@ -160,15 +161,15 @@ class Interpret(private var blocks: List<BlockEntity>) {
     private fun printMemory() {
         var currentMemory = memory
         while (currentMemory.previousMemory != null) {
-            println(currentMemory.scope)
+            ConsoleViewModel.consoleText = currentMemory.scope + '\n'
             for((key, value) in currentMemory.stack) {
-                println("$key: $value")
+                ConsoleViewModel.consoleText += "$key: $value\n"
             }
             currentMemory = currentMemory.previousMemory!!
         }
-        println(currentMemory.scope)
+        ConsoleViewModel.consoleText = currentMemory.scope + '\n'
         for((key, value) in currentMemory.stack) {
-            println("$key: $value")
+            ConsoleViewModel.consoleText += "$key: $value\n"
         }
     }
 

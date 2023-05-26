@@ -2,6 +2,7 @@ package block
 
 import Instruction
 import com.example.android_blueprint.model.BottomBarModel
+import com.example.android_blueprint.viewModel.ConsoleViewModel
 import memory.Valuable
 import java.io.Serializable
 
