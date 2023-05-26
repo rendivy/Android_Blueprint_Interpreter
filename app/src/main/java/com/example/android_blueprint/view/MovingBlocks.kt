@@ -278,24 +278,17 @@ fun EndBlock(
 fun MovablePrintBlock(
     value: BlockValue.PrintBlock,
     block: PrintBlock,
-    viewModel: PathViewModel
+    viewModel: PathViewModel,
+    modifier: Modifier
 
 ) {
-
-
-    val modifier = Modifier
-        .offset { IntOffset(viewModel.offsetX.roundToInt(), viewModel.offsetY.roundToInt()) }
-        .onGloballyPositioned { coordinates ->
-            viewModel.boxHeight = coordinates.size.height.toFloat()
-            viewModel.boxWidth = coordinates.size.width.toFloat()
-        }
-        .clip(BlockShape)
-
-
     Column(
-        modifier = modifier
-            .width(BlockWidth)
-            .background(ComplexBlockColor)
+        modifier = Modifier
+            .offset { IntOffset(viewModel.offsetX.roundToInt(), viewModel.offsetY.roundToInt()) }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
@@ -325,6 +318,10 @@ fun MovablePrintBlock(
                     )
                 }
             }
+            .clip(BlockShape)
+            .width(BlockWidth)
+            .background(ComplexBlockColor)
+            .then(modifier)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row(
@@ -433,6 +430,7 @@ fun BinaryMovableOperatorBlock(
             .clip(BlockShape)
             .background(OperatorBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
 
 
     ) {
@@ -528,6 +526,7 @@ fun UnaryMovableOperatorBlock(
             .clip(BlockShape)
             .background(OperatorBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
         UnaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(
@@ -623,6 +622,7 @@ fun MovableIfBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
 
 
     ) {
@@ -752,7 +752,7 @@ fun MovableEndifBLock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
-            .background(ComplexBlockColor)
+            .background(ComplexBlockColor).then(modifier)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         MainFlow(modifier = Modifier
@@ -847,6 +847,7 @@ fun MovableInitializationBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
 
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
@@ -1055,6 +1056,7 @@ fun MovableForBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Box(
@@ -1164,6 +1166,7 @@ fun MovableWhileBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Box(
@@ -1260,6 +1263,7 @@ fun MovableGetValueBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row {
@@ -1326,6 +1330,7 @@ fun MovableFunctionBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row {
@@ -1398,6 +1403,7 @@ fun MovableReturnBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
         MainFlow(modifier = Modifier.clickable {
             setMainFlow(block)
@@ -1471,6 +1477,7 @@ fun MovableContinueOrBreakBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
         MainFlow(modifier = Modifier.clickable {
             setMainFlow(block)

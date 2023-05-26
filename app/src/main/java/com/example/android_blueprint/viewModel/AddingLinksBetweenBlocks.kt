@@ -93,7 +93,7 @@ fun setPreviousSupportFlowBlock(block: BlockEntity) {
 @OptIn(DelicateCoroutinesApi::class)
 fun start(startBlock: StartBlock) {
     GlobalScope.launch {
-        val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
+        val interpreter = interpretator.Interpret()
         ConsoleViewModel.consoleText = ""
         ConsoleViewModel.defaultTextColor = actionColor
         try{

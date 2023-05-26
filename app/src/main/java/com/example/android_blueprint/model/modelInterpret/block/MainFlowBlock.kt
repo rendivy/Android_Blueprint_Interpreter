@@ -39,7 +39,7 @@ class PrintBlock(
     override var previousMainFlowBlocks: BlockEntity? = null
     private fun printValue() {
         val curr = (valuable as IGetValuable).getValue()
-        if (curr.array.isEmpty()) {
+        if (curr.type != Type.LIST) {
             ConsoleViewModel.consoleText += curr.value  + '\n'
             println(curr.value)
         } else {

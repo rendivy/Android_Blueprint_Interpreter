@@ -176,6 +176,7 @@ fun SetMovableBlock(
         is BlockValue.PrintBlock -> MovablePrintBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as PrintBlock,
+            modifier = modifier,
             viewModel = fieldBlock.pathViewModel!!
         )
     }
