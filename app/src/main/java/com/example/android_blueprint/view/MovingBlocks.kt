@@ -84,6 +84,7 @@ fun createStartBranch(
 }
 
 fun createEndBranch(
+    inputBranch: BranchEntity,
     characteristicsBlock: CharacteristicsBlock,
     isMainFlow: Boolean,
     idFinishBlock: Int
@@ -94,6 +95,7 @@ fun createEndBranch(
     ) {
         defaultBranch
     } else {
+        tryClearBranches(inputBranch)
         val resultBranch = branchInWorking
         resultBranch.xFinish = mutableStateOf(characteristicsBlock.xResult)
         resultBranch.yFinish =
@@ -150,6 +152,19 @@ fun tryClearBranches(
     }
 }
 
+fun deleteAllBranches(
+    viewModel: BlockViewModel
+) {
+    tryClearBranches(viewModel.outputBranch)
+    tryClearBranches(viewModel.inputBranch)
+    tryClearBranches(viewModel.inputBranchForEndIf)
+    tryClearBranches(viewModel.outputBranchTrue)
+    tryClearBranches(viewModel.outputBranchFalse)
+    tryClearBranches(viewModel.inputSupportFLow)
+    tryClearBranches(viewModel.outputSupportFLow)
+    tryClearBranches(viewModel.inputSupportFLowLeft)
+    tryClearBranches(viewModel.inputSupportFLowRight)
+}
 
 @Composable
 fun StartBlock(
@@ -270,6 +285,7 @@ fun EndBlock(
                 setMainFlow(block)
 
                 viewModel.inputBranch = createEndBranch(
+                    viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 2,
@@ -349,6 +365,7 @@ fun MovablePrintBlock(
                     setMainFlow(block)
 
                     viewModel.inputBranch = createEndBranch(
+                        viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
                             viewModel.offsetY + viewModel.boxHeight / 2.35f,
@@ -381,6 +398,7 @@ fun MovablePrintBlock(
                     setUnaryOperatorFlow(block)
 
                     viewModel.inputSupportFLow = createEndBranch(
+                        viewModel.inputSupportFLow,
                         CharacteristicsBlock(
                             viewModel.offsetX,
                             viewModel.offsetY + viewModel.boxHeight / 1.2f,
@@ -460,6 +478,7 @@ fun BinaryMovableOperatorBlock(
         SupportingFlow(modifier = Modifier.clickable {
             setTopFlowOperator(block)
             viewModel.inputSupportFLowLeft = createEndBranch(
+                viewModel.inputSupportFLowLeft,
                 CharacteristicsBlock(
                     viewModel.offsetX,
                     viewModel.offsetY + viewModel.boxHeight / 5f,
@@ -474,6 +493,7 @@ fun BinaryMovableOperatorBlock(
                 .clickable {
                     setBottomFlowOperator(block)
                     viewModel.inputSupportFLowRight = createEndBranch(
+                        viewModel.inputSupportFLowRight,
                         CharacteristicsBlock(
                             viewModel.offsetX,
                             viewModel.offsetY + viewModel.boxHeight / 1.2f,
@@ -564,6 +584,7 @@ fun UnaryMovableOperatorBlock(
                     setUnaryOperatorFlow(block)
 
                     viewModel.inputSupportFLow = createEndBranch(
+                        viewModel.inputSupportFLow,
                         CharacteristicsBlock(
                             viewModel.offsetX,
                             viewModel.offsetY + viewModel.boxHeight / 2,
@@ -673,6 +694,7 @@ fun MovableIfBlock(
                     setMainFlow(block)
 
                     viewModel.inputBranch = createEndBranch(
+                        viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
                             viewModel.offsetY + viewModel.boxHeight / 5f,
@@ -706,6 +728,7 @@ fun MovableIfBlock(
                     setUnaryOperatorFlow(block)
 
                     viewModel.inputSupportFLow = createEndBranch(
+                        viewModel.inputSupportFLow,
                         CharacteristicsBlock(
                             viewModel.offsetX,
                             viewModel.offsetY + viewModel.boxHeight / 1.2f,
@@ -804,6 +827,7 @@ fun MovableEndifBLock(
                 setEndifTopFlow(block)
 
                 viewModel.inputBranch = createEndBranch(
+                    viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 5f,
@@ -818,6 +842,7 @@ fun MovableEndifBLock(
                 setEndifBottomFlow(block)
 
                 viewModel.inputBranchForEndIf = createEndBranch(
+                    viewModel.inputBranchForEndIf,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 1.2f,
@@ -911,6 +936,7 @@ fun MovableInitializationBlock(
                 setMainFlow(block)
 
                 viewModel.inputBranch = createEndBranch(
+                    viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 2,
@@ -1013,6 +1039,7 @@ fun MovableSetBlock(
                 setMainFlow(block)
 
                 viewModel.inputBranch = createEndBranch(
+                    viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 2,
@@ -1055,6 +1082,7 @@ fun MovableSetBlock(
                                 viewModel.offsetX + viewModel.boxWidth,
                                 viewModel.offsetY + viewModel.boxHeight / 1.4f,
                             ),
+                            false,
                             idStartBlock = block.getId()
                         )
                     })
@@ -1134,6 +1162,7 @@ fun MovableForBlock(
                 setMainFlow(block)
 
                 viewModel.inputBranch = createEndBranch(
+                    viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 5f,
@@ -1252,6 +1281,7 @@ fun MovableWhileBlock(
                 setMainFlow(block)
 
                 viewModel.inputBranch = createEndBranch(
+                    viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 5f,
@@ -1501,6 +1531,7 @@ fun MovableReturnBlock(
                 setMainFlow(block)
 
                 viewModel.inputBranch = createEndBranch(
+                    viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 5,
@@ -1524,13 +1555,14 @@ fun MovableReturnBlock(
             SupportingFlow(modifier = Modifier.clickable {
                 setUnaryOperatorFlow(block)
 
-                viewModel.inputSupportFLow = createStartBranch(
+                viewModel.inputSupportFLow = createEndBranch(
                     viewModel.inputSupportFLow,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 1.4f,
                     ),
-                    idStartBlock = block.getId()
+                    false,
+                    (block as BlockEntity).getId()
                 )
             })
             TextForFlow(text = "value")
@@ -1583,6 +1615,7 @@ fun MovableContinueOrBreakBlock(
                 setMainFlow(block)
 
                 viewModel.inputBranch = createEndBranch(
+                    viewModel.inputBranch,
                     CharacteristicsBlock(
                         viewModel.offsetX,
                         viewModel.offsetY + viewModel.boxHeight / 2,
