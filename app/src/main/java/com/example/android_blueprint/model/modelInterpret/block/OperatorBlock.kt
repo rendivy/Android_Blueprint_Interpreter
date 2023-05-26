@@ -103,6 +103,34 @@ class GetVariableBlock(
     }
 }
 
+class InputBlock(
+    instruction: Instruction = Instruction.INPUT
+) : BlockEntity(instruction), IGetValuable, IHaveUserInput {
+    private var rawInput: String = ""
+    private var variable: Valuable = Valuable(0, Type.INT)
+
+    fun getRawInput(): String {
+        return rawInput
+    }
+
+    override fun setUserInput(input: String) {
+        this.rawInput = input
+    }
+
+    override fun getValue(): Valuable {
+        return variable
+    }
+
+    fun setValue(value: Valuable) {
+        this.variable = value
+    }
+
+    //TODO: validate user input
+    override fun validate() {
+
+    }
+}
+
 class BinarySumOperatorBlock(
     instruction: Instruction = Instruction.OPERATOR_BLOCK
 ) : BlockEntity(instruction), IBinaryOperatorBlock {
