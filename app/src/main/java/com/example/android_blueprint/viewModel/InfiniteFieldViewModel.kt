@@ -13,15 +13,18 @@ import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
 import com.example.android_blueprint.model.PreviousBlocks
 import com.example.android_blueprint.model.Transform
+import com.example.android_blueprint.ui.theme.ActiveColor
 import com.example.android_blueprint.ui.theme.InitialOffset
 import com.example.android_blueprint.ui.theme.InitialScale
+import interpretator.Interpret
 
 class InfiniteFieldViewModel : ViewModel() {
     private var currentIndex = 0
+    val interpret = Interpret()
     val startBlock = StartBlock()
     val endBlock = EndBlock()
-    val startViewModel = PathViewModel()
-    val endViewModel = PathViewModel()
+    val startViewModel = BlockViewModel()
+    val endViewModel = BlockViewModel()
     var blocks by mutableStateOf(listOf<FieldBlock>())
     var deleteMode by mutableStateOf(false)
     var transform by mutableStateOf(Transform(InitialScale, InitialOffset))
@@ -31,9 +34,9 @@ class InfiniteFieldViewModel : ViewModel() {
     }
 
     fun addBlock(blockValue: Any) {
-        val pathViewModel = PathViewModel()
+        val pathViewModel = BlockViewModel()
         if (blockValue == BlockValue.IfBlock) {
-            val pathVIewModelEndif = PathViewModel()
+            val pathVIewModelEndif = BlockViewModel()
             addVariable(
                 FieldBlock(
                     value = blockValue,
@@ -70,7 +73,7 @@ class InfiniteFieldViewModel : ViewModel() {
 
     fun getDeleteButtonColor(): Color {
         return if (deleteMode) {
-            Color.Red
+            ActiveColor
         } else {
             Color.Gray
         }

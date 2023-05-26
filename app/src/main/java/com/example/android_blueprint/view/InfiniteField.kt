@@ -29,7 +29,6 @@ import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.DeleteButtonSize
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
-import com.example.android_blueprint.viewModel.PathViewModel
 import com.example.android_blueprint.viewModel.start
 
 
@@ -65,10 +64,14 @@ fun InfiniteField(
     )
     {
 
-        EndBlock(value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock,
-        endViewModel = infiniteFieldViewModel.endViewModel)
-        StartBlock(value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock,
-        startViewModel =  infiniteFieldViewModel.startViewModel)
+        EndBlock(
+            value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock,
+            viewModel = infiniteFieldViewModel.endViewModel
+        )
+        StartBlock(
+            value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock,
+            viewModel = infiniteFieldViewModel.startViewModel
+        )
 
         for (block in blocks) {
             SetMovableBlock(fieldBlock = block, infiniteFieldViewModel = infiniteFieldViewModel)
@@ -86,7 +89,12 @@ fun InfiniteField(
                     .size(DeleteButtonSize)
                     .clip(CircleShape)
                     .background(Color.Gray)
-                    .clickable { start(infiniteFieldViewModel.startBlock) }
+                    .clickable {
+                        start(
+                            infiniteFieldViewModel.startBlock,
+                            infiniteFieldViewModel.interpret
+                        )
+                    }
             ) {
                 Icon(
                     Icons.Rounded.Build, contentDescription = null,

@@ -2,12 +2,9 @@ package com.example.android_blueprint.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
@@ -16,7 +13,6 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,13 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
+import block.BlockEntity
 import block.EndFunctionBlock
 import block.EndIfBlock
 import block.ForBlock
@@ -49,8 +43,8 @@ import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
 import com.example.android_blueprint.ui.theme.BinaryOperatorsTextSize
-import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
+import com.example.android_blueprint.ui.theme.BreakPointPadding
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.ComplexBlockTextSize
 import com.example.android_blueprint.ui.theme.DefaultPadding
@@ -64,8 +58,6 @@ import com.example.android_blueprint.ui.theme.TextPaddingForFlow
 import com.example.android_blueprint.ui.theme.UnaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
-import com.example.android_blueprint.viewModel.PathViewModel
-import kotlin.math.roundToInt
 
 @Composable
 fun SetMovableBlock(
@@ -92,91 +84,92 @@ fun SetMovableBlock(
         is BlockValue.ContinueBlock, BlockValue.BreakBlock -> MovableContinueOrBreakBlock(
             value = fieldBlock.value as BlockValue,
             block = fieldBlock.block as IMainFLowBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.SetBlock -> MovableSetBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as SetVariableBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.ReturnBlock -> MovableReturnBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as EndFunctionBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.FunctionBlock -> MovableFunctionBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as FunctionBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.GetValueBlock -> MovableGetValueBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as GetVariableBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.ForBlock -> MovableForBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as ForBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.WhileBlock -> MovableWhileBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as WhileBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as IUnaryOperatorBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.BinaryOperator -> BinaryMovableOperatorBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as IBinaryOperatorBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.InitializationBlock -> MovableInitializationBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as InitializationVariableBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.IfBlock -> MovableIfBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as IfBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.EndifBlock -> MovableEndifBLock(
             value = fieldBlock.value,
             block = fieldBlock.block as EndIfBlock,
-            modifier = modifier,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
 
         is BlockValue.PrintBlock -> MovablePrintBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as PrintBlock,
-            viewModel = fieldBlock.pathViewModel!!
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
         )
     }
 }
@@ -375,5 +368,25 @@ fun placeholderText(text: String, modifier: Modifier = Modifier) {
         textAlign = TextAlign.Center,
         modifier = modifier
             .padding(top = PaddingForPlaceholderText)
+    )
+}
+
+@Composable
+fun BreakPoint(
+    block: BlockEntity,
+    color: Color,
+    changeBreakPointColor: () -> Unit,
+    modifier: Modifier
+) {
+    Box(
+        modifier = modifier
+            .padding(BreakPointPadding)
+            .clip(BlockShape)
+            .size(FlowSize)
+            .background(color)
+            .clickable {
+                block.switchBreakPoint()
+                changeBreakPointColor()
+            }
     )
 }

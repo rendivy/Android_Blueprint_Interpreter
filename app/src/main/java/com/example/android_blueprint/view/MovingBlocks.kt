@@ -8,15 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,7 +44,7 @@ import com.example.android_blueprint.ui.theme.BorderBlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
-import com.example.android_blueprint.viewModel.PathViewModel
+import com.example.android_blueprint.viewModel.BlockViewModel
 import com.example.android_blueprint.viewModel.setBottomFlowOperator
 import com.example.android_blueprint.viewModel.setEndifBottomFlow
 import com.example.android_blueprint.viewModel.setEndifTopFlow
@@ -61,7 +57,6 @@ import com.example.android_blueprint.viewModel.setUnaryOperatorFlow
 import kotlin.math.roundToInt
 
 val defaultBranch = BranchEntity(mutableStateOf(0f), mutableStateOf(0f), idStartBlock = -1)
-
 var branchInWorking: BranchEntity = defaultBranch
 
 data class CharacteristicsBlock(
@@ -160,31 +155,31 @@ fun tryClearBranches(
 fun StartBlock(
     value: BlockValue.StartBlock,
     block: StartBlock,
-    startViewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Box(
         modifier = Modifier
             .offset {
                 IntOffset(
-                    startViewModel.offsetX.roundToInt(),
-                    startViewModel.offsetY.roundToInt()
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
                 )
             }
             .onGloballyPositioned { coordinates ->
-                startViewModel.boxHeight = coordinates.size.height.toFloat()
-                startViewModel.boxWidth = coordinates.size.width.toFloat()
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
             }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
-                    startViewModel.offsetX += dragAmount.x
-                    startViewModel.offsetY += dragAmount.y
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
 
-                    startViewModel.outputBranch = updateStartBranch(
-                        startViewModel.outputBranch,
+                    viewModel.outputBranch = updateStartBranch(
+                        viewModel.outputBranch,
                         CharacteristicsBlock(
-                            startViewModel.offsetX + startViewModel.boxWidth,
-                            startViewModel.offsetY + startViewModel.boxHeight / 2
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2
                         )
                     )
                 }
@@ -195,19 +190,25 @@ fun StartBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
+        BreakPoint(
+            block = block,
+            color = viewModel.color,
+            changeBreakPointColor = viewModel::changeBreakPointColor,
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
         MainFlowTest(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clickable {
                     setPreviousMainFlowTrueBlock(block)
 
-                    tryClearBranches(startViewModel.outputBranch)
+                    tryClearBranches(viewModel.outputBranch)
 
-                    startViewModel.outputBranch = createStartBranch(
-                        startViewModel.outputBranch,
+                    viewModel.outputBranch = createStartBranch(
+                        viewModel.outputBranch,
                         CharacteristicsBlock(
-                            startViewModel.offsetX + startViewModel.boxWidth,
-                            startViewModel.offsetY + startViewModel.boxHeight / 2,
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
                         ),
                         idStartBlock = block.getId()
                     )
@@ -220,7 +221,7 @@ fun StartBlock(
 fun EndBlock(
     value: BlockValue.EndBlock,
     block: EndBlock,
-    endViewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
 
 
@@ -228,25 +229,25 @@ fun EndBlock(
         modifier = Modifier
             .offset {
                 IntOffset(
-                    endViewModel.offsetX.roundToInt(),
-                    endViewModel.offsetY.roundToInt()
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
                 )
             }
             .onGloballyPositioned { coordinates ->
-                endViewModel.boxHeight = coordinates.size.height.toFloat()
-                endViewModel.boxWidth = coordinates.size.width.toFloat()
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
             }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
-                    endViewModel.offsetX += dragAmount.x
-                    endViewModel.offsetY += dragAmount.y
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
 
-                    endViewModel.inputBranch = updateEndBranch(
-                        endViewModel.inputBranch,
+                    viewModel.inputBranch = updateEndBranch(
+                        viewModel.inputBranch,
                         CharacteristicsBlock(
-                            endViewModel.offsetX,
-                            endViewModel.offsetY + endViewModel.boxHeight / 2,
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
                         )
                     )
                 }
@@ -257,15 +258,21 @@ fun EndBlock(
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
+        BreakPoint(
+            block = block,
+            color = viewModel.color,
+            changeBreakPointColor = viewModel::changeBreakPointColor,
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
         MainFlowTest2(modifier = Modifier
             .align(Alignment.CenterStart)
             .clickable {
                 setMainFlow(block)
 
-                endViewModel.inputBranch = createEndBranch(
+                viewModel.inputBranch = createEndBranch(
                     CharacteristicsBlock(
-                        endViewModel.offsetX,
-                        endViewModel.offsetY + endViewModel.boxHeight / 2,
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 2,
                     ),
                     true,
                     block.getId()
@@ -278,22 +285,18 @@ fun EndBlock(
 fun MovablePrintBlock(
     value: BlockValue.PrintBlock,
     block: PrintBlock,
-    viewModel: PathViewModel
-
+    modifier: Modifier,
+    viewModel: BlockViewModel
 ) {
 
-
-    val modifier = Modifier
-        .offset { IntOffset(viewModel.offsetX.roundToInt(), viewModel.offsetY.roundToInt()) }
-        .onGloballyPositioned { coordinates ->
-            viewModel.boxHeight = coordinates.size.height.toFloat()
-            viewModel.boxWidth = coordinates.size.width.toFloat()
-        }
-        .clip(BlockShape)
-
-
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset { IntOffset(viewModel.offsetX.roundToInt(), viewModel.offsetY.roundToInt()) }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .clip(BlockShape)
             .width(BlockWidth)
             .background(ComplexBlockColor)
             .pointerInput(Unit) {
@@ -325,8 +328,18 @@ fun MovablePrintBlock(
                     )
                 }
             }
+            .then(modifier)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box {
+            ComplexBlockText(modifier = value.modifier, text = value.text)
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd),
+
+                )
+        }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
@@ -385,7 +398,7 @@ fun BinaryMovableOperatorBlock(
     value: BlockValue.BinaryOperator,
     block: IBinaryOperatorBlock,
     modifier: Modifier,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Box(
         modifier = Modifier
@@ -433,9 +446,16 @@ fun BinaryMovableOperatorBlock(
             .clip(BlockShape)
             .background(OperatorBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
 
 
     ) {
+        BreakPoint(
+            block = block as BlockEntity,
+            color = viewModel.color,
+            changeBreakPointColor = viewModel::changeBreakPointColor,
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
         BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(modifier = Modifier.clickable {
             setTopFlowOperator(block)
@@ -486,7 +506,7 @@ fun UnaryMovableOperatorBlock(
     value: BlockValue.UnaryOperator,
     block: IUnaryOperatorBlock,
     modifier: Modifier,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
 
     Box(
@@ -528,7 +548,14 @@ fun UnaryMovableOperatorBlock(
             .clip(BlockShape)
             .background(OperatorBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
+        BreakPoint(
+            block = block as BlockEntity,
+            color = viewModel.color,
+            changeBreakPointColor = viewModel::changeBreakPointColor,
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
         UnaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(
             modifier = Modifier
@@ -569,7 +596,7 @@ fun MovableIfBlock(
     value: BlockValue.IfBlock,
     block: IfBlock,
     modifier: Modifier,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Column(
         modifier = Modifier
@@ -623,10 +650,19 @@ fun MovableIfBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
 
 
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box {
+            ComplexBlockText(modifier = value.modifier, text = value.text)
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -705,7 +741,7 @@ fun MovableEndifBLock(
     value: BlockValue.EndifBlock,
     block: EndIfBlock,
     modifier: Modifier,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Box(
         modifier = Modifier
@@ -753,8 +789,15 @@ fun MovableEndifBLock(
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
             .background(ComplexBlockColor)
+            .then(modifier)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
+        BreakPoint(
+            block = block,
+            color = viewModel.color,
+            changeBreakPointColor = viewModel::changeBreakPointColor,
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
         MainFlow(modifier = Modifier
             .align(Alignment.CenterStart)
             .clickable {
@@ -806,7 +849,7 @@ fun MovableInitializationBlock(
     value: BlockValue.InitializationBlock,
     block: InitializationVariableBlock,
     modifier: Modifier,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
 
     Column(
@@ -847,9 +890,18 @@ fun MovableInitializationBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
 
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box {
+            ComplexBlockText(modifier = value.modifier, text = value.text)
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -894,7 +946,7 @@ fun MovableSetBlock(
     value: BlockValue.SetBlock,
     block: SetVariableBlock,
     modifier: Modifier,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Column(
         modifier = Modifier
@@ -943,7 +995,15 @@ fun MovableSetBlock(
             .heightIn(min = BlockHeight)
             .then(modifier)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box {
+            ComplexBlockText(modifier = value.modifier, text = value.text)
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -1008,7 +1068,7 @@ fun MovableForBlock(
     value: BlockValue.ForBlock,
     modifier: Modifier,
     block: ForBlock,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Column(
         modifier = Modifier
@@ -1055,8 +1115,17 @@ fun MovableForBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box {
+            ComplexBlockText(modifier = value.modifier, text = value.text)
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1117,7 +1186,7 @@ fun MovableWhileBlock(
     value: BlockValue.WhileBlock,
     modifier: Modifier,
     block: WhileBlock,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Column(
         modifier = Modifier
@@ -1164,8 +1233,17 @@ fun MovableWhileBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box {
+            ComplexBlockText(modifier = value.modifier, text = value.text)
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1227,7 +1305,7 @@ fun MovableGetValueBlock(
     value: BlockValue.GetValueBlock,
     modifier: Modifier,
     block: GetVariableBlock,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Column(
         modifier = Modifier
@@ -1260,8 +1338,17 @@ fun MovableGetValueBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box {
+            ComplexBlockText(modifier = value.modifier, text = value.text)
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        }
         Row {
             TextFieldForVariable(
                 value = "expression",
@@ -1293,7 +1380,7 @@ fun MovableFunctionBlock(
     value: BlockValue.FunctionBlock,
     modifier: Modifier,
     block: FunctionBlock,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Column(
         modifier = Modifier
@@ -1326,8 +1413,17 @@ fun MovableFunctionBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        Box {
+            ComplexBlockText(modifier = value.modifier, text = value.text)
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        }
         Row {
             TextFieldForVariable(
                 value = "name(args)",
@@ -1358,7 +1454,7 @@ fun MovableReturnBlock(
     value: BlockValue.ReturnBlock,
     modifier: Modifier,
     block: EndFunctionBlock,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Column(
         modifier = Modifier
@@ -1398,19 +1494,28 @@ fun MovableReturnBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
-        MainFlow(modifier = Modifier.clickable {
-            setMainFlow(block)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            MainFlow(modifier = Modifier.clickable {
+                setMainFlow(block)
 
-            viewModel.inputBranch = createEndBranch(
-                CharacteristicsBlock(
-                    viewModel.offsetX,
-                    viewModel.offsetY + viewModel.boxHeight / 5,
-                ),
-                true,
-                (block as BlockEntity).getId()
+                viewModel.inputBranch = createEndBranch(
+                    CharacteristicsBlock(
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 5,
+                    ),
+                    true,
+                    (block as BlockEntity).getId()
+                )
+            })
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
             )
-        })
+        }
         ComplexBlockText(
             modifier = value.modifier.align(Alignment.CenterHorizontally),
             text = value.text
@@ -1438,7 +1543,7 @@ fun MovableContinueOrBreakBlock(
     value: BlockValue,
     modifier: Modifier,
     block: IMainFLowBlock,
-    viewModel: PathViewModel
+    viewModel: BlockViewModel
 ) {
     Column(
         modifier = Modifier
@@ -1471,19 +1576,28 @@ fun MovableContinueOrBreakBlock(
             .clip(BlockShape)
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
-        MainFlow(modifier = Modifier.clickable {
-            setMainFlow(block)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            MainFlow(modifier = Modifier.clickable {
+                setMainFlow(block)
 
-            viewModel.inputBranch = createEndBranch(
-                CharacteristicsBlock(
-                    viewModel.offsetX,
-                    viewModel.offsetY + viewModel.boxHeight / 2,
-                ),
-                true,
-                (block as BlockEntity).getId()
+                viewModel.inputBranch = createEndBranch(
+                    CharacteristicsBlock(
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 2,
+                    ),
+                    true,
+                    (block as BlockEntity).getId()
+                )
+            })
+            BreakPoint(
+                block = block as BlockEntity,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
             )
-        })
+        }
         ComplexBlockText(
             modifier = value.modifier.align(Alignment.CenterHorizontally),
             text = value.text

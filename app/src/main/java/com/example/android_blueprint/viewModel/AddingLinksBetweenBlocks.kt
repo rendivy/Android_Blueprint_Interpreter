@@ -10,6 +10,7 @@ import block.IUnaryOperatorBlock
 import block.StartBlock
 import com.example.android_blueprint.model.PreviousBlocks
 import com.example.android_blueprint.ui.theme.actionColor
+import interpretator.Interpret
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -91,9 +92,8 @@ fun setPreviousSupportFlowBlock(block: BlockEntity) {
 }
 
 @OptIn(DelicateCoroutinesApi::class)
-fun start(startBlock: StartBlock) {
+fun start(startBlock: StartBlock, interpreter: Interpret) {
     GlobalScope.launch {
-        val interpreter = interpretator.Interpret(BlockEntity.getBlocks())
         ConsoleViewModel.consoleText = ""
         ConsoleViewModel.defaultTextColor = actionColor
         try{

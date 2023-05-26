@@ -20,3 +20,4 @@ val BorderBlockWidth = 130.dp
 val AdaptiveWidth = 156.dp
 val InitialOffset = Offset.Zero
 val HeightOfSmallBlocks = 60.dp
+val ButtonSize = 70.dp

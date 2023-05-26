@@ -22,7 +22,7 @@ class BottomNavGraphViewModel : ViewModel() {
                 )
             }
             composable(route = BottomBarModel.Console.route) {
-                ConsoleScreen()
+                ConsoleScreen(infiniteFieldViewModel.interpret)
             }
             composable(route = BottomBarModel.BlockOfList.route) {
                 ListScreen(infiniteFieldViewModel::addBlock)
