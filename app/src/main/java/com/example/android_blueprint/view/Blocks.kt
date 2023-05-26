@@ -64,12 +64,13 @@ import com.example.android_blueprint.ui.theme.TextPaddingForFlow
 import com.example.android_blueprint.ui.theme.UnaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
+import com.example.android_blueprint.viewModel.PathViewModel
 import kotlin.math.roundToInt
 
 @Composable
 fun SetMovableBlock(
     fieldBlock: FieldBlock,
-    infiniteFieldViewModel: InfiniteFieldViewModel
+    infiniteFieldViewModel: InfiniteFieldViewModel,
 ) {
     if (fieldBlock.value == -1) return
     var offsetX by rememberSaveable { mutableStateOf(0f) }
@@ -164,7 +165,8 @@ fun SetMovableBlock(
 
         is BlockValue.PrintBlock -> MovablePrintBlock(
             value = fieldBlock.value,
-            block = fieldBlock.block as PrintBlock
+            block = fieldBlock.block as PrintBlock,
+            viewModel = fieldBlock.pathViewModel!!
         )
     }
 }

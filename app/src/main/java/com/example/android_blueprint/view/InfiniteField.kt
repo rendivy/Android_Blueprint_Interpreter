@@ -21,10 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
-import block.PrintBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.BranchEntity
 import com.example.android_blueprint.ui.theme.BackgroundColor
@@ -35,12 +33,13 @@ import com.example.android_blueprint.viewModel.PathViewModel
 import com.example.android_blueprint.viewModel.start
 
 
-
-
 @Composable
 fun InfiniteField(
-    infiniteFieldViewModel: InfiniteFieldViewModel
+    infiniteFieldViewModel: InfiniteFieldViewModel,
+    startViewModel: PathViewModel,
+    endViewModel: PathViewModel,
 ) {
+
     val blocks = infiniteFieldViewModel.blocks
     val transform = infiniteFieldViewModel.transform
     val changeTransform = infiniteFieldViewModel::changeTransform
@@ -68,8 +67,10 @@ fun InfiniteField(
     )
     {
 
-        EndBlock(value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock)
-        StartBlock(value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock)
+        EndBlock(value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock,
+        endViewModel = endViewModel)
+        StartBlock(value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock,
+        startViewModel =  startViewModel)
 
         for (block in blocks) {
             SetMovableBlock(fieldBlock = block, infiniteFieldViewModel = infiniteFieldViewModel)
