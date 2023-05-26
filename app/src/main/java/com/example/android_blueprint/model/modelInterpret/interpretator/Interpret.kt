@@ -18,7 +18,8 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlinx.coroutines.*
 
-class Interpret(private var blocks: List<BlockEntity>) {
+class Interpret() {
+    var blocks = BlockEntity.getBlocks()
     var input = ""
     var output = ""
     var waitingForInput = false
@@ -60,6 +61,7 @@ class Interpret(private var blocks: List<BlockEntity>) {
     private var functionName = mutableListOf<String>()
 
     fun run(startBlock: StartBlock) {
+        blocks = BlockEntity.getBlocks()
         blocks.forEach {
             it.validate()
         }
