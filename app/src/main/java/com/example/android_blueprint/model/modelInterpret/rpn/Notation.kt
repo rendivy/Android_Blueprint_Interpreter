@@ -143,7 +143,7 @@ class Notation {
                 "(\\.toInt\\(\\)|\\.toFloat\\(\\)|\\.toString\\(\\)|\\.toBool\\(\\)|\\.sort\\(\\)|\\.toList\\(\\))"
             val operator = "(\\+=|-=|\\*=|/=|%=|&&|\\|\\||\\+|-|//|\\*|%|/|==|=|!=|>=|<=|<|>|)"
             val bracket = "(\\(|\\)|\\[|\\])"
-            val functionCall = "\\b(${functionName.joinToString("|")})\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()])*\\))*\\))*\\))*\\))*\\)(?!\\))"
+            val functionCall = "\\b($name)\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()])*\\))*\\))*\\))*\\))*\\)(?!\\))"
             val exp = Regex("($functionCall|$convert|$reserved|$bracket|$name|$operator)")
 
             return (exp.findAll(str).toList().map { it.destructured.toList()[0] })

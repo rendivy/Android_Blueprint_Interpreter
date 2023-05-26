@@ -2,10 +2,6 @@ package exceptions
 
 class RuntimeError(message: String = "") : Exception(message)
 
-class UnhandledError(message: String = "") : Exception(message)
-
-class LexerError(message: String = "") : Exception(message)
-
 class TypeError(message: String = "") :
     Exception("FATAL ERROR:\nTypeError: $message\n\nStack traceback:")
 
@@ -18,14 +14,8 @@ class StackCorruptionError(message: String = "") :
 class IndexOutOfRangeError(message: String = "") :
     Exception("FATAL ERROR:\nIndexOutOfRangeError: $message\n\nStack traceback:")
 
-class BlockOutOfCycleContextError(message: String = "") :
-    Exception("FATAL ERROR:\nBlockOutOfCycleContextError: $message\n\nStack traceback:")
-
-class NullPointerException(message: String = "") :
-    Exception("FATAL ERROR:\nNullPointerException: $message\n\nStack traceback:")
-
 class NullPointerExceptionInOperator(message: String = "") :
     Exception("FATAL ERROR:\nNullPointerExceptionInOperator: $message\n\nStack traceback:")
 
-class InvalidBlockStructure(message: String = "") :
-    Exception("FATAL ERROR:\nInvalidBlockStructure: $message\n\nStack traceback:")
+class NotFoundError(message: String = "") :
+    Exception("FATAL ERROR:\nNotFoundError: $message\n\nStack traceback:")

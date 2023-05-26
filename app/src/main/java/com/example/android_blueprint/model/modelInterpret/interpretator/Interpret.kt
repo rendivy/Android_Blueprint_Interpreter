@@ -10,6 +10,7 @@ import exceptions.StackCorruptionError
 import Type
 import block.*
 import com.example.android_blueprint.viewModel.ConsoleViewModel
+import exceptions.NotFoundError
 import memory.Memory
 import memory.MemoryArea
 import memory.Valuable
@@ -37,15 +38,15 @@ class Interpret() {
         return isRunning
     }
 
-    fun switchStepInto(){
+    fun switchStepInto() {
         stepInto = !stepInto
     }
 
-    fun switchStepTo(){
+    fun switchStepTo() {
         stepTo = !stepTo
     }
 
-    fun switchDebug(){
+    fun switchDebug() {
         debug = !debug
     }
 
@@ -85,7 +86,7 @@ class Interpret() {
                 parseInitializationFunction(it)
             }
         }
-        functionHashMap.forEach(){
+        functionHashMap.forEach() {
             Notation.functionName.add(it.key)
             functionName.add(it.key)
         }
@@ -147,10 +148,9 @@ class Interpret() {
 
     private fun runFunction(rawFunction: String): Valuable? {
         val callFunctionEntity = parseCallFunction(rawFunction)
-        //TODO: изменить выкидываемую ошибку
 
         val functionEntity = functionHashMap[callFunctionEntity.name]
-            ?: throw NullPointerExceptionInOperator("Function ${callFunctionEntity.name} not found")
+            ?: throw NotFoundError("Function ${callFunctionEntity.name} not found")
 
         if (functionEntity.variables.size != callFunctionEntity.variables.size) {
             throw NullPointerExceptionInOperator(
@@ -174,18 +174,18 @@ class Interpret() {
         var currentMemory = memory
         while (currentMemory.previousMemory != null) {
             ConsoleViewModel.consoleText = currentMemory.scope + '\n'
-            for((key, value) in currentMemory.stack) {
+            for ((key, value) in currentMemory.stack) {
                 ConsoleViewModel.consoleText += "$key: $value\n"
             }
             currentMemory = currentMemory.previousMemory!!
         }
         ConsoleViewModel.consoleText = currentMemory.scope + '\n'
-        for((key, value) in currentMemory.stack) {
+        for ((key, value) in currentMemory.stack) {
             ConsoleViewModel.consoleText += "$key: $value\n"
         }
     }
 
-    private fun skipLoop(): BlockEntity{
+    private fun skipLoop(): BlockEntity {
         val loopBlock = loopStack.peek()
         if (loopBlock.getInstruction() == Instruction.FOR) {
             val parse = parseForLoop(loopBlock)
@@ -197,14 +197,15 @@ class Interpret() {
     private fun parse(startBlock: BlockEntity): Valuable? {
         var currentBlock = startBlock
         while (currentBlock.getInstruction() != Instruction.END_POINT) {
-            if(debug){
+            if (debug) {
                 debugging(currentBlock)
             }
             when (currentBlock.getInstruction()) {
                 Instruction.START_POINT -> {}
 
                 Instruction.INITIALIZATION -> {
-                    val parse = splitRawInput((currentBlock as InitializationVariableBlock).getRawInput())
+                    val parse =
+                        splitRawInput((currentBlock as InitializationVariableBlock).getRawInput())
                     for (raw in parse) {
                         parseExpressionString(raw, true)
                     }
@@ -240,12 +241,15 @@ class Interpret() {
                         parseExpressionString(parse[0], true)
                     }
                     if (parseExpressionString(parse[1]).value == "true") {
-                        (currentBlock as ForBlock).nextMainFlowBlocks = currentBlock.getTrueBranchExpression()!!
+                        (currentBlock as ForBlock).nextMainFlowBlocks =
+                            currentBlock.getTrueBranchExpression()!!
                     } else {
-                        if((currentBlock as ForBlock).getFalseBranchExpression() == null && !loopStack.isEmpty()){
-                            currentBlock.nextMainFlowBlocks = (loopStack.peek() as IMainFLowBlock).previousMainFlowBlocks
-                        }else{
-                            currentBlock.nextMainFlowBlocks = currentBlock.getFalseBranchExpression()!!
+                        if ((currentBlock as ForBlock).getFalseBranchExpression() == null && !loopStack.isEmpty()) {
+                            currentBlock.nextMainFlowBlocks =
+                                (loopStack.peek() as IMainFLowBlock).previousMainFlowBlocks
+                        } else {
+                            currentBlock.nextMainFlowBlocks =
+                                currentBlock.getFalseBranchExpression()!!
                         }
                         memory = memory.previousMemory!!
                         loopStack.pop()
@@ -260,10 +264,12 @@ class Interpret() {
                     if (parseExpressionString((currentBlock as WhileBlock).getRawInput()).value == "true") {
                         currentBlock.nextMainFlowBlocks = currentBlock.getTrueBranchExpression()!!
                     } else {
-                        if(currentBlock.getFalseBranchExpression() == null && !loopStack.isEmpty()){
-                            currentBlock.nextMainFlowBlocks = (loopStack.peek() as IMainFLowBlock).previousMainFlowBlocks
-                        }else{
-                            currentBlock.nextMainFlowBlocks = currentBlock.getFalseBranchExpression()!!
+                        if (currentBlock.getFalseBranchExpression() == null && !loopStack.isEmpty()) {
+                            currentBlock.nextMainFlowBlocks =
+                                (loopStack.peek() as IMainFLowBlock).previousMainFlowBlocks
+                        } else {
+                            currentBlock.nextMainFlowBlocks =
+                                currentBlock.getFalseBranchExpression()!!
                         }
                         memory = memory.previousMemory!!
                         loopStack.pop()
@@ -277,7 +283,7 @@ class Interpret() {
                 }
 
                 Instruction.RETURN -> {
-                    if((currentBlock as EndFunctionBlock).valuable == null){
+                    if ((currentBlock as EndFunctionBlock).valuable == null) {
                         memory = functionMemoryStack.pop()
                         return null
                     }
@@ -288,20 +294,20 @@ class Interpret() {
                 }
 
                 Instruction.CONTINUE -> {
-                    if(loopStack.isEmpty()){
+                    if (loopStack.isEmpty()) {
                         throw Exception("Unknown instruction")
                     }
                     currentBlock = skipLoop()
                 }
 
                 Instruction.BREAK -> {
-                    if (loopStack.isEmpty()){
+                    if (loopStack.isEmpty()) {
                         throw Exception("Unknown instruction")
                     }
                     currentBlock = skipLoop()
-                    if(currentBlock is ForBlock){
+                    if (currentBlock is ForBlock) {
                         currentBlock.nextMainFlowBlocks = currentBlock.getFalseBranchExpression()!!
-                    }else if(currentBlock is WhileBlock){
+                    } else if (currentBlock is WhileBlock) {
                         currentBlock.nextMainFlowBlocks = currentBlock.getFalseBranchExpression()!!
                         memory = memory.previousMemory!!
                         loopStack.pop()
@@ -312,7 +318,7 @@ class Interpret() {
                     runBlocking {
                         suspensionUserWhenInput()
                     }
-                    parseExpressionString((currentBlock as InputBlock).getRawInput()+"="+input)
+                    parseExpressionString((currentBlock as InputBlock).getRawInput() + "=" + input)
                     input = ""
                 }
 
@@ -320,11 +326,12 @@ class Interpret() {
                     throw Exception("Unknown instruction")
                 }
             }
-            if(!loopStack.isEmpty() &&
+            if (!loopStack.isEmpty() &&
                 ((currentBlock as IMainFLowBlock).nextMainFlowBlocks == null
-                        || (currentBlock as IMainFLowBlock).nextMainFlowBlocks == loopStack.peek())){
+                        || (currentBlock as IMainFLowBlock).nextMainFlowBlocks == loopStack.peek())
+            ) {
                 currentBlock = skipLoop()
-            } else{
+            } else {
                 currentBlock = (currentBlock as IMainFLowBlock).nextMainFlowBlocks!!
             }
         }
@@ -332,8 +339,8 @@ class Interpret() {
         return null
     }
 
-    private fun debugging(currentBlock: BlockEntity){
-        when{
+    private fun debugging(currentBlock: BlockEntity) {
+        when {
             stepInto -> {
                 stepInto = false
                 isRunningBlock = true
@@ -343,8 +350,9 @@ class Interpret() {
                 }
                 isRunningBlock = false
             }
+
             stepTo -> {
-                if(currentBlock.getBreakPoint()){
+                if (currentBlock.getBreakPoint()) {
                     stepTo = false
                     isRunningBlock = true
                     printMemory()
@@ -476,8 +484,10 @@ class Interpret() {
 
     private fun getValue(data: String): MemoryArea? {
         return when {
-            data in listOf("abs", "exp", "sorted", "ceil", "floor", "len",
-                ".toInt()", ".toFloat()", ".toBool()", ".toString()", ".sort()", ".toList()") -> {
+            data in listOf(
+                "abs", "exp", "sorted", "ceil", "floor", "len",
+                ".toInt()", ".toFloat()", ".toBool()", ".toString()", ".sort()", ".toList()"
+            ) -> {
                 null
             }
 
@@ -486,7 +496,9 @@ class Interpret() {
             }
 
 
-            (Regex("\\b(${functionName.joinToString("|")})\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()])*\\))*\\))*\\))*\\))*\\)(?!\\))").containsMatchIn(data)) -> {
+            (Regex("\\b([\\d]+\\.?[\\d]+|\\w[\\w\\d_]*|\".*\")\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()])*\\))*\\))*\\))*\\))*\\)(?!\\))").containsMatchIn(
+                data
+            )) -> {
                 runFunction(data)
             }
 
