@@ -17,6 +17,15 @@ abstract class BlockEntity(
             return Blocks
         }
 
+        fun checkBreakPointInBlocks(): Boolean{
+            Blocks.forEach {
+                if (it.breakPoint){
+                    return true
+                }
+            }
+            return false
+        }
+
         fun deletePreviousBlockMainFlowBranch(block: BlockEntity) {
             if ((block as IMainFLowBlock).previousMainFlowBlocks != null) {
                 if (block.previousMainFlowBlocks is IBranchesBlock) {
