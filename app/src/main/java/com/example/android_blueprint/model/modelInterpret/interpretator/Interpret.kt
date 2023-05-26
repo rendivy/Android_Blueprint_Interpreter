@@ -21,12 +21,21 @@ import kotlinx.coroutines.*
 class Interpret() {
     var blocks = BlockEntity.getBlocks()
     var input = ""
-    var output = ""
     var waitingForInput = false
 
     var debug = true
     var stepInto = false
     var stepTo = true
+    private var isRunning = false
+    private var isRunningBlock = false
+
+    fun isRunningInBlock(): Boolean {
+        return isRunningBlock
+    }
+
+    fun isRunning(): Boolean {
+        return isRunning
+    }
 
     fun switchStepInto(){
         stepInto = !stepInto
@@ -66,6 +75,7 @@ class Interpret() {
             it.validate()
         }
         initializationsFunction()
+        isRunning = true
         parse(startBlock)
     }
 
@@ -295,6 +305,14 @@ class Interpret() {
                     }
                 }
 
+                Instruction.INPUT -> {
+                    runBlocking {
+                        suspensionUserWhenInput()
+                    }
+                    parseExpressionString((currentBlock as InputBlock).getRawInput()+"="+input)
+                    input = ""
+                }
+
                 else -> {
                     throw Exception("Unknown instruction")
                 }
@@ -310,6 +328,7 @@ class Interpret() {
                 currentBlock = (currentBlock as IMainFLowBlock).nextMainFlowBlocks!!
             }
         }
+        isRunning = false
         return null
     }
 
@@ -317,24 +336,37 @@ class Interpret() {
         when{
             stepInto -> {
                 stepInto = false
+                isRunningBlock = true
                 printMemory()
                 runBlocking {
-                    suspensionUser()
+                    suspensionUserWhenDebugging()
                 }
+                isRunningBlock = false
             }
             stepTo -> {
                 if(currentBlock.getBreakPoint()){
                     stepTo = false
+                    isRunningBlock = true
                     printMemory()
                     runBlocking {
-                        suspensionUser()
+                        suspensionUserWhenDebugging()
                     }
+                    isRunningBlock = false
                 }
             }
         }
     }
 
-    private suspend fun suspensionUser() {
+    private suspend fun suspensionUserWhenInput() {
+        while (true) {
+            if (input.isNotEmpty()) {
+                break
+            }
+            delay(1000)
+        }
+    }
+
+    private suspend fun suspensionUserWhenDebugging() {
         while (true) {
             if (stepTo || stepInto) {
                 break
