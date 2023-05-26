@@ -72,10 +72,12 @@ fun SetMovableBlock(
     val modifier = Modifier
         .clickable(
             indication = null,
-            interactionSource = remember { MutableInteractionSource() }
+            interactionSource = remember {
+                MutableInteractionSource()
+            }
         ) {
             if (infiniteFieldViewModel.deleteMode) {
-                infiniteFieldViewModel.deleteMovableBlock(fieldBlock.index, fieldBlock.block!!)
+                infiniteFieldViewModel.deleteMovableBlock(fieldBlock.index, fieldBlock.block!!, fieldBlock.pathViewModel!!)
             }
         }
 

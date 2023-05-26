@@ -16,6 +16,7 @@ import com.example.android_blueprint.model.Transform
 import com.example.android_blueprint.ui.theme.ActiveColor
 import com.example.android_blueprint.ui.theme.InitialOffset
 import com.example.android_blueprint.ui.theme.InitialScale
+import com.example.android_blueprint.view.deleteAllBranches
 import interpretator.Interpret
 
 class InfiniteFieldViewModel : ViewModel() {
@@ -66,9 +67,10 @@ class InfiniteFieldViewModel : ViewModel() {
         }
     }
 
-    fun deleteMovableBlock(index: Int, block: BlockEntity) {
+    fun deleteMovableBlock(index: Int, block: BlockEntity, blockViewModel: BlockViewModel) {
         valueChange(index = index, value = FieldBlock())
         BlockEntity.deleteBlock(block)
+        deleteAllBranches(blockViewModel)
     }
 
     fun getDeleteButtonColor(): Color {
