@@ -60,7 +60,7 @@ import com.example.android_blueprint.viewModel.setTopFlowOperator
 import com.example.android_blueprint.viewModel.setUnaryOperatorFlow
 import kotlin.math.roundToInt
 
-val defaultBranch = BranchEntity(mutableStateOf(0f), mutableStateOf(0f))
+val defaultBranch = BranchEntity(mutableStateOf(0f), mutableStateOf(0f), idStartBlock = -1)
 
 var branchInWorking: BranchEntity = defaultBranch
 
@@ -70,22 +70,56 @@ data class CharacteristicsBlock(
 )
 
 fun createStartBranch(
+    inputBranch: BranchEntity,
     characteristicsBlock: CharacteristicsBlock,
     isMainFlow: Boolean = true,
+    idStartBlock: Int
 ): BranchEntity {
+    if (inputBranch.getId() != defaultBranch.getId()) {
+        inputBranch.deleteBranch()
+    }
     val branch = BranchEntity(
         xStart = mutableStateOf(characteristicsBlock.xResult),
         yStart = mutableStateOf(characteristicsBlock.yResult),
-        isMainFlow
+        isMainFlow,
+        idStartBlock,
     )
     branchInWorking = branch
     return branch
+}
+
+fun createEndBranch(
+    characteristicsBlock: CharacteristicsBlock,
+    isMainFlow: Boolean,
+    idFinishBlock: Int
+): BranchEntity {
+    return if (branchInWorking.isMainFlowBranch != isMainFlow ||
+        branchInWorking.getId() == defaultBranch.getId() ||
+        branchInWorking.idStartBlock == idFinishBlock
+    ) {
+        defaultBranch
+    } else {
+        val resultBranch = branchInWorking
+        resultBranch.xFinish = mutableStateOf(characteristicsBlock.xResult)
+        resultBranch.yFinish =
+            mutableStateOf(characteristicsBlock.yResult)
+        resultBranch.putInMap()
+        resultBranch.drawBranch()
+        resultBranch.switchIsConnected()
+        resultBranch.idFinishBlock = idFinishBlock
+        branchInWorking = defaultBranch
+        resultBranch
+    }
 }
 
 fun updateStartBranch(
     outputBranch: BranchEntity,
     characteristicsBlock: CharacteristicsBlock
 ): BranchEntity {
+    if (!outputBranch.isInMap()) {
+        return defaultBranch
+    }
+
     if (outputBranch.getId() != defaultBranch.getId()) {
         outputBranch.xStart.value = characteristicsBlock.xResult
         outputBranch.yStart.value = characteristicsBlock.yResult
@@ -97,42 +131,28 @@ fun updateStartBranch(
 
 }
 
-fun createEndBranch(
-    inputBranch: BranchEntity,
-    characteristicsBlock: CharacteristicsBlock,
-    isMainFlow: Boolean,
-): BranchEntity {
-    return if (inputBranch.isMainFlowBranch != isMainFlow) {
-        defaultBranch
-    } else if (inputBranch.getId() != defaultBranch.getId() && inputBranch.getIsConnected()) {
-        inputBranch.switchIsConnected()
-        inputBranch.deleteBranch()
-        defaultBranch
-    } else if (inputBranch.getId() == branchInWorking.getId()) {
-        defaultBranch
-    } else {
-        val resultBranch = branchInWorking
-        resultBranch.xFinish = mutableStateOf(characteristicsBlock.xResult)
-        resultBranch.yFinish =
-            mutableStateOf(characteristicsBlock.yResult)
-        resultBranch.putInMap()
-        resultBranch.drawBranch()
-        resultBranch.switchIsConnected()
-        branchInWorking = defaultBranch
-        resultBranch
-    }
-}
-
 fun updateEndBranch(
     inputBranch: BranchEntity,
     characteristicsBlock: CharacteristicsBlock
 ): BranchEntity {
+    if (!inputBranch.isInMap()) {
+        return defaultBranch
+    }
+
     if (inputBranch.getId() != defaultBranch.getId() && inputBranch.getIsConnected()) {
         inputBranch.xFinish.value = characteristicsBlock.xResult
         inputBranch.yFinish.value = characteristicsBlock.yResult
         inputBranch.drawBranch()
     }
     return inputBranch
+}
+
+fun tryClearBranches(
+    inputBranch: BranchEntity,
+) {
+    if (inputBranch.getId() != defaultBranch.getId()) {
+        inputBranch.deleteBranch()
+    }
 }
 
 
@@ -181,11 +201,15 @@ fun StartBlock(
                 .clickable {
                     setPreviousMainFlowTrueBlock(block)
 
+                    tryClearBranches(startViewModel.outputBranch)
+
                     startViewModel.outputBranch = createStartBranch(
+                        startViewModel.outputBranch,
                         CharacteristicsBlock(
                             startViewModel.offsetX + startViewModel.boxWidth,
-                            startViewModel.offsetY + startViewModel.boxHeight / 2
-                        )
+                            startViewModel.offsetY + startViewModel.boxHeight / 2,
+                        ),
+                        idStartBlock = block.getId()
                     )
                 }
         )
@@ -239,12 +263,12 @@ fun EndBlock(
                 setMainFlow(block)
 
                 endViewModel.inputBranch = createEndBranch(
-                    endViewModel.inputBranch,
                     CharacteristicsBlock(
                         endViewModel.offsetX,
                         endViewModel.offsetY + endViewModel.boxHeight / 2,
                     ),
-                    true
+                    true,
+                    block.getId()
                 )
             })
     }
@@ -296,7 +320,7 @@ fun MovablePrintBlock(
                         viewModel.inputSupportFLow,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.8f,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
                         )
                     )
                 }
@@ -312,12 +336,12 @@ fun MovablePrintBlock(
                     setMainFlow(block)
 
                     viewModel.inputBranch = createEndBranch(
-                        viewModel.inputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX,
                             viewModel.offsetY + viewModel.boxHeight / 2.35f,
                         ),
-                        true
+                        true,
+                        block.getId()
                     )
                 },
 
@@ -327,10 +351,12 @@ fun MovablePrintBlock(
                     setPreviousMainFlowTrueBlock(block)
 
                     viewModel.outputBranch = createStartBranch(
+                        viewModel.outputBranch,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
                             viewModel.offsetY + viewModel.boxHeight / 2.35f,
-                        )
+                        ),
+                        idStartBlock = block.getId()
                     )
                 },
             )
@@ -342,12 +368,12 @@ fun MovablePrintBlock(
                     setUnaryOperatorFlow(block)
 
                     viewModel.inputSupportFLow = createEndBranch(
-                        viewModel.inputSupportFLow,
                         CharacteristicsBlock(
                             viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.8f,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
                         ),
-                        false
+                        false,
+                        block.getId()
                     )
                 })
     }
@@ -382,41 +408,44 @@ fun BinaryMovableOperatorBlock(
                     viewModel.inputSupportFLowLeft = updateEndBranch(
                         viewModel.inputSupportFLowLeft,
                         CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth / 2.5f,
-                            viewModel.offsetY,
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
                         )
                     )
                     viewModel.inputSupportFLowRight = updateEndBranch(
                         viewModel.inputSupportFLowRight,
                         CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth / 1.3f,
-                            viewModel.offsetY,
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
                         )
                     )
                     viewModel.outputSupportFLow = updateStartBranch(
                         viewModel.outputSupportFLow,
                         CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth / 2,
-                            viewModel.offsetY,
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
                         )
                     )
 
                 }
             }
-            .width(BlockWidth).clip(BlockShape)
-            .background(OperatorBlockColor).heightIn(min = BlockHeight)
+            .width(BlockWidth)
+            .clip(BlockShape)
+            .background(OperatorBlockColor)
+            .heightIn(min = BlockHeight)
 
 
     ) {
         BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(modifier = Modifier.clickable {
             setTopFlowOperator(block)
-            viewModel.inputSupportFLowLeft = createStartBranch(
+            viewModel.inputSupportFLowLeft = createEndBranch(
                 CharacteristicsBlock(
-                    viewModel.offsetX + viewModel.boxWidth / 2.5f,
-                    viewModel.offsetY,
+                    viewModel.offsetX,
+                    viewModel.offsetY + viewModel.boxHeight / 5f,
                 ),
-                false
+                false,
+                (block as BlockEntity).getId()
             )
         })
         SupportingFlow(
@@ -424,12 +453,13 @@ fun BinaryMovableOperatorBlock(
                 .align(Alignment.BottomStart)
                 .clickable {
                     setBottomFlowOperator(block)
-                    viewModel.inputSupportFLowRight = createStartBranch(
+                    viewModel.inputSupportFLowRight = createEndBranch(
                         CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth / 1.3f,
-                            viewModel.offsetY + viewModel.boxHeight,
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
                         ),
-                        false
+                        false,
+                        (block as BlockEntity).getId()
                     )
                 })
         SupportingFlow(
@@ -438,13 +468,14 @@ fun BinaryMovableOperatorBlock(
                 .clickable {
                     setPreviousSupportFlowBlock(block as BlockEntity)
 
-                    viewModel.outputSupportFLow = createEndBranch(
+                    viewModel.outputSupportFLow = createStartBranch(
                         viewModel.outputSupportFLow,
                         CharacteristicsBlock(
                             viewModel.offsetX + viewModel.boxWidth,
                             viewModel.offsetY + viewModel.boxHeight / 2,
                         ),
-                        false
+                        false,
+                        block.getId()
                     )
                 })
     }
@@ -459,27 +490,77 @@ fun UnaryMovableOperatorBlock(
 ) {
 
     Box(
-        modifier = modifier
-            .width(BlockWidth)
-            .background(OperatorBlockColor)
-
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
+
+                    viewModel.inputSupportFLow = updateEndBranch(
+                        viewModel.inputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        )
+                    )
+                    viewModel.outputSupportFLow = updateStartBranch(
+                        viewModel.outputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        )
+                    )
+
                 }
             }
+            .width(BlockWidth)
+            .clip(BlockShape)
+            .background(OperatorBlockColor)
+            .heightIn(min = BlockHeight)
     ) {
         UnaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .clickable { setUnaryOperatorFlow(block) })
+                .clickable {
+                    setUnaryOperatorFlow(block)
+
+                    viewModel.inputSupportFLow = createEndBranch(
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        ),
+                        false,
+                        (block as BlockEntity).getId()
+                    )
+                })
         SupportingFlow(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .clickable { setPreviousSupportFlowBlock(block as BlockEntity) })
+                .clickable {
+                    setPreviousSupportFlowBlock(block as BlockEntity)
+
+                    viewModel.outputSupportFLow = createStartBranch(
+                        viewModel.outputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        ),
+                        false,
+                        block.getId()
+                    )
+                })
     }
 }
 
@@ -487,12 +568,36 @@ fun UnaryMovableOperatorBlock(
 fun MovableIfBlock(
     value: BlockValue.IfBlock,
     block: IfBlock,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: PathViewModel
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(BlockWidth)
+            .clip(BlockShape)
             .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
+
+
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Box(
@@ -528,11 +633,34 @@ fun MovableIfBlock(
 fun MovableEndifBLock(
     value: BlockValue.EndifBlock,
     block: EndIfBlock,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: PathViewModel
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(BorderBlockWidth)
+            .clip(BlockShape)
+            .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
             .background(ComplexBlockColor)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
@@ -553,13 +681,36 @@ fun MovableEndifBLock(
 fun MovableInitializationBlock(
     value: BlockValue.InitializationBlock,
     block: InitializationVariableBlock,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: PathViewModel
 ) {
 
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(TextFieldBlockWidth)
+            .clip(BlockShape)
             .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
+
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row(
@@ -583,12 +734,35 @@ fun MovableInitializationBlock(
 fun MovableSetBlock(
     value: BlockValue.SetBlock,
     block: SetVariableBlock,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: PathViewModel
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(TextFieldBlockWidth)
+            .clip(BlockShape)
             .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
+            .then(modifier)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row(
@@ -621,12 +795,34 @@ fun MovableSetBlock(
 fun MovableForBlock(
     value: BlockValue.ForBlock,
     modifier: Modifier,
-    block: ForBlock
+    block: ForBlock,
+    viewModel: PathViewModel
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(TextFieldBlockWidth)
+            .clip(BlockShape)
             .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Box(
@@ -655,12 +851,34 @@ fun MovableForBlock(
 fun MovableWhileBlock(
     value: BlockValue.WhileBlock,
     modifier: Modifier,
-    block: WhileBlock
+    block: WhileBlock,
+    viewModel: PathViewModel
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(TextFieldBlockWidth)
+            .clip(BlockShape)
             .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Box(
@@ -690,12 +908,34 @@ fun MovableWhileBlock(
 fun MovableGetValueBlock(
     value: BlockValue.GetValueBlock,
     modifier: Modifier,
-    block: GetVariableBlock
+    block: GetVariableBlock,
+    viewModel: PathViewModel
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(TextFieldBlockWidth)
+            .clip(BlockShape)
             .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row {
@@ -716,12 +956,34 @@ fun MovableGetValueBlock(
 fun MovableFunctionBlock(
     value: BlockValue.FunctionBlock,
     modifier: Modifier,
-    block: FunctionBlock
+    block: FunctionBlock,
+    viewModel: PathViewModel
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(TextFieldBlockWidth)
+            .clip(BlockShape)
             .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
     ) {
         ComplexBlockText(modifier = value.modifier, text = value.text)
         Row {
@@ -742,12 +1004,34 @@ fun MovableFunctionBlock(
 fun MovableReturnBlock(
     value: BlockValue.ReturnBlock,
     modifier: Modifier,
-    block: EndFunctionBlock
+    block: EndFunctionBlock,
+    viewModel: PathViewModel
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(BorderBlockWidth)
+            .clip(BlockShape)
             .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
     ) {
         MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
         ComplexBlockText(
@@ -765,12 +1049,34 @@ fun MovableReturnBlock(
 fun MovableContinueOrBreakBlock(
     value: BlockValue,
     modifier: Modifier,
-    block: IMainFLowBlock
+    block: IMainFLowBlock,
+    viewModel: PathViewModel
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+
+                }
+            }
             .width(BorderBlockWidth)
+            .clip(BlockShape)
             .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
     ) {
         MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
         ComplexBlockText(

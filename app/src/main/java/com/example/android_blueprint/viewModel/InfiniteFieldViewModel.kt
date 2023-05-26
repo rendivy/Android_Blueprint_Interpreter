@@ -31,6 +31,7 @@ class InfiniteFieldViewModel : ViewModel() {
     fun addBlock(blockValue: Any) {
         val pathViewModel = PathViewModel()
         if (blockValue == BlockValue.IfBlock) {
+            val pathVIewModelEndif = PathViewModel()
             addVariable(
                 FieldBlock(
                     value = blockValue,
@@ -44,7 +45,7 @@ class InfiniteFieldViewModel : ViewModel() {
                     value = BlockValue.EndifBlock,
                     index = currentIndex++,
                     block = BlockFactory.createObj(blockValue = BlockValue.EndifBlock) as BlockEntity,
-                    pathViewModel = pathViewModel
+                    pathViewModel = pathVIewModelEndif
 
                 )
             )

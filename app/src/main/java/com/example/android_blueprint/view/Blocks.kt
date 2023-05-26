@@ -78,8 +78,6 @@ fun SetMovableBlock(
     var boxHeight by remember { mutableStateOf(0f) }
     var boxWidth by remember { mutableStateOf(0f) }
     val modifier = Modifier
-        .heightIn(min = BlockHeight)
-        .clip(BlockShape)
         .clickable(
             indication = null,
             interactionSource = remember { MutableInteractionSource() }
@@ -94,43 +92,50 @@ fun SetMovableBlock(
         is BlockValue.ContinueBlock, BlockValue.BreakBlock -> MovableContinueOrBreakBlock(
             value = fieldBlock.value as BlockValue,
             block = fieldBlock.block as IMainFLowBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.SetBlock -> MovableSetBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as SetVariableBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.ReturnBlock -> MovableReturnBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as EndFunctionBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.FunctionBlock -> MovableFunctionBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as FunctionBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.GetValueBlock -> MovableGetValueBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as GetVariableBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.ForBlock -> MovableForBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as ForBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.WhileBlock -> MovableWhileBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as WhileBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
@@ -150,19 +155,22 @@ fun SetMovableBlock(
         is BlockValue.InitializationBlock -> MovableInitializationBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as InitializationVariableBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.IfBlock -> MovableIfBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as IfBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.EndifBlock -> MovableEndifBLock(
             value = fieldBlock.value,
             block = fieldBlock.block as EndIfBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.PrintBlock -> MovablePrintBlock(
