@@ -9,7 +9,7 @@ import block.IMainFLowBlock
 import block.IUnaryOperatorBlock
 import block.StartBlock
 import com.example.android_blueprint.model.PreviousBlocks
-import com.example.android_blueprint.ui.theme.actionColor
+import com.example.android_blueprint.ui.theme.ActionColor
 import interpretator.Interpret
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -103,7 +103,7 @@ fun start(
     }
     GlobalScope.launch {
         ConsoleViewModel.consoleText = ""
-        ConsoleViewModel.defaultTextColor = actionColor
+        ConsoleViewModel.defaultTextColor = ActionColor
         try {
             interpreter.run(startBlock)
             closeDebugger()

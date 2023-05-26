@@ -2,11 +2,14 @@ package com.example.android_blueprint.model
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
+import android.content.res.Resources;
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.example.android_blueprint.R
 
 
 sealed class BlockValue(
@@ -45,7 +48,7 @@ sealed class BlockValue(
 
 
     object InitializationBlock : BlockValue(
-        text = "Initialization",
+        text = Resources.getSystem().getString(R.string.Initialization),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -58,7 +61,7 @@ sealed class BlockValue(
     )
 
     object SetBlock : BlockValue(
-        text = "Set",
+        text = Resources.getSystem().getString(R.string.Set),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -71,7 +74,7 @@ sealed class BlockValue(
     )
 
     object IfBlock : BlockValue(
-        text = "If",
+        text = Resources.getSystem().getString(R.string.If),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -84,7 +87,7 @@ sealed class BlockValue(
     )
 
     object EndifBlock : BlockValue(
-        text = "Endif",
+        text = Resources.getSystem().getString(R.string.EndIf),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -97,7 +100,7 @@ sealed class BlockValue(
     )
 
     object PrintBlock : BlockValue(
-        text = "Print",
+        text = Resources.getSystem().getString(R.string.Print),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -110,7 +113,7 @@ sealed class BlockValue(
     )
 
     object StartBlock : BlockValue(
-        text = "Start",
+        text = Resources.getSystem().getString(R.string.Start),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -123,7 +126,7 @@ sealed class BlockValue(
     )
 
     object EndBlock : BlockValue(
-        text = "End",
+        text = Resources.getSystem().getString(R.string.End),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -136,7 +139,7 @@ sealed class BlockValue(
     )
 
     object ForBlock : BlockValue(
-        text = "For",
+        text = Resources.getSystem().getString(R.string.For),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -149,7 +152,7 @@ sealed class BlockValue(
     )
 
     object WhileBlock : BlockValue(
-        text = "While",
+        text = Resources.getSystem().getString(R.string.While),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -162,7 +165,7 @@ sealed class BlockValue(
     )
 
     object GetValueBlock : BlockValue(
-        text = "Get value",
+        text =Resources.getSystem().getString(R.string.GetValue),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -175,7 +178,7 @@ sealed class BlockValue(
     )
 
     object FunctionBlock : BlockValue(
-        text = "Function",
+        text = Resources.getSystem().getString(R.string.Function),
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -188,20 +191,20 @@ sealed class BlockValue(
     )
 
     object BreakBlock : BlockValue(
-        text = "Break",
+        text = Resources.getSystem().getString(R.string.Break),
         modifier = Modifier
             .fillMaxWidth()
     )
 
     object ContinueBlock : BlockValue(
-        text = "Continue",
+        text = Resources.getSystem().getString(R.string.Continue),
         modifier = Modifier
             .fillMaxWidth()
     )
 
 
     object ReturnBlock : BlockValue(
-        text = "Return",
+        text = Resources.getSystem().getString(R.string.Return),
         modifier = Modifier
             .fillMaxWidth()
     )

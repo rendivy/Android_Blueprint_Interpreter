@@ -16,7 +16,6 @@ import com.example.android_blueprint.model.Transform
 import com.example.android_blueprint.ui.theme.ActiveColor
 import com.example.android_blueprint.ui.theme.InitialOffset
 import com.example.android_blueprint.ui.theme.InitialScale
-import com.example.android_blueprint.view.deleteAllBranches
 import interpretator.Interpret
 
 class InfiniteFieldViewModel : ViewModel() {

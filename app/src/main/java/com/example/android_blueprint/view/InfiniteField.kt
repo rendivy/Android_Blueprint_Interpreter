@@ -17,10 +17,6 @@ import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +29,7 @@ import com.example.android_blueprint.model.BranchEntity
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.DeleteButtonSize
+import com.example.android_blueprint.ui.theme.ActionColor
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 import com.example.android_blueprint.viewModel.start
 
@@ -63,7 +60,7 @@ fun InfiniteField(
             )
             .drawBehind {
                 for (value in BranchEntity.pathData.values) {
-                    drawPath(value.path, Color.White, style = Stroke(width = 10f))
+                    drawPath(value.path, if (value.isMainFlowBranch) Color.White else ActionColor, style = Stroke(width = 10f))
                 }
             }
     )

@@ -290,32 +290,6 @@ fun SupportingFlow(
     )
 }
 
-@Composable
-fun MainFlowTest(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .padding(DefaultPadding)
-            .clip(MainFlowShape)
-            .size(FlowSize)
-            .background(Color.White)
-    )
-}
-
-
-@Composable
-fun MainFlowTest2(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .padding(DefaultPadding)
-            .clip(MainFlowShape)
-            .size(FlowSize)
-            .background(Color.White)
-    )
-}
 
 
 @Composable

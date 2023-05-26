@@ -30,15 +30,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.android_blueprint.model.BottomBarModel
 import com.example.android_blueprint.ui.theme.BackgroundColor
-import com.example.android_blueprint.ui.theme.actionColor
-import com.example.android_blueprint.ui.theme.actionFontColor
+import com.example.android_blueprint.ui.theme.ActionColor
+import com.example.android_blueprint.ui.theme.ActionFontColor
 import com.example.android_blueprint.ui.theme.neuMedium
-import com.example.android_blueprint.ui.theme.unSelectedColor
+import com.example.android_blueprint.ui.theme.UnSelectedColor
 import com.example.android_blueprint.viewModel.BottomNavGraphViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Preview(
-    showSystemUi = true, device = "spec:parent=pixel_5,orientation=landscape"
+    showSystemUi = true, device = "spec:parent=pixel_5"
 )
 @Composable
 fun MainScreen() {
@@ -92,8 +92,8 @@ fun AddItem(
     navController: NavHostController
 ) {
     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-    val iconColor = if (selected) actionColor else unSelectedColor
-    val textColor = if (selected) actionFontColor else unSelectedColor
+    val iconColor = if (selected) ActionColor else UnSelectedColor
+    val textColor = if (selected) ActionFontColor else UnSelectedColor
     Box(
         modifier = Modifier
             .clickable(onClick = {
@@ -115,8 +115,8 @@ fun AddItem(
                 tint = iconColor, modifier = if (selected) Modifier
                     .shadow(
                         24.dp,
-                        spotColor = actionColor,
-                        ambientColor = actionColor
+                        spotColor = ActionColor,
+                        ambientColor = ActionColor
                     ) else Modifier
             )
             Text(text = screen.title, color = textColor, fontFamily = neuMedium)

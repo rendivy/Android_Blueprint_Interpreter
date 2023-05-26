@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.example.android_blueprint.ui.theme.ActiveColor
 import com.example.android_blueprint.ui.theme.InactiveBreakpointColor
-import com.example.android_blueprint.view.defaultBranch
+
 
 class BlockViewModel : ViewModel() {
 

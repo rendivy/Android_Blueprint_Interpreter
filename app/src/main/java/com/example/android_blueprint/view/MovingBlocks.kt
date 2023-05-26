@@ -12,14 +12,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
-import block.BlockEntity
 import block.EndBlock
 import block.EndFunctionBlock
 import block.EndIfBlock
@@ -35,8 +34,9 @@ import block.PrintBlock
 import block.SetVariableBlock
 import block.StartBlock
 import block.WhileBlock
+import com.example.android_blueprint.R
 import com.example.android_blueprint.model.BlockValue
-import com.example.android_blueprint.model.BranchEntity
+import com.example.android_blueprint.model.CharacteristicsBlock
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BlockWidth
@@ -45,6 +45,8 @@ import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
 import com.example.android_blueprint.viewModel.BlockViewModel
+import com.example.android_blueprint.viewModel.createEndBranch
+import com.example.android_blueprint.viewModel.createStartBranch
 import com.example.android_blueprint.viewModel.setBottomFlowOperator
 import com.example.android_blueprint.viewModel.setEndifBottomFlow
 import com.example.android_blueprint.viewModel.setEndifTopFlow
@@ -54,119 +56,11 @@ import com.example.android_blueprint.viewModel.setPreviousMainFlowTrueBlock
 import com.example.android_blueprint.viewModel.setPreviousSupportFlowBlock
 import com.example.android_blueprint.viewModel.setTopFlowOperator
 import com.example.android_blueprint.viewModel.setUnaryOperatorFlow
+import com.example.android_blueprint.viewModel.tryClearBranches
+import com.example.android_blueprint.viewModel.updateEndBranch
+import com.example.android_blueprint.viewModel.updateStartBranch
 import kotlin.math.roundToInt
-
-val defaultBranch = BranchEntity(mutableStateOf(0f), mutableStateOf(0f), idStartBlock = -1)
-var branchInWorking: BranchEntity = defaultBranch
-
-data class CharacteristicsBlock(
-    val xResult: Float,
-    val yResult: Float,
-)
-
-fun createStartBranch(
-    inputBranch: BranchEntity,
-    characteristicsBlock: CharacteristicsBlock,
-    isMainFlow: Boolean = true,
-    idStartBlock: Int
-): BranchEntity {
-    if (inputBranch.getId() != defaultBranch.getId()) {
-        inputBranch.deleteBranch()
-    }
-    val branch = BranchEntity(
-        xStart = mutableStateOf(characteristicsBlock.xResult),
-        yStart = mutableStateOf(characteristicsBlock.yResult),
-        isMainFlow,
-        idStartBlock,
-    )
-    branchInWorking = branch
-    return branch
-}
-
-fun createEndBranch(
-    inputBranch: BranchEntity,
-    characteristicsBlock: CharacteristicsBlock,
-    isMainFlow: Boolean,
-    idFinishBlock: Int
-): BranchEntity {
-    return if (branchInWorking.isMainFlowBranch != isMainFlow ||
-        branchInWorking.idStartBlock == idFinishBlock
-    ) {
-        defaultBranch
-    } else if(branchInWorking.getId() == defaultBranch.getId()){
-        inputBranch
-    }
-    else {
-        tryClearBranches(inputBranch)
-        val resultBranch = branchInWorking
-        resultBranch.xFinish = mutableStateOf(characteristicsBlock.xResult)
-        resultBranch.yFinish =
-            mutableStateOf(characteristicsBlock.yResult)
-        resultBranch.putInMap()
-        resultBranch.drawBranch()
-        resultBranch.switchIsConnected()
-        resultBranch.idFinishBlock = idFinishBlock
-        branchInWorking = defaultBranch
-        resultBranch
-    }
-}
-
-fun updateStartBranch(
-    outputBranch: BranchEntity,
-    characteristicsBlock: CharacteristicsBlock
-): BranchEntity {
-    if (!outputBranch.isInMap()) {
-        return defaultBranch
-    }
-
-    if (outputBranch.getId() != defaultBranch.getId()) {
-        outputBranch.xStart.value = characteristicsBlock.xResult
-        outputBranch.yStart.value = characteristicsBlock.yResult
-        if (outputBranch.getIsConnected()) {
-            outputBranch.drawBranch()
-        }
-    }
-    return outputBranch
-
-}
-
-fun updateEndBranch(
-    inputBranch: BranchEntity,
-    characteristicsBlock: CharacteristicsBlock
-): BranchEntity {
-    if (!inputBranch.isInMap()) {
-        return defaultBranch
-    }
-
-    if (inputBranch.getId() != defaultBranch.getId() && inputBranch.getIsConnected()) {
-        inputBranch.xFinish.value = characteristicsBlock.xResult
-        inputBranch.yFinish.value = characteristicsBlock.yResult
-        inputBranch.drawBranch()
-    }
-    return inputBranch
-}
-
-fun tryClearBranches(
-    inputBranch: BranchEntity,
-) {
-    if (inputBranch.getId() != defaultBranch.getId()) {
-        inputBranch.deleteBranch()
-    }
-}
-
-fun deleteAllBranches(
-    viewModel: BlockViewModel
-) {
-    tryClearBranches(viewModel.outputBranch)
-    tryClearBranches(viewModel.inputBranch)
-    tryClearBranches(viewModel.inputBranchForEndIf)
-    tryClearBranches(viewModel.outputBranchTrue)
-    tryClearBranches(viewModel.outputBranchFalse)
-    tryClearBranches(viewModel.inputSupportFLow)
-    tryClearBranches(viewModel.outputSupportFLow)
-    tryClearBranches(viewModel.inputSupportFLowLeft)
-    tryClearBranches(viewModel.inputSupportFLowRight)
-}
+import block.BlockEntity as BlockEntity1
 
 @Composable
 fun StartBlock(
@@ -213,7 +107,7 @@ fun StartBlock(
             changeBreakPointColor = viewModel::changeBreakPointColor,
             modifier = Modifier.align(Alignment.TopEnd)
         )
-        MainFlowTest(
+        MainFlow(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clickable {
@@ -281,7 +175,7 @@ fun EndBlock(
             changeBreakPointColor = viewModel::changeBreakPointColor,
             modifier = Modifier.align(Alignment.TopEnd)
         )
-        MainFlowTest2(modifier = Modifier
+        MainFlow(modifier = Modifier
             .align(Alignment.CenterStart)
             .clickable {
                 setMainFlow(block)
@@ -362,7 +256,7 @@ fun MovablePrintBlock(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MainFlowTest(
+            MainFlow(
                 modifier = Modifier.clickable {
                     setMainFlow(block)
 
@@ -378,7 +272,7 @@ fun MovablePrintBlock(
                 },
 
                 )
-            MainFlowTest2(
+            MainFlow(
                 modifier = Modifier.clickable {
                     setPreviousMainFlowTrueBlock(block)
 
@@ -471,7 +365,7 @@ fun BinaryMovableOperatorBlock(
 
     ) {
         BreakPoint(
-            block = block as BlockEntity,
+            block = block as BlockEntity1,
             color = viewModel.color,
             changeBreakPointColor = viewModel::changeBreakPointColor,
             modifier = Modifier.align(Alignment.TopEnd)
@@ -486,7 +380,7 @@ fun BinaryMovableOperatorBlock(
                     viewModel.offsetY + viewModel.boxHeight / 5f,
                 ),
                 false,
-                (block as BlockEntity).getId()
+                (block as BlockEntity1).getId()
             )
         })
         SupportingFlow(
@@ -501,14 +395,14 @@ fun BinaryMovableOperatorBlock(
                             viewModel.offsetY + viewModel.boxHeight / 1.2f,
                         ),
                         false,
-                        (block as BlockEntity).getId()
+                        (block as BlockEntity1).getId()
                     )
                 })
         SupportingFlow(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clickable {
-                    setPreviousSupportFlowBlock(block as BlockEntity)
+                    setPreviousSupportFlowBlock(block as BlockEntity1)
 
                     viewModel.outputSupportFLow = createStartBranch(
                         viewModel.outputSupportFLow,
@@ -573,7 +467,7 @@ fun UnaryMovableOperatorBlock(
             .then(modifier)
     ) {
         BreakPoint(
-            block = block as BlockEntity,
+            block = block as BlockEntity1,
             color = viewModel.color,
             changeBreakPointColor = viewModel::changeBreakPointColor,
             modifier = Modifier.align(Alignment.TopEnd)
@@ -592,14 +486,14 @@ fun UnaryMovableOperatorBlock(
                             viewModel.offsetY + viewModel.boxHeight / 2,
                         ),
                         false,
-                        (block as BlockEntity).getId()
+                        (block as BlockEntity1).getId()
                     )
                 })
         SupportingFlow(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clickable {
-                    setPreviousSupportFlowBlock(block as BlockEntity)
+                    setPreviousSupportFlowBlock(block as BlockEntity1)
 
                     viewModel.outputSupportFLow = createStartBranch(
                         viewModel.outputSupportFLow,
@@ -706,7 +600,7 @@ fun MovableIfBlock(
                     )
                 })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
-                TextForFlow(text = "True")
+                TextForFlow(text = stringResource(R.string.ifTrueValue))
                 MainFlow(modifier = Modifier.clickable {
                     setPreviousMainFlowTrueBlock(block)
 
@@ -736,13 +630,13 @@ fun MovableIfBlock(
                             viewModel.offsetY + viewModel.boxHeight / 1.2f,
                         ),
                         false,
-                        (block as BlockEntity).getId()
+                        (block as BlockEntity1).getId()
                     )
                 })
-                TextForFlow(text = "Condition")
+                TextForFlow(text = stringResource(R.string.conditionalValue))
             }
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
-                TextForFlow(text = "False")
+                TextForFlow(text = stringResource(R.string.ifFalseValue))
                 MainFlow(modifier = Modifier.clickable {
                     setPreviousMainFlowFalseBlock(block)
 
@@ -961,7 +855,7 @@ fun MovableInitializationBlock(
             })
         }
         TextFieldForVariable(
-            value = "name or *name[n]",
+            value = stringResource(R.string.initBlockValue),
             modifier = Modifier.fillMaxWidth(),
             block = block
         )
@@ -1068,7 +962,7 @@ fun MovableSetBlock(
                 .fillMaxWidth()
         ) {
             TextFieldForVariable(
-                value = "name = value",
+                value = stringResource(R.string.nameEqualValue),
                 modifier = Modifier.weight(1f),
                 block = block
             )
@@ -1174,7 +1068,7 @@ fun MovableForBlock(
                 )
             })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
-                TextForFlow(text = "loop")
+                TextForFlow(text = stringResource(R.string.loop))
                 MainFlow(modifier = Modifier.clickable {
                     setPreviousMainFlowTrueBlock(block)
 
@@ -1190,12 +1084,12 @@ fun MovableForBlock(
             }
         }
         TextFieldForVariable(
-            value = "conditional",
+            value = stringResource(R.string.conditional),
             modifier = Modifier.fillMaxWidth(),
             block = block
         )
         Row(modifier = Modifier.align(Alignment.End)) {
-            TextForFlow(text = "endloop")
+            TextForFlow(text = stringResource(R.string.endLoop))
             MainFlow(modifier = Modifier.clickable {
                 setPreviousMainFlowFalseBlock(block)
 
@@ -1293,7 +1187,7 @@ fun MovableWhileBlock(
                 )
             })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
-                TextForFlow(text = "loop")
+                TextForFlow(text = stringResource(R.string.loop))
                 MainFlow(modifier = Modifier.clickable {
                     setPreviousMainFlowTrueBlock(block)
 
@@ -1314,7 +1208,7 @@ fun MovableWhileBlock(
             block = block
         )
         Row(modifier = Modifier.align(Alignment.End)) {
-            TextForFlow(text = "endloop")
+            TextForFlow(text = stringResource(R.string.endLoop))
             MainFlow(modifier = Modifier.clickable {
                 setPreviousMainFlowFalseBlock(block)
 
@@ -1383,7 +1277,7 @@ fun MovableGetValueBlock(
         }
         Row {
             TextFieldForVariable(
-                value = "expression",
+                value = stringResource(R.string.expression),
                 modifier = Modifier.weight(1f),
                 block = block
             )
@@ -1458,7 +1352,7 @@ fun MovableFunctionBlock(
         }
         Row {
             TextFieldForVariable(
-                value = "name(args)",
+                value = stringResource(R.string.array_name),
                 modifier = Modifier.weight(1f),
                 block = block
             )
@@ -1539,7 +1433,7 @@ fun MovableReturnBlock(
                         viewModel.offsetY + viewModel.boxHeight / 5,
                     ),
                     true,
-                    (block as BlockEntity).getId()
+                    (block as BlockEntity1).getId()
                 )
             })
             BreakPoint(
@@ -1564,10 +1458,10 @@ fun MovableReturnBlock(
                         viewModel.offsetY + viewModel.boxHeight / 1.2f,
                     ),
                     false,
-                    (block as BlockEntity).getId()
+                    (block as BlockEntity1).getId()
                 )
             })
-            TextForFlow(text = "value")
+            TextForFlow(text = stringResource(R.string.value))
         }
     }
 }
@@ -1623,11 +1517,11 @@ fun MovableContinueOrBreakBlock(
                         viewModel.offsetY + viewModel.boxHeight / 5,
                     ),
                     true,
-                    (block as BlockEntity).getId()
+                    (block as BlockEntity1).getId()
                 )
             })
             BreakPoint(
-                block = block as BlockEntity,
+                block = block as BlockEntity1,
                 color = viewModel.color,
                 changeBreakPointColor = viewModel::changeBreakPointColor,
                 modifier = Modifier.align(Alignment.TopEnd)

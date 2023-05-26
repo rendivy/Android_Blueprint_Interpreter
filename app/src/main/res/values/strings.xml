@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">Android_Blueprint</string>
+    <string name="array_name">name(args)</string>
+    <string name="value">value</string>
+    <string name="expression">expression</string>
+    <string name="endLoop">endLoop</string>
+    <string name="loop">loop</string>
+    <string name="conditional">conditional</string>
+    <string name="nameEqualValue">name = value</string>
+    <string name="initBlockValue">name or *name[n]</string>
+    <string name="ifFalseValue"> False </string>
+    <string name="conditionalValue">Condition</string>
+    <string name="ifTrueValue"> True </string>
+    <string name="Initialization"> Initialization </string>
+    <string name="Continue"> Continue </string>
+    <string name="Break"> Break </string>
+    <string name="While"> While </string>
+    <string name="GetValue"> Get value </string>
+    <string name="Function"> Function </string>
+    <string name="Set"> Set </string>
+    <string name="If"> If </string>
+    <string name="EndIf"> Endif </string>
+    <string name="Print"> Print </string>
+    <string name="Start"> Start </string>
+    <string name="End"> End </string>
+    <string name="For"> For </string>
+    <string name="Return"> Return </string>
+
 </resources>

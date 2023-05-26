@@ -4,11 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.android_blueprint.ui.theme.actionColor
+import com.example.android_blueprint.ui.theme.ActionColor
 
 class ConsoleViewModel: ViewModel() {
     companion object {
-        var defaultTextColor = actionColor
+        var defaultTextColor = ActionColor
         var consoleText by mutableStateOf("")
     }
 }
