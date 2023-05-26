@@ -27,13 +27,9 @@ import com.example.android_blueprint.viewModel.PathViewModel
 @Composable
 fun FieldScreen(
     infiniteFieldViewModel: InfiniteFieldViewModel,
-    startViewModel: PathViewModel,
-    endViewModel: PathViewModel,
 ) {
     InfiniteField(
-        infiniteFieldViewModel = infiniteFieldViewModel,
-        startViewModel = startViewModel,
-        endViewModel = endViewModel,
+        infiniteFieldViewModel = infiniteFieldViewModel
     )
 }
 

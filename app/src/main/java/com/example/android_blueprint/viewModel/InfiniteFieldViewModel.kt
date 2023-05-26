@@ -20,6 +20,8 @@ class InfiniteFieldViewModel : ViewModel() {
     private var currentIndex = 0
     val startBlock = StartBlock()
     val endBlock = EndBlock()
+    val startViewModel = PathViewModel()
+    val endViewModel = PathViewModel()
     var blocks by mutableStateOf(listOf<FieldBlock>())
     var deleteMode by mutableStateOf(false)
     var transform by mutableStateOf(Transform(InitialScale, InitialOffset))

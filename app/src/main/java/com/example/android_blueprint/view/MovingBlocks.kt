@@ -589,7 +589,34 @@ fun MovableIfBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.inputBranch = updateEndBranch(
+                        viewModel.inputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        )
+                    )
+                    viewModel.outputBranchTrue = updateStartBranch(
+                        viewModel.outputBranchTrue,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        )
+                    )
+                    viewModel.outputBranchFalse = updateStartBranch(
+                        viewModel.outputBranchFalse,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        )
+                    )
+                    viewModel.inputSupportFLow = updateEndBranch(
+                        viewModel.inputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        )
+                    )
                 }
             }
             .width(BlockWidth)
@@ -606,10 +633,32 @@ fun MovableIfBlock(
         ) {
             MainFlow(modifier = Modifier
                 .align(Alignment.TopStart)
-                .clickable { setMainFlow(block) })
+                .clickable {
+                    setMainFlow(block)
+
+                    viewModel.inputBranch = createEndBranch(
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        ),
+                        true,
+                        block.getId()
+                    )
+                })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 TextForFlow(text = "True")
-                MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
+                MainFlow(modifier = Modifier.clickable {
+                    setPreviousMainFlowTrueBlock(block)
+
+                    viewModel.outputBranchTrue = createStartBranch(
+                        viewModel.outputBranchTrue,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        ),
+                        idStartBlock = block.getId()
+                    )
+                })
             }
         }
         Box(
@@ -617,12 +666,34 @@ fun MovableIfBlock(
                 .fillMaxWidth()
         ) {
             Row(modifier = Modifier.align(Alignment.TopStart)) {
-                SupportingFlow(modifier = Modifier.clickable { setUnaryOperatorFlow(block) })
+                SupportingFlow(modifier = Modifier.clickable {
+                    setUnaryOperatorFlow(block)
+
+                    viewModel.inputSupportFLow = createEndBranch(
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        ),
+                        false,
+                        (block as BlockEntity).getId()
+                    )
+                })
                 TextForFlow(text = "Condition")
             }
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 TextForFlow(text = "False")
-                MainFlow(modifier = Modifier.clickable { setPreviousMainFlowFalseBlock(block) })
+                MainFlow(modifier = Modifier.clickable {
+                    setPreviousMainFlowFalseBlock(block)
+
+                    viewModel.outputBranchFalse = createStartBranch(
+                        viewModel.outputBranchFalse,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        ),
+                        idStartBlock = block.getId()
+                    )
+                })
             }
         }
 
@@ -654,7 +725,27 @@ fun MovableEndifBLock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.inputBranch = updateEndBranch(
+                        viewModel.inputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        )
+                    )
+                    viewModel.inputBranchForEndIf = updateEndBranch(
+                        viewModel.inputBranchForEndIf,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        )
+                    )
+                    viewModel.outputBranch = updateStartBranch(
+                        viewModel.outputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        )
+                    )
                 }
             }
             .width(BorderBlockWidth)
@@ -666,14 +757,47 @@ fun MovableEndifBLock(
         ComplexBlockText(modifier = value.modifier, text = value.text)
         MainFlow(modifier = Modifier
             .align(Alignment.CenterStart)
-            .clickable { setEndifTopFlow(block) })
+            .clickable {
+                setEndifTopFlow(block)
+
+                viewModel.inputBranch = createEndBranch(
+                    CharacteristicsBlock(
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 5f,
+                    ),
+                    true,
+                    block.getId()
+                )
+            })
         MainFlow(modifier = Modifier
             .align(Alignment.BottomStart)
-            .clickable { setEndifBottomFlow(block) })
+            .clickable {
+                setEndifBottomFlow(block)
+
+                viewModel.inputBranchForEndIf = createEndBranch(
+                    CharacteristicsBlock(
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                    ),
+                    true,
+                    block.getId()
+                )
+            })
         MainFlow(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .clickable { setPreviousMainFlowTrueBlock(block) })
+                .clickable {
+                    setPreviousMainFlowTrueBlock(block)
+
+                    viewModel.outputBranch = createStartBranch(
+                        viewModel.outputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        ),
+                        idStartBlock = block.getId()
+                    )
+                })
     }
 }
 
@@ -703,7 +827,20 @@ fun MovableInitializationBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.inputBranch = updateEndBranch(
+                        viewModel.inputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        )
+                    )
+                    viewModel.outputBranch = updateStartBranch(
+                        viewModel.outputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        )
+                    )
                 }
             }
             .width(TextFieldBlockWidth)
@@ -718,8 +855,30 @@ fun MovableInitializationBlock(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
-            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
+            MainFlow(modifier = Modifier.clickable {
+                setMainFlow(block)
+
+                viewModel.inputBranch = createEndBranch(
+                    CharacteristicsBlock(
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 2,
+                    ),
+                    true,
+                    block.getId()
+                )
+            })
+            MainFlow(modifier = Modifier.clickable {
+                setPreviousMainFlowTrueBlock(block)
+
+                viewModel.outputBranch = createStartBranch(
+                    viewModel.outputBranch,
+                    CharacteristicsBlock(
+                        viewModel.offsetX + viewModel.boxWidth,
+                        viewModel.offsetY + viewModel.boxHeight / 2,
+                    ),
+                    idStartBlock = block.getId()
+                )
+            })
         }
         TextFieldForVariable(
             value = "name or *name[n]",
@@ -755,7 +914,27 @@ fun MovableSetBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.inputBranch = updateEndBranch(
+                        viewModel.inputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        )
+                    )
+                    viewModel.outputBranch = updateStartBranch(
+                        viewModel.outputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 5,
+                        )
+                    )
+                    viewModel.outputSupportFLow = updateStartBranch(
+                        viewModel.outputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 1.4f,
+                        )
+                    )
                 }
             }
             .width(TextFieldBlockWidth)
@@ -770,8 +949,30 @@ fun MovableSetBlock(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
-            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
+            MainFlow(modifier = Modifier.clickable {
+                setMainFlow(block)
+
+                viewModel.inputBranch = createEndBranch(
+                    CharacteristicsBlock(
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 2,
+                    ),
+                    true,
+                    block.getId()
+                )
+            })
+            MainFlow(modifier = Modifier.clickable {
+                setPreviousMainFlowTrueBlock(block)
+
+                viewModel.outputBranch = createStartBranch(
+                    viewModel.outputBranch,
+                    CharacteristicsBlock(
+                        viewModel.offsetX + viewModel.boxWidth,
+                        viewModel.offsetY + viewModel.boxHeight / 5,
+                    ),
+                    idStartBlock = block.getId()
+                )
+            })
         }
         Row(
             modifier = Modifier
@@ -785,7 +986,18 @@ fun MovableSetBlock(
             SupportingFlow(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .clickable { setPreviousSupportFlowBlock(block) })
+                    .clickable {
+                        setPreviousSupportFlowBlock(block)
+
+                        viewModel.outputSupportFLow = createStartBranch(
+                            viewModel.outputSupportFLow,
+                            CharacteristicsBlock(
+                                viewModel.offsetX + viewModel.boxWidth,
+                                viewModel.offsetY + viewModel.boxHeight / 1.4f,
+                            ),
+                            idStartBlock = block.getId()
+                        )
+                    })
         }
     }
 }
@@ -816,7 +1028,27 @@ fun MovableForBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.inputBranch = updateEndBranch(
+                        viewModel.inputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        )
+                    )
+                    viewModel.outputBranchTrue = updateStartBranch(
+                        viewModel.outputBranchTrue,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        )
+                    )
+                    viewModel.outputBranchFalse = updateStartBranch(
+                        viewModel.outputBranchFalse,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        )
+                    )
                 }
             }
             .width(TextFieldBlockWidth)
@@ -829,10 +1061,32 @@ fun MovableForBlock(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
+            MainFlow(modifier = Modifier.clickable {
+                setMainFlow(block)
+
+                viewModel.inputBranch = createEndBranch(
+                    CharacteristicsBlock(
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 5f,
+                    ),
+                    true,
+                    block.getId()
+                )
+            })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 TextForFlow(text = "loop")
-                MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
+                MainFlow(modifier = Modifier.clickable {
+                    setPreviousMainFlowTrueBlock(block)
+
+                    viewModel.outputBranchTrue = createStartBranch(
+                        viewModel.outputBranchTrue,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        ),
+                        idStartBlock = block.getId()
+                    )
+                })
             }
         }
         TextFieldForVariable(
@@ -842,7 +1096,18 @@ fun MovableForBlock(
         )
         Row(modifier = Modifier.align(Alignment.End)) {
             TextForFlow(text = "endloop")
-            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowFalseBlock(block) })
+            MainFlow(modifier = Modifier.clickable {
+                setPreviousMainFlowFalseBlock(block)
+
+                viewModel.outputBranchFalse = createStartBranch(
+                    viewModel.outputBranchFalse,
+                    CharacteristicsBlock(
+                        viewModel.offsetX + viewModel.boxWidth,
+                        viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                    ),
+                    idStartBlock = block.getId()
+                )
+            })
         }
     }
 }
@@ -872,7 +1137,27 @@ fun MovableWhileBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.inputBranch = updateEndBranch(
+                        viewModel.inputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        )
+                    )
+                    viewModel.outputBranchTrue = updateStartBranch(
+                        viewModel.outputBranchTrue,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        )
+                    )
+                    viewModel.outputBranchFalse = updateStartBranch(
+                        viewModel.outputBranchFalse,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                        )
+                    )
                 }
             }
             .width(TextFieldBlockWidth)
@@ -885,10 +1170,32 @@ fun MovableWhileBlock(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
+            MainFlow(modifier = Modifier.clickable {
+                setMainFlow(block)
+
+                viewModel.inputBranch = createEndBranch(
+                    CharacteristicsBlock(
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 5f,
+                    ),
+                    true,
+                    block.getId()
+                )
+            })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
                 TextForFlow(text = "loop")
-                MainFlow(modifier = Modifier.clickable { setPreviousMainFlowTrueBlock(block) })
+                MainFlow(modifier = Modifier.clickable {
+                    setPreviousMainFlowTrueBlock(block)
+
+                    viewModel.outputBranchTrue = createStartBranch(
+                        viewModel.outputBranchTrue,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 5f,
+                        ),
+                        idStartBlock = block.getId()
+                    )
+                })
             }
         }
         TextFieldForVariable(
@@ -898,7 +1205,18 @@ fun MovableWhileBlock(
         )
         Row(modifier = Modifier.align(Alignment.End)) {
             TextForFlow(text = "endloop")
-            MainFlow(modifier = Modifier.clickable { setPreviousMainFlowFalseBlock(block) })
+            MainFlow(modifier = Modifier.clickable {
+                setPreviousMainFlowFalseBlock(block)
+
+                viewModel.outputBranchFalse = createStartBranch(
+                    viewModel.outputBranchFalse,
+                    CharacteristicsBlock(
+                        viewModel.offsetX + viewModel.boxWidth,
+                        viewModel.offsetY + viewModel.boxHeight / 1.2f,
+                    ),
+                    idStartBlock = block.getId()
+                )
+            })
         }
     }
 }
@@ -929,7 +1247,13 @@ fun MovableGetValueBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.outputSupportFLow = updateStartBranch(
+                        viewModel.outputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        )
+                    )
                 }
             }
             .width(TextFieldBlockWidth)
@@ -947,7 +1271,19 @@ fun MovableGetValueBlock(
             SupportingFlow(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .clickable { setPreviousSupportFlowBlock(block) })
+                    .clickable {
+                        setPreviousSupportFlowBlock(block)
+
+                        viewModel.outputSupportFLow = createStartBranch(
+                            viewModel.outputSupportFLow,
+                            CharacteristicsBlock(
+                                viewModel.offsetX + viewModel.boxWidth,
+                                viewModel.offsetY + viewModel.boxHeight / 2,
+                            ),
+                            false,
+                            block.getId()
+                        )
+                    })
         }
     }
 }
@@ -977,7 +1313,13 @@ fun MovableFunctionBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.outputBranch = updateStartBranch(
+                        viewModel.outputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        )
+                    )
                 }
             }
             .width(TextFieldBlockWidth)
@@ -995,7 +1337,18 @@ fun MovableFunctionBlock(
             MainFlow(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .clickable { setPreviousMainFlowTrueBlock(block) })
+                    .clickable {
+                        setPreviousMainFlowTrueBlock(block)
+
+                        viewModel.outputBranch = createStartBranch(
+                            viewModel.outputBranch,
+                            CharacteristicsBlock(
+                                viewModel.offsetX + viewModel.boxWidth,
+                                viewModel.offsetY + viewModel.boxHeight / 2,
+                            ),
+                            idStartBlock = block.getId()
+                        )
+                    })
         }
     }
 }
@@ -1025,7 +1378,20 @@ fun MovableReturnBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.inputBranch = updateEndBranch(
+                        viewModel.inputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 5,
+                        )
+                    )
+                    viewModel.inputSupportFLow = updateEndBranch(
+                        viewModel.inputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 1.4f,
+                        )
+                    )
                 }
             }
             .width(BorderBlockWidth)
@@ -1033,13 +1399,35 @@ fun MovableReturnBlock(
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
     ) {
-        MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
+        MainFlow(modifier = Modifier.clickable {
+            setMainFlow(block)
+
+            viewModel.inputBranch = createEndBranch(
+                CharacteristicsBlock(
+                    viewModel.offsetX,
+                    viewModel.offsetY + viewModel.boxHeight / 5,
+                ),
+                true,
+                (block as BlockEntity).getId()
+            )
+        })
         ComplexBlockText(
             modifier = value.modifier.align(Alignment.CenterHorizontally),
             text = value.text
         )
         Row {
-            SupportingFlow(modifier = Modifier.clickable { setUnaryOperatorFlow(block) })
+            SupportingFlow(modifier = Modifier.clickable {
+                setUnaryOperatorFlow(block)
+
+                viewModel.inputSupportFLow = createStartBranch(
+                    viewModel.inputSupportFLow,
+                    CharacteristicsBlock(
+                        viewModel.offsetX,
+                        viewModel.offsetY + viewModel.boxHeight / 1.4f,
+                    ),
+                    idStartBlock = block.getId()
+                )
+            })
             TextForFlow(text = "value")
         }
     }
@@ -1070,7 +1458,13 @@ fun MovableContinueOrBreakBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-
+                    viewModel.inputBranch = updateEndBranch(
+                        viewModel.inputBranch,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        )
+                    )
                 }
             }
             .width(BorderBlockWidth)
@@ -1078,7 +1472,18 @@ fun MovableContinueOrBreakBlock(
             .background(ComplexBlockColor)
             .heightIn(min = BlockHeight)
     ) {
-        MainFlow(modifier = Modifier.clickable { setMainFlow(block) })
+        MainFlow(modifier = Modifier.clickable {
+            setMainFlow(block)
+
+            viewModel.inputBranch = createEndBranch(
+                CharacteristicsBlock(
+                    viewModel.offsetX,
+                    viewModel.offsetY + viewModel.boxHeight / 2,
+                ),
+                true,
+                (block as BlockEntity).getId()
+            )
+        })
         ComplexBlockText(
             modifier = value.modifier.align(Alignment.CenterHorizontally),
             text = value.text

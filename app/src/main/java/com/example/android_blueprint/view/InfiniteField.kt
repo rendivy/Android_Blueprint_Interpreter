@@ -35,9 +35,7 @@ import com.example.android_blueprint.viewModel.start
 
 @Composable
 fun InfiniteField(
-    infiniteFieldViewModel: InfiniteFieldViewModel,
-    startViewModel: PathViewModel,
-    endViewModel: PathViewModel,
+    infiniteFieldViewModel: InfiniteFieldViewModel
 ) {
 
     val blocks = infiniteFieldViewModel.blocks
@@ -68,9 +66,9 @@ fun InfiniteField(
     {
 
         EndBlock(value = BlockValue.EndBlock, block = infiniteFieldViewModel.endBlock,
-        endViewModel = endViewModel)
+        endViewModel = infiniteFieldViewModel.endViewModel)
         StartBlock(value = BlockValue.StartBlock, block = infiniteFieldViewModel.startBlock,
-        startViewModel =  startViewModel)
+        startViewModel =  infiniteFieldViewModel.startViewModel)
 
         for (block in blocks) {
             SetMovableBlock(fieldBlock = block, infiniteFieldViewModel = infiniteFieldViewModel)

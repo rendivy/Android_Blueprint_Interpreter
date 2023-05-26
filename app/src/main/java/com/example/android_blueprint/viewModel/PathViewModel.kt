@@ -14,6 +14,7 @@ class PathViewModel : ViewModel() {
     var boxWidth by mutableStateOf(0f)
     var outputBranch = defaultBranch
     var inputBranch = defaultBranch
+    var inputBranchForEndIf = defaultBranch
     var outputBranchTrue = defaultBranch
     var outputBranchFalse = defaultBranch
     var inputSupportFLow = defaultBranch
