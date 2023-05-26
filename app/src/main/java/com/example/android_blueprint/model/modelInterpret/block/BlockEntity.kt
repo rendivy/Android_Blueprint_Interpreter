@@ -112,8 +112,8 @@ abstract class BlockEntity(
         return id
     }
 
-    fun switchBreakPoint(breakPoint: Boolean) {
-        this.breakPoint = !breakPoint
+    fun switchBreakPoint() {
+        breakPoint = !breakPoint
     }
 
     fun getBreakPoint(): Boolean {
