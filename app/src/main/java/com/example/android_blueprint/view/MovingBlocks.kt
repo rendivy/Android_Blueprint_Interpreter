@@ -1,6 +1,5 @@
 package com.example.android_blueprint.view
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -9,27 +8,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import block.BlockEntity
 import block.EndBlock
 import block.EndFunctionBlock
@@ -65,7 +58,6 @@ import com.example.android_blueprint.viewModel.setPreviousMainFlowTrueBlock
 import com.example.android_blueprint.viewModel.setPreviousSupportFlowBlock
 import com.example.android_blueprint.viewModel.setTopFlowOperator
 import com.example.android_blueprint.viewModel.setUnaryOperatorFlow
-import com.example.android_blueprint.viewModel.start
 import kotlin.math.roundToInt
 
 val defaultBranch = BranchEntity(mutableStateOf(0f), mutableStateOf(0f))
@@ -78,11 +70,13 @@ data class CharacteristicsBlock(
 )
 
 fun createStartBranch(
-    characteristicsBlock: CharacteristicsBlock
+    characteristicsBlock: CharacteristicsBlock,
+    isMainFlow: Boolean = true,
 ): BranchEntity {
     val branch = BranchEntity(
         xStart = mutableStateOf(characteristicsBlock.xResult),
-        yStart = mutableStateOf(characteristicsBlock.yResult)
+        yStart = mutableStateOf(characteristicsBlock.yResult),
+        isMainFlow
     )
     branchInWorking = branch
     return branch
@@ -105,9 +99,12 @@ fun updateStartBranch(
 
 fun createEndBranch(
     inputBranch: BranchEntity,
-    characteristicsBlock: CharacteristicsBlock
+    characteristicsBlock: CharacteristicsBlock,
+    isMainFlow: Boolean,
 ): BranchEntity {
-    return if (inputBranch.getId() != defaultBranch.getId() && inputBranch.getIsConnected()) {
+    return if (inputBranch.isMainFlowBranch != isMainFlow) {
+        defaultBranch
+    } else if (inputBranch.getId() != defaultBranch.getId() && inputBranch.getIsConnected()) {
         inputBranch.switchIsConnected()
         inputBranch.deleteBranch()
         defaultBranch
@@ -246,7 +243,8 @@ fun EndBlock(
                     CharacteristicsBlock(
                         endViewModel.offsetX,
                         endViewModel.offsetY + endViewModel.boxHeight / 2,
-                    )
+                    ),
+                    true
                 )
             })
     }
@@ -318,7 +316,8 @@ fun MovablePrintBlock(
                         CharacteristicsBlock(
                             viewModel.offsetX,
                             viewModel.offsetY + viewModel.boxHeight / 2.35f,
-                        )
+                        ),
+                        true
                     )
                 },
 
@@ -347,7 +346,8 @@ fun MovablePrintBlock(
                         CharacteristicsBlock(
                             viewModel.offsetX,
                             viewModel.offsetY + viewModel.boxHeight / 1.8f,
-                        )
+                        ),
+                        false
                     )
                 })
     }
@@ -358,23 +358,95 @@ fun MovablePrintBlock(
 fun BinaryMovableOperatorBlock(
     value: BlockValue.BinaryOperator,
     block: IBinaryOperatorBlock,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: PathViewModel
 ) {
     Box(
-        modifier = modifier
-            .width(BlockWidth)
-            .background(OperatorBlockColor)
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+
+                    viewModel.inputSupportFLowLeft = updateEndBranch(
+                        viewModel.inputSupportFLowLeft,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth / 2.5f,
+                            viewModel.offsetY,
+                        )
+                    )
+                    viewModel.inputSupportFLowRight = updateEndBranch(
+                        viewModel.inputSupportFLowRight,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth / 1.3f,
+                            viewModel.offsetY,
+                        )
+                    )
+                    viewModel.outputSupportFLow = updateStartBranch(
+                        viewModel.outputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth / 2,
+                            viewModel.offsetY,
+                        )
+                    )
+
+                }
+            }
+            .width(BlockWidth).clip(BlockShape)
+            .background(OperatorBlockColor).heightIn(min = BlockHeight)
+
+
     ) {
         BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
-        SupportingFlow(modifier = Modifier.clickable { setTopFlowOperator(block) })
+        SupportingFlow(modifier = Modifier.clickable {
+            setTopFlowOperator(block)
+            viewModel.inputSupportFLowLeft = createStartBranch(
+                CharacteristicsBlock(
+                    viewModel.offsetX + viewModel.boxWidth / 2.5f,
+                    viewModel.offsetY,
+                ),
+                false
+            )
+        })
         SupportingFlow(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .clickable { setBottomFlowOperator(block) })
+                .clickable {
+                    setBottomFlowOperator(block)
+                    viewModel.inputSupportFLowRight = createStartBranch(
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth / 1.3f,
+                            viewModel.offsetY + viewModel.boxHeight,
+                        ),
+                        false
+                    )
+                })
         SupportingFlow(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .clickable { setPreviousSupportFlowBlock(block as BlockEntity) })
+                .clickable {
+                    setPreviousSupportFlowBlock(block as BlockEntity)
+
+                    viewModel.outputSupportFLow = createEndBranch(
+                        viewModel.outputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2,
+                        ),
+                        false
+                    )
+                })
     }
 }
 
@@ -382,12 +454,22 @@ fun BinaryMovableOperatorBlock(
 fun UnaryMovableOperatorBlock(
     value: BlockValue.UnaryOperator,
     block: IUnaryOperatorBlock,
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: PathViewModel
 ) {
+
     Box(
         modifier = modifier
             .width(BlockWidth)
             .background(OperatorBlockColor)
+
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+                }
+            }
     ) {
         UnaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(

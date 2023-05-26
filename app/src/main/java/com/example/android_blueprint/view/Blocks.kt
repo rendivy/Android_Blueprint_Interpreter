@@ -136,13 +136,15 @@ fun SetMovableBlock(
         is BlockValue.UnaryOperator -> UnaryMovableOperatorBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as IUnaryOperatorBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.BinaryOperator -> BinaryMovableOperatorBlock(
             value = fieldBlock.value,
             block = fieldBlock.block as IBinaryOperatorBlock,
-            modifier = modifier
+            modifier = modifier,
+            viewModel = fieldBlock.pathViewModel!!
         )
 
         is BlockValue.InitializationBlock -> MovableInitializationBlock(
