@@ -73,18 +73,16 @@ val defaultBranch = BranchEntity(mutableStateOf(0f), mutableStateOf(0f))
 var branchInWorking: BranchEntity = defaultBranch
 
 data class CharacteristicsBlock(
-    var offsetX: Float,
-    var offsetY: Float,
-    var boxHeight: Float,
-    var boxWidth: Float,
+    val xResult: Float,
+    val yResult: Float,
 )
 
 fun createStartBranch(
     characteristicsBlock: CharacteristicsBlock
 ): BranchEntity {
     val branch = BranchEntity(
-        xStart = mutableStateOf(characteristicsBlock.offsetX + characteristicsBlock.boxWidth),
-        yStart = mutableStateOf(characteristicsBlock.offsetY + characteristicsBlock.boxHeight / 2)
+        xStart = mutableStateOf(characteristicsBlock.xResult),
+        yStart = mutableStateOf(characteristicsBlock.yResult)
     )
     branchInWorking = branch
     return branch
@@ -95,9 +93,8 @@ fun updateStartBranch(
     characteristicsBlock: CharacteristicsBlock
 ): BranchEntity {
     if (outputBranch.getId() != defaultBranch.getId()) {
-        outputBranch.xStart.value = characteristicsBlock.offsetX + characteristicsBlock.boxWidth
-        outputBranch.yStart.value =
-            characteristicsBlock.offsetY + characteristicsBlock.boxHeight / 2
+        outputBranch.xStart.value = characteristicsBlock.xResult
+        outputBranch.yStart.value = characteristicsBlock.yResult
         if (outputBranch.getIsConnected()) {
             outputBranch.drawBranch()
         }
@@ -118,9 +115,9 @@ fun createEndBranch(
         defaultBranch
     } else {
         val resultBranch = branchInWorking
-        resultBranch.xFinish = mutableStateOf(characteristicsBlock.offsetX)
+        resultBranch.xFinish = mutableStateOf(characteristicsBlock.xResult)
         resultBranch.yFinish =
-            mutableStateOf(characteristicsBlock.offsetY + characteristicsBlock.boxHeight / 2)
+            mutableStateOf(characteristicsBlock.yResult)
         resultBranch.putInMap()
         resultBranch.drawBranch()
         resultBranch.switchIsConnected()
@@ -134,9 +131,8 @@ fun updateEndBranch(
     characteristicsBlock: CharacteristicsBlock
 ): BranchEntity {
     if (inputBranch.getId() != defaultBranch.getId() && inputBranch.getIsConnected()) {
-        inputBranch.xFinish.value = characteristicsBlock.offsetX
-        inputBranch.yFinish.value =
-            characteristicsBlock.offsetY + characteristicsBlock.boxHeight / 2
+        inputBranch.xFinish.value = characteristicsBlock.xResult
+        inputBranch.yFinish.value = characteristicsBlock.yResult
         inputBranch.drawBranch()
     }
     return inputBranch
@@ -170,10 +166,8 @@ fun StartBlock(
                     startViewModel.outputBranch = updateStartBranch(
                         startViewModel.outputBranch,
                         CharacteristicsBlock(
-                            startViewModel.offsetX,
-                            startViewModel.offsetY,
-                            startViewModel.boxHeight,
-                            startViewModel.boxWidth
+                            startViewModel.offsetX + startViewModel.boxWidth,
+                            startViewModel.offsetY + startViewModel.boxHeight / 2
                         )
                     )
                 }
@@ -192,10 +186,8 @@ fun StartBlock(
 
                     startViewModel.outputBranch = createStartBranch(
                         CharacteristicsBlock(
-                            startViewModel.offsetX,
-                            startViewModel.offsetY,
-                            startViewModel.boxHeight,
-                            startViewModel.boxWidth
+                            startViewModel.offsetX + startViewModel.boxWidth,
+                            startViewModel.offsetY + startViewModel.boxHeight / 2
                         )
                     )
                 }
@@ -233,9 +225,7 @@ fun EndBlock(
                         endViewModel.inputBranch,
                         CharacteristicsBlock(
                             endViewModel.offsetX,
-                            endViewModel.offsetY,
-                            endViewModel.boxHeight,
-                            endViewModel.boxWidth
+                            endViewModel.offsetY + endViewModel.boxHeight / 2,
                         )
                     )
                 }
@@ -255,9 +245,7 @@ fun EndBlock(
                     endViewModel.inputBranch,
                     CharacteristicsBlock(
                         endViewModel.offsetX,
-                        endViewModel.offsetY,
-                        endViewModel.boxHeight,
-                        endViewModel.boxWidth
+                        endViewModel.offsetY + endViewModel.boxHeight / 2,
                     )
                 )
             })
@@ -270,7 +258,7 @@ fun MovablePrintBlock(
     block: PrintBlock,
     viewModel: PathViewModel
 
-    ) {
+) {
 
 
     val modifier = Modifier
@@ -295,13 +283,22 @@ fun MovablePrintBlock(
                     viewModel.inputBranch = updateEndBranch(
                         viewModel.inputBranch,
                         CharacteristicsBlock(
-                            viewModel.offsetX, viewModel.offsetY, viewModel.boxHeight, viewModel.boxWidth
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 2.35f,
                         )
                     )
                     viewModel.outputBranch = updateStartBranch(
                         viewModel.outputBranch,
                         CharacteristicsBlock(
-                            viewModel.offsetX, viewModel.offsetY, viewModel.boxHeight, viewModel.boxWidth
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2.35f,
+                        )
+                    )
+                    viewModel.inputSupportFLow = updateEndBranch(
+                        viewModel.inputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 1.8f,
                         )
                     )
                 }
@@ -319,7 +316,8 @@ fun MovablePrintBlock(
                     viewModel.inputBranch = createEndBranch(
                         viewModel.inputBranch,
                         CharacteristicsBlock(
-                            viewModel.offsetX, viewModel.offsetY, viewModel.boxHeight, viewModel.boxWidth
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 2.35f,
                         )
                     )
                 },
@@ -331,7 +329,8 @@ fun MovablePrintBlock(
 
                     viewModel.outputBranch = createStartBranch(
                         CharacteristicsBlock(
-                            viewModel.offsetX, viewModel.offsetY, viewModel.boxHeight, viewModel.boxWidth
+                            viewModel.offsetX + viewModel.boxWidth,
+                            viewModel.offsetY + viewModel.boxHeight / 2.35f,
                         )
                     )
                 },
@@ -340,7 +339,17 @@ fun MovablePrintBlock(
         SupportingFlow(
             modifier = Modifier
                 .align(Alignment.Start)
-                .clickable { setUnaryOperatorFlow(block) })
+                .clickable {
+                    setUnaryOperatorFlow(block)
+
+                    viewModel.inputSupportFLow = createEndBranch(
+                        viewModel.inputSupportFLow,
+                        CharacteristicsBlock(
+                            viewModel.offsetX,
+                            viewModel.offsetY + viewModel.boxHeight / 1.8f,
+                        )
+                    )
+                })
     }
 }
 

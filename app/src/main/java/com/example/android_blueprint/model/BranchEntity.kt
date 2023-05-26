@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.graphics.Path
 
-class BranchEntity(var xStart: MutableState<Float>, var yStart: MutableState<Float>) {
+class BranchEntity(var xStart: MutableState<Float>, var yStart: MutableState<Float>, var isMainFlowBranch: Boolean = true) {
     companion object {
         private var nextId = 0
         var pathData = mutableStateMapOf<Int, BranchEntity>()
