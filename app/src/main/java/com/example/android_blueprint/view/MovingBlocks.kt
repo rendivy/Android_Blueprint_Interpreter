@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import block.BlockEntity
+import block.CallFunctionBlock
 import block.EndBlock
 import block.EndFunctionBlock
 import block.EndIfBlock
@@ -243,7 +244,7 @@ fun MovablePrintBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText( text = value.text)
+            ComplexBlockText(text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -539,7 +540,7 @@ fun MovableIfBlock(
 
     ) {
         Box {
-            ComplexBlockText( text = value.text)
+            ComplexBlockText(text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -667,7 +668,7 @@ fun MovableEndifBLock(
             .background(ComplexBlockColor)
             .then(modifier)
     ) {
-        ComplexBlockText( text = value.text)
+        ComplexBlockText(text = value.text)
         BreakPoint(
             block = block,
             color = viewModel.color,
@@ -765,7 +766,7 @@ fun MovableInitializationBlock(
 
     ) {
         Box {
-            ComplexBlockText( text = value.text)
+            ComplexBlockText(text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -861,7 +862,7 @@ fun MovableSetBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText( text = value.text)
+            ComplexBlockText(text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -976,7 +977,7 @@ fun MovableForBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText( text = value.text)
+            ComplexBlockText(text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -1088,7 +1089,7 @@ fun MovableWhileBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText( text = value.text)
+            ComplexBlockText(text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -1187,7 +1188,7 @@ fun MovableGetValueBlock(
             .heightIn(min = BlockHeight)
             .then(modifier)
     ) {
-        ComplexBlockText( text = value.text)
+        ComplexBlockText(text = value.text)
         Row {
             TextFieldForVariable(
                 value = stringResource(R.string.expression),
@@ -1251,7 +1252,7 @@ fun MovableFunctionBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText( text = value.text)
+            ComplexBlockText(text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -1429,6 +1430,97 @@ fun MovableContinueOrBreakBlock(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text = value.text,
             color = OperatorsTextColor
+        )
+    }
+}
+
+@Composable
+fun MovableCallFunctionBlock(
+    value: BlockValue.CallFunctionBlock,
+    block: CallFunctionBlock,
+    modifier: Modifier,
+    viewModel: BlockViewModel
+) {
+    Column(
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    viewModel.offsetX.roundToInt(),
+                    viewModel.offsetY.roundToInt()
+                )
+            }
+            .onGloballyPositioned { coordinates ->
+                viewModel.boxHeight = coordinates.size.height.toFloat()
+                viewModel.boxWidth = coordinates.size.width.toFloat()
+            }
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    viewModel.offsetX += dragAmount.x
+                    viewModel.offsetY += dragAmount.y
+                    //TODO: fix position branches
+
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        2.75f
+                    )
+
+                    viewModel.outputBranch = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutput,
+                        2.75f
+                    )
+                }
+            }
+            .width(TextFieldBlockWidth)
+            .clip(BlockShape)
+            .background(ComplexBlockColor)
+            .heightIn(min = BlockHeight)
+            .then(modifier)
+
+    ) {
+        Box {
+            ComplexBlockText(text = value.text)
+            BreakPoint(
+                block = block,
+                color = viewModel.color,
+                changeBreakPointColor = viewModel::changeBreakPointColor,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            MainFlow(modifier = Modifier.clickable {
+                setMainFlow(block)
+
+                viewModel.inputBranch = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInput,
+                    true,
+                    block.getId(),
+                    2.75f
+                )
+            })
+            MainFlow(modifier = Modifier.clickable {
+                setPreviousMainFlowTrueBlock(block)
+
+                viewModel.outputBranch = selectCreateStartBranch(
+                    viewModel,
+                    BranchType.MainFlowOutput,
+                    true,
+                    block.getId(),
+                    2.75f
+                )
+            })
+        }
+        TextFieldForVariable(
+            value = "name(args)",
+            modifier = Modifier.fillMaxWidth(),
+            block = block
         )
     }
 }

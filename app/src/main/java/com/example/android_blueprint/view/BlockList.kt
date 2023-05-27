@@ -31,6 +31,7 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
         BlockValue.PrintBlock,
         BlockValue.IfBlock,
         BlockValue.FunctionBlock,
+        BlockValue.CallFunctionBlock,
         BlockValue.ReturnBlock,
         BlockValue.BreakBlock,
         BlockValue.ContinueBlock,

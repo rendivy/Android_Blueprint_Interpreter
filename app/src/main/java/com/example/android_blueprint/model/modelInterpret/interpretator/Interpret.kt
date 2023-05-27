@@ -72,11 +72,11 @@ class Interpret() {
 
     fun run(startBlock: StartBlock) {
         blocks = BlockEntity.getBlocks()
+        clearContext()
         blocks.forEach {
             it.validate()
         }
         initializationsFunction()
-        isRunning = true
         parse(startBlock)
     }
 
@@ -90,6 +90,19 @@ class Interpret() {
             Notation.functionName.add(it.key)
             functionName.add(it.key)
         }
+    }
+
+    private fun clearContext() {
+        debug = true
+        stepInto = false
+        stepTo = true
+        isRunning = true
+        isRunningBlock = false
+        parseMap.clear()
+        loopStack.clear()
+        functionMemoryStack.clear()
+        functionHashMap.clear()
+        functionName.clear()
     }
 
     private fun parseForLoop(block: BlockEntity): List<String> {
@@ -163,6 +176,8 @@ class Interpret() {
         functionMemoryStack.push(memory)
         memory = functionEntity.memory
         for (i in functionEntity.variables.indices) {
+            if(functionEntity.variables[i] == "" &&
+                    callFunctionEntity.variables[i] == "") continue
             val variable = functionEntity.variables[i]
             val value = callFunctionEntity.variables[i]
             parseExpressionString("$variable=$value", true)
@@ -173,15 +188,15 @@ class Interpret() {
     private fun printMemory() {
         var currentMemory = memory
         while (currentMemory.previousMemory != null) {
-            ConsoleViewModel.consoleText = currentMemory.scope + '\n'
+            ConsoleViewModel.debugText = currentMemory.scope + '\n'
             for ((key, value) in currentMemory.stack) {
-                ConsoleViewModel.consoleText += "$key: $value\n"
+                ConsoleViewModel.debugText += "$key: $value\n"
             }
             currentMemory = currentMemory.previousMemory!!
         }
-        ConsoleViewModel.consoleText = currentMemory.scope + '\n'
+        ConsoleViewModel.debugText = currentMemory.scope + '\n'
         for ((key, value) in currentMemory.stack) {
-            ConsoleViewModel.consoleText += "$key: $value\n"
+            ConsoleViewModel.debugText += "$key: $value\n"
         }
     }
 

@@ -25,6 +25,7 @@ import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BottomBarPadding
 import com.example.android_blueprint.ui.theme.ButtonSize
+import com.example.android_blueprint.ui.theme.DebugPadding
 import com.example.android_blueprint.ui.theme.OperatorsTextColor
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.ConsoleViewModel
@@ -47,7 +48,7 @@ fun DebugSheetState(interpret: Interpret, closeBottomSheet: KSuspendFunction0<Un
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = ConsoleViewModel.consoleText,
+                text = ConsoleViewModel.debugText,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = neuMedium,
@@ -58,7 +59,7 @@ fun DebugSheetState(interpret: Interpret, closeBottomSheet: KSuspendFunction0<Un
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = BottomBarPadding)
+                .padding(bottom = DebugPadding)
                 .fillMaxWidth()
         ) {
             Box(

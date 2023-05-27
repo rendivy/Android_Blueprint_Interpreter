@@ -21,8 +21,8 @@ fun createStartBranch(
         inputBranch.deleteBranch()
     }
     val branch = BranchEntity(
-        xStart = mutableStateOf(characteristicsBlock.xResult),
-        yStart = mutableStateOf(characteristicsBlock.yResult),
+        mutableStateOf(characteristicsBlock.xResult),
+        mutableStateOf(characteristicsBlock.yResult),
         isMainFlow,
         idStartBlock,
     )
@@ -36,14 +36,14 @@ fun createEndBranch(
     isMainFlow: Boolean,
     idFinishBlock: Int
 ): BranchEntity {
-    return if (branchInWorking.isMainFlowBranch != isMainFlow ||
-        branchInWorking.idStartBlock == idFinishBlock
-    ) {
-        defaultBranch
-    } else if(branchInWorking.getId() == defaultBranch.getId()){
+    return if(branchInWorking.getId() == defaultBranch.getId())
+    {
         inputBranch
-    }
-    else {
+    } else if (branchInWorking.isMainFlowBranch != isMainFlow ||
+        branchInWorking.idStartBlock == idFinishBlock)
+    {
+        defaultBranch
+    } else {
         tryClearBranches(inputBranch)
         val resultBranch = branchInWorking
         resultBranch.xFinish = mutableStateOf(characteristicsBlock.xResult)
@@ -62,6 +62,12 @@ fun updateStartBranch(
     outputBranch: BranchEntity,
     characteristicsBlock: CharacteristicsBlock
 ): BranchEntity {
+    if(outputBranch.idFinishBlock == -1){
+        outputBranch.xStart.value = characteristicsBlock.xResult
+        outputBranch.yStart.value = characteristicsBlock.yResult
+        return outputBranch
+    }
+
     if (!outputBranch.isInMap()) {
         return defaultBranch
     }
