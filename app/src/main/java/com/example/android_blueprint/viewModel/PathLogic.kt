@@ -36,14 +36,14 @@ fun createEndBranch(
     isMainFlow: Boolean,
     idFinishBlock: Int
 ): BranchEntity {
-    return if (branchInWorking.isMainFlowBranch != isMainFlow ||
-        branchInWorking.idStartBlock == idFinishBlock
-    ) {
-        defaultBranch
-    } else if(branchInWorking.getId() == defaultBranch.getId()){
+    return if(branchInWorking.getId() == defaultBranch.getId())
+    {
         inputBranch
-    }
-    else {
+    } else if (branchInWorking.isMainFlowBranch != isMainFlow ||
+        branchInWorking.idStartBlock == idFinishBlock)
+    {
+        defaultBranch
+    } else {
         tryClearBranches(inputBranch)
         val resultBranch = branchInWorking
         resultBranch.xFinish = mutableStateOf(characteristicsBlock.xResult)
