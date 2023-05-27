@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import block.BlockEntity
+import block.CallFunctionBlock
 import block.EndFunctionBlock
 import block.EndIfBlock
 import block.ForBlock
@@ -91,6 +92,13 @@ fun SetMovableBlock(
         }
 
     when (fieldBlock.value) {
+
+        is BlockValue.CallFunctionBlock -> MovableCallFunctionBlock(
+            value = fieldBlock.value,
+            block = fieldBlock.block as CallFunctionBlock,
+            viewModel = fieldBlock.pathViewModel!!,
+            modifier = modifier
+        )
 
         is BlockValue.ContinueBlock, BlockValue.BreakBlock -> MovableContinueOrBreakBlock(
             value = fieldBlock.value as BlockValue,
@@ -201,6 +209,11 @@ fun SetFixedBlock(
 
     when (value) {
 
+        is BlockValue.CallFunctionBlock -> FixedCallFunctionBlock(
+            value = value,
+            modifier = modifier
+        )
+
         is BlockValue.ContinueBlock, BlockValue.BreakBlock -> FixedContinueOrBreakBlock(
             value = value as BlockValue,
             modifier = modifier
@@ -308,7 +321,7 @@ fun SupportingFlow(
             .padding(DefaultPadding)
             .clip(BlockShape)
             .size(FlowSize)
-            .background(Color.White)
+            .background(ActionColor)
     )
 }
 

@@ -14,6 +14,7 @@ import block.BinaryPowOperatorBlock
 import block.BinarySubOperatorBlock
 import block.BinarySumOperatorBlock
 import block.BreakBlock
+import block.CallFunctionBlock
 import block.ContinueBlock
 import block.EndFunctionBlock
 import block.EndIfBlock
@@ -42,6 +43,9 @@ import com.example.android_blueprint.model.BlockValue
 
 object BlockFactory {
 
+    private fun createCallFunction(): CallFunctionBlock {
+        return CallFunctionBlock()
+    }
     private fun createWhileBlock(): WhileBlock {
         return WhileBlock()
     }
@@ -127,33 +131,35 @@ object BlockFactory {
     fun createObj(blockValue: Any): Any? {
         return when (blockValue) {
 
-            is BlockValue.SetBlock -> BlockFactory.createSetBlock()
+            is BlockValue.CallFunctionBlock -> createCallFunction()
 
-            is BlockValue.ContinueBlock -> BlockFactory.createContinueBlock()
+            is BlockValue.SetBlock -> createSetBlock()
 
-            is BlockValue.BreakBlock -> BlockFactory.createBreakBlock()
+            is BlockValue.ContinueBlock -> createContinueBlock()
 
-            is BlockValue.ReturnBlock -> BlockFactory.createReturnBlock()
+            is BlockValue.BreakBlock -> createBreakBlock()
 
-            is BlockValue.FunctionBlock -> BlockFactory.createFunctionBlock()
+            is BlockValue.ReturnBlock -> createReturnBlock()
 
-            is BlockValue.GetValueBlock -> BlockFactory.createGetValueBlock()
+            is BlockValue.FunctionBlock -> createFunctionBlock()
 
-            is BlockValue.ForBlock -> BlockFactory.createForBlock()
+            is BlockValue.GetValueBlock -> createGetValueBlock()
 
-            is BlockValue.WhileBlock -> BlockFactory.createWhileBlock()
+            is BlockValue.ForBlock -> createForBlock()
 
-            is BlockValue.UnaryOperator -> BlockFactory.createUnaryOperatorBlock(unaryOperator = blockValue)
+            is BlockValue.WhileBlock -> createWhileBlock()
 
-            is BlockValue.BinaryOperator -> BlockFactory.createBinaryOperatorBlock(binaryOperator = blockValue)
+            is BlockValue.UnaryOperator -> createUnaryOperatorBlock(unaryOperator = blockValue)
 
-            is BlockValue.InitializationBlock -> BlockFactory.createInitializationBlock()
+            is BlockValue.BinaryOperator -> createBinaryOperatorBlock(binaryOperator = blockValue)
 
-            is BlockValue.IfBlock -> BlockFactory.createIfBlock()
+            is BlockValue.InitializationBlock -> createInitializationBlock()
 
-            is BlockValue.EndifBlock -> BlockFactory.createEndifBlock()
+            is BlockValue.IfBlock -> createIfBlock()
 
-            is BlockValue.PrintBlock -> BlockFactory.createPrintBlock()
+            is BlockValue.EndifBlock -> createEndifBlock()
+
+            is BlockValue.PrintBlock -> createPrintBlock()
             else -> null
         }
     }
