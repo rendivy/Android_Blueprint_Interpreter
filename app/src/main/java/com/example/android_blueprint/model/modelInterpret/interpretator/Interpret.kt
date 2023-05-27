@@ -501,7 +501,7 @@ class Interpret() {
         return when {
             data in listOf(
                 "abs", "exp", "sorted", "ceil", "floor", "len",
-                ".toInt()", ".toFloat()", ".toBool()", ".toString()", ".sort()", ".toList()"
+                ".toInt()", ".toDouble()", ".toBool()", ".toString()", ".sort()", ".toList()"
             ) -> {
                 null
             }
