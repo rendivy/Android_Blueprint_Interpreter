@@ -15,12 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
+import block.BlockEntity
 import block.EndBlock
 import block.EndFunctionBlock
 import block.EndIfBlock
@@ -40,13 +39,13 @@ import com.example.android_blueprint.R
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.BranchType
 import com.example.android_blueprint.model.CharacteristicsBlock
-import com.example.android_blueprint.ui.theme.ActionColor
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BlockWidth
 import com.example.android_blueprint.ui.theme.BorderBlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
+import com.example.android_blueprint.ui.theme.OperatorsTextColor
 import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
 import com.example.android_blueprint.viewModel.BlockViewModel
 import com.example.android_blueprint.viewModel.createEndBranch
@@ -106,7 +105,7 @@ fun StartBlock(
             .width(BorderBlockWidth)
             .background(ComplexBlockColor)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText(text = value.text)
         BreakPoint(
             block = block,
             color = viewModel.color,
@@ -171,7 +170,7 @@ fun EndBlock(
             .width(BorderBlockWidth)
             .background(ComplexBlockColor)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText(text = value.text)
         BreakPoint(
             block = block,
             color = viewModel.color,
@@ -244,7 +243,7 @@ fun MovablePrintBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText(modifier = value.modifier, text = value.text)
+            ComplexBlockText( text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -361,12 +360,6 @@ fun BinaryMovableOperatorBlock(
 
 
     ) {
-        BreakPoint(
-            block = block as BlockEntity1,
-            color = viewModel.color,
-            changeBreakPointColor = viewModel::changeBreakPointColor,
-            modifier = Modifier.align(Alignment.TopEnd)
-        )
         BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(modifier = Modifier.clickable {
             setTopFlowOperator(block)
@@ -375,7 +368,7 @@ fun BinaryMovableOperatorBlock(
                 viewModel,
                 BranchType.SupportFlowInputLeft,
                 false,
-                block.getId(),
+                (block as BlockEntity1).getId(),
                 5f
             )
         })
@@ -389,7 +382,7 @@ fun BinaryMovableOperatorBlock(
                         viewModel,
                         BranchType.SupportFlowInputRight,
                         false,
-                        block.getId(),
+                        (block as BlockEntity).getId(),
                         1.2f
                     )
                 })
@@ -397,7 +390,7 @@ fun BinaryMovableOperatorBlock(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clickable {
-                    setPreviousSupportFlowBlock(block as BlockEntity1)
+                    setPreviousSupportFlowBlock(block as BlockEntity)
 
                     viewModel.outputSupportFLow = selectCreateStartBranch(
                         viewModel,
@@ -455,12 +448,6 @@ fun UnaryMovableOperatorBlock(
             .heightIn(min = BlockHeight)
             .then(modifier)
     ) {
-        BreakPoint(
-            block = block as BlockEntity1,
-            color = viewModel.color,
-            changeBreakPointColor = viewModel::changeBreakPointColor,
-            modifier = Modifier.align(Alignment.TopEnd)
-        )
         UnaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(
             modifier = Modifier
@@ -472,7 +459,7 @@ fun UnaryMovableOperatorBlock(
                         viewModel,
                         BranchType.SupportFlowInput,
                         false,
-                        (block as BlockEntity1).getId(),
+                        (block as BlockEntity).getId(),
                         2f
                     )
                 })
@@ -480,7 +467,7 @@ fun UnaryMovableOperatorBlock(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clickable {
-                    setPreviousSupportFlowBlock(block as BlockEntity1)
+                    setPreviousSupportFlowBlock(block as BlockEntity)
 
                     viewModel.outputSupportFLow = selectCreateStartBranch(
                         viewModel,
@@ -552,7 +539,7 @@ fun MovableIfBlock(
 
     ) {
         Box {
-            ComplexBlockText(modifier = value.modifier, text = value.text)
+            ComplexBlockText( text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -680,7 +667,7 @@ fun MovableEndifBLock(
             .background(ComplexBlockColor)
             .then(modifier)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText( text = value.text)
         BreakPoint(
             block = block,
             color = viewModel.color,
@@ -778,7 +765,7 @@ fun MovableInitializationBlock(
 
     ) {
         Box {
-            ComplexBlockText(modifier = value.modifier, text = value.text)
+            ComplexBlockText( text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -874,7 +861,7 @@ fun MovableSetBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText(modifier = value.modifier, text = value.text)
+            ComplexBlockText( text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -989,7 +976,7 @@ fun MovableForBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText(modifier = value.modifier, text = value.text)
+            ComplexBlockText( text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -1101,7 +1088,7 @@ fun MovableWhileBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText(modifier = value.modifier, text = value.text)
+            ComplexBlockText( text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -1187,11 +1174,9 @@ fun MovableGetValueBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.outputSupportFLow = selectCreateStartBranch(
+                    viewModel.outputSupportFLow = selectUpdateStartBranch(
                         viewModel,
                         BranchType.SupportFlowOutput,
-                        false,
-                        block.getId(),
                         1.5f
                     )
                 }
@@ -1202,15 +1187,7 @@ fun MovableGetValueBlock(
             .heightIn(min = BlockHeight)
             .then(modifier)
     ) {
-        Box {
-            ComplexBlockText(modifier = value.modifier, text = value.text)
-            BreakPoint(
-                block = block,
-                color = viewModel.color,
-                changeBreakPointColor = viewModel::changeBreakPointColor,
-                modifier = Modifier.align(Alignment.TopEnd)
-            )
-        }
+        ComplexBlockText( text = value.text)
         Row {
             TextFieldForVariable(
                 value = stringResource(R.string.expression),
@@ -1274,7 +1251,7 @@ fun MovableFunctionBlock(
             .then(modifier)
     ) {
         Box {
-            ComplexBlockText(modifier = value.modifier, text = value.text)
+            ComplexBlockText( text = value.text)
             BreakPoint(
                 block = block,
                 color = viewModel.color,
@@ -1369,9 +1346,10 @@ fun MovableReturnBlock(
                 modifier = Modifier.align(Alignment.TopEnd)
             )
         }
-        ComplexSecondBlockText(
-            modifier = value.modifier.align(Alignment.CenterHorizontally),
-            text = value.text
+        ComplexBlockText(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = value.text,
+            color = OperatorsTextColor
         )
         Row {
             SupportingFlow(modifier = Modifier.clickable {
@@ -1447,9 +1425,10 @@ fun MovableContinueOrBreakBlock(
                 modifier = Modifier.align(Alignment.TopEnd)
             )
         }
-        ComplexSecondBlockText(
-            modifier = value.modifier.align(Alignment.CenterHorizontally),
-            text = value.text
+        ComplexBlockText(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = value.text,
+            color = OperatorsTextColor
         )
     }
 }

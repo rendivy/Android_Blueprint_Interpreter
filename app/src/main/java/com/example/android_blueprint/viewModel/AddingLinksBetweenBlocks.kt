@@ -14,6 +14,7 @@ import interpretator.Interpret
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlin.reflect.KSuspendFunction0
 
 
 fun setBottomFlowOperator(block: IBinaryOperatorBlock) {
@@ -96,7 +97,7 @@ fun start(
     startBlock: StartBlock,
     interpreter: Interpret,
     openDebugger: () -> Unit,
-    closeDebugger: () -> Unit
+    closeDebugger: () -> Unit,
 ) {
     if (BlockEntity.checkBreakPointInBlocks()) {
         openDebugger()

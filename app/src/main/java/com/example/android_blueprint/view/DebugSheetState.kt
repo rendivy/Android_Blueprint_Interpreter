@@ -14,13 +14,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import block.BlockEntity
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BottomBarPadding
@@ -29,9 +29,12 @@ import com.example.android_blueprint.ui.theme.OperatorsTextColor
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.ConsoleViewModel
 import interpretator.Interpret
+import kotlinx.coroutines.launch
+import kotlin.reflect.KSuspendFunction0
 
 @Composable
-fun DebugSheetState(interpret: Interpret) {
+fun DebugSheetState(interpret: Interpret, closeBottomSheet: KSuspendFunction0<Unit>) {
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +66,15 @@ fun DebugSheetState(interpret: Interpret) {
                     .size(ButtonSize)
                     .clip(BlockShape)
                     .background(Color.Gray)
-                    .clickable { interpret.switchStepTo() }
+                    .clickable {
+                        if (interpret.isRunning()) {
+                            interpret.switchStepTo()
+                        } else {
+                            coroutineScope.launch {
+                                closeBottomSheet()
+                            }
+                        }
+                    }
             ) {
                 Text(
                     text = "Step to",
@@ -77,7 +88,15 @@ fun DebugSheetState(interpret: Interpret) {
                     .size(ButtonSize)
                     .clip(BlockShape)
                     .background(Color.Gray)
-                    .clickable { interpret.switchStepInto() }
+                    .clickable {
+                        if (interpret.isRunning()) {
+                            interpret.switchStepInto()
+                        } else {
+                            coroutineScope.launch {
+                                closeBottomSheet()
+                            }
+                        }
+                    }
             ) {
                 Text(
                     text = "Step into",

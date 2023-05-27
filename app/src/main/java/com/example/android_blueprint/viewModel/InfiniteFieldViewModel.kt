@@ -1,5 +1,8 @@
 package com.example.android_blueprint.viewModel
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -30,8 +33,21 @@ class InfiniteFieldViewModel : ViewModel() {
     var deleteMode by mutableStateOf(false)
     var transform by mutableStateOf(Transform(InitialScale, InitialOffset))
     var isDebug by mutableStateOf(false)
+    @OptIn(ExperimentalMaterialApi::class)
+    val sheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+
     companion object {
         var previousBlocks = PreviousBlocks()
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    suspend fun closeBottomSheet() {
+        sheetState.hide()
+    }
+
+    @OptIn(ExperimentalMaterialApi::class)
+    suspend fun openBottomSheet() {
+        sheetState.show()
     }
 
     fun openDebugger() {

@@ -9,9 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -28,10 +26,14 @@ import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 fun FieldScreen(
     infiniteFieldViewModel: InfiniteFieldViewModel
 ) {
-    var sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.HalfExpanded)
     ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetContent = { DebugSheetState(interpret = infiniteFieldViewModel.interpret) },
+        sheetState = infiniteFieldViewModel.sheetState,
+        sheetContent = {
+            DebugSheetState(
+                interpret = infiniteFieldViewModel.interpret,
+                infiniteFieldViewModel::closeBottomSheet
+            )
+        },
         content = {
             InfiniteField(infiniteFieldViewModel = infiniteFieldViewModel)
         },

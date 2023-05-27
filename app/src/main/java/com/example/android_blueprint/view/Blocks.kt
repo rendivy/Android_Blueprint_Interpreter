@@ -20,6 +20,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
@@ -43,6 +45,7 @@ import block.SetVariableBlock
 import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
+import com.example.android_blueprint.ui.theme.ActionColor
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.BinaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.BlockShape
@@ -79,7 +82,11 @@ fun SetMovableBlock(
             }
         ) {
             if (infiniteFieldViewModel.deleteMode) {
-                infiniteFieldViewModel.deleteMovableBlock(fieldBlock.index, fieldBlock.block!!, fieldBlock.pathViewModel!!)
+                infiniteFieldViewModel.deleteMovableBlock(
+                    fieldBlock.index,
+                    fieldBlock.block!!,
+                    fieldBlock.pathViewModel!!
+                )
             }
         }
 
@@ -253,7 +260,7 @@ fun BinaryOperatorText(modifier: Modifier, text: String) {
         color = OperatorsTextColor,
         modifier = modifier,
 
-    )
+        )
 }
 
 @Composable
@@ -270,28 +277,25 @@ fun UnaryOperatorText(modifier: Modifier, text: String) {
 
 
 @Composable
-fun ComplexBlockText(modifier: Modifier, text: String) {
-    Text(
-        text = text,
-        fontFamily = neuMedium,
-        fontSize = ComplexBlockTextSize,
-        color = BackgroundColor,
-        textAlign = TextAlign.Center,
-        modifier = modifier,
-        fontWeight = FontWeight.Bold
+fun ComplexBlockText(
+    text: String, color: Color = BackgroundColor, modifier: Modifier = Modifier.background(
+        Brush.linearGradient(
+            colors = listOf(ActionColor, ActionColor),
+            start = Offset(0f, 0f),
+            end = Offset(100f, 0f)
+        )
     )
-}
-
-@Composable
-fun ComplexSecondBlockText(modifier: Modifier, text: String) {
+) {
     Text(
         text = text,
         fontFamily = neuMedium,
         fontSize = ComplexBlockTextSize,
-        color = OperatorsTextColor,
+        color = color,
         textAlign = TextAlign.Center,
-        modifier = modifier,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier)
     )
 }
 
@@ -307,7 +311,6 @@ fun SupportingFlow(
             .background(Color.White)
     )
 }
-
 
 
 @Composable

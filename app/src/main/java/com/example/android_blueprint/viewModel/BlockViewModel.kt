@@ -15,7 +15,7 @@ class BlockViewModel : ViewModel() {
     var offsetY by mutableStateOf(0f)
     var boxHeight by mutableStateOf(0f)
     var boxWidth by mutableStateOf(0f)
-    var color by mutableStateOf(Color.LightGray.copy(alpha = 0.5f))
+    var color by mutableStateOf(InactiveBreakpointColor)
     var outputBranch = defaultBranch
     var inputBranch = defaultBranch
     var inputBranchForEndIf = defaultBranch

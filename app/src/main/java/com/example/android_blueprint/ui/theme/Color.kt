@@ -19,7 +19,5 @@ val OperatorBlockColor = Color(17, 22, 27).copy(alpha = 0.8f)
 val ComplexBlockColor = Color(17, 22, 27)
 val OperatorsTextColor = Color.LightGray.copy(alpha = 0.8f)
 val PlaceholderTextColor = Color(0xFF808080)
-val InactiveBreakpointColor = Color.LightGray.copy(alpha = 0.5f)
+val InactiveBreakpointColor = BackgroundColor
 val ActiveColor = Color.Red
-
-val IfBlockColor = Color(120, 51, 246)

@@ -12,7 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockHeight
+import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.HeightOfSmallBlocks
+import com.example.android_blueprint.ui.theme.OperatorsTextColor
 
 @Composable
 fun BinaryFixedOperatorBlock(
@@ -54,7 +56,7 @@ fun FixedPrintBlock(
         modifier = modifier
             .heightIn(min = BlockHeight)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText( text = value.text)
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
@@ -76,7 +78,7 @@ fun FixedBranchBlock(
         modifier = modifier
             .heightIn(min = BlockHeight)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText( text = value.text)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,7 +116,7 @@ fun FixedInitializationBlock(
         modifier = modifier
             .heightIn(min = BlockHeight)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText( text = value.text)
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -139,7 +141,7 @@ fun FixedSetBlock(
         modifier = modifier
             .heightIn(min = BlockHeight)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText( text = value.text)
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -171,7 +173,7 @@ fun FixedLoopBlock(
         modifier = modifier
             .heightIn(min = BlockHeight)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText( text = value.text)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -199,7 +201,7 @@ fun FixedGetValueBlock(
         modifier = modifier
             .heightIn(min = HeightOfSmallBlocks)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText( text = value.text)
         Row {
             placeholderText(text = "expression", modifier = Modifier.weight(1f))
             SupportingFlow()
@@ -216,7 +218,7 @@ fun FixedFunctionBlock(
         modifier = modifier
             .heightIn(min = HeightOfSmallBlocks)
     ) {
-        ComplexBlockText(modifier = value.modifier, text = value.text)
+        ComplexBlockText( text = value.text)
         Row {
             placeholderText(text = "name(args)", modifier = Modifier.weight(1f))
             MainFlow()
@@ -234,9 +236,10 @@ fun FixedReturnBlock(
             .heightIn(min = BlockHeight)
     ) {
         MainFlow()
-        ComplexSecondBlockText(
-            modifier = value.modifier.align(Alignment.CenterHorizontally),
-            text = value.text
+        ComplexBlockText(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = value.text,
+            color = OperatorsTextColor
         )
         Row {
             SupportingFlow()
@@ -255,9 +258,10 @@ fun FixedContinueOrBreakBlock(
             .heightIn(min = BlockHeight)
     ) {
         MainFlow()
-        ComplexSecondBlockText(
-            modifier = value.modifier.align(Alignment.CenterHorizontally),
-            text = value.text
+        ComplexBlockText(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = value.text,
+            color = OperatorsTextColor
         )
     }
 }

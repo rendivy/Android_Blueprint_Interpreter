@@ -11,32 +11,31 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.example.android_blueprint.R
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.BranchEntity
+import com.example.android_blueprint.ui.theme.ActionColor
 import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.DeleteButtonSize
-import com.example.android_blueprint.ui.theme.ActionColor
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 import com.example.android_blueprint.viewModel.start
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -52,6 +51,8 @@ fun InfiniteField(
     val state = rememberTransformableState { zoomChange, offsetChange, _ ->
         changeTransform(zoomChange, offsetChange)
     }
+    val coroutineScope = rememberCoroutineScope()
+
     Box(
         modifier = Modifier
             .transformable(state = state)
@@ -92,19 +93,23 @@ fun InfiniteField(
     Box(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
-                .align(Alignment.Center)
+                .align(Alignment.TopEnd)
         ) {
             if (infiniteFieldViewModel.isDebug) {
                 Box(
                     modifier = Modifier
                         .padding(DefaultPadding)
                         .size(DeleteButtonSize)
-                        .clip(RoundedCornerShape(24.dp))
+                        .clip(CircleShape)
                         .background(ActionColor)
-                    )
-                 {
+                        .clickable {
+                            coroutineScope.launch {
+                                infiniteFieldViewModel.openBottomSheet()
+                            }
+                        }
+                ) {
                     Icon(
-                        painter = (painterResource(R.drawable.bug_fill)), contentDescription = null,
+                        (painterResource(R.drawable.bug_fill)), contentDescription = null,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -120,7 +125,7 @@ fun InfiniteField(
                             startBlock = infiniteFieldViewModel.startBlock,
                             interpreter = infiniteFieldViewModel.interpret,
                             openDebugger = infiniteFieldViewModel::openDebugger,
-                            closeDebugger = infiniteFieldViewModel::closeDebugger
+                            closeDebugger = infiniteFieldViewModel::closeDebugger,
                         )
                     }
             ) {
