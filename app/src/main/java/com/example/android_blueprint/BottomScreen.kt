@@ -21,20 +21,23 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.android_blueprint.model.BottomBarModel
-import com.example.android_blueprint.ui.theme.BackgroundColor
-import com.example.android_blueprint.ui.theme.ActionColor
 import com.example.android_blueprint.ui.theme.ActionFontColor
-import com.example.android_blueprint.ui.theme.neuMedium
+import com.example.android_blueprint.ui.theme.ItemBottom
+import com.example.android_blueprint.ui.theme.ItemEnd
+import com.example.android_blueprint.ui.theme.ItemStart
+import com.example.android_blueprint.ui.theme.ItemTop
+import com.example.android_blueprint.ui.theme.PrimaryColor
+import com.example.android_blueprint.ui.theme.SecondaryColor
+import com.example.android_blueprint.ui.theme.ShadowRadius
 import com.example.android_blueprint.ui.theme.UnSelectedColor
+import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.BottomNavGraphViewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
@@ -73,7 +76,7 @@ fun BottomBar(modifier: Modifier, navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(BackgroundColor),
+            .background(SecondaryColor),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         screens.forEach { screen ->
@@ -95,7 +98,7 @@ fun AddItem(
     navController: NavHostController
 ) {
     val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-    val iconColor = if (selected) ActionColor else UnSelectedColor
+    val iconColor = if (selected) PrimaryColor else UnSelectedColor
     val textColor = if (selected) ActionFontColor else UnSelectedColor
     Box(
         modifier = Modifier
@@ -109,7 +112,12 @@ fun AddItem(
     )
     {
         Column(
-            modifier = Modifier.padding(bottom = 8.dp, top = 8.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(
+                bottom = ItemBottom,
+                top = ItemTop,
+                start = ItemStart,
+                end = ItemEnd
+            ),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -117,9 +125,9 @@ fun AddItem(
                 painter = painterResource(id = screen.icon), contentDescription = null,
                 tint = iconColor, modifier = if (selected) Modifier
                     .shadow(
-                        24.dp,
-                        spotColor = ActionColor,
-                        ambientColor = ActionColor
+                        ShadowRadius,
+                        spotColor = PrimaryColor,
+                        ambientColor = PrimaryColor
                     ) else Modifier
             )
             Text(text = screen.title, color = textColor, fontFamily = neuMedium)

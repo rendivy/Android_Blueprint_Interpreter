@@ -46,6 +46,7 @@ object BlockFactory {
     private fun createCallFunction(): CallFunctionBlock {
         return CallFunctionBlock()
     }
+
     private fun createWhileBlock(): WhileBlock {
         return WhileBlock()
     }
@@ -163,5 +164,4 @@ object BlockFactory {
             else -> null
         }
     }
-
 }

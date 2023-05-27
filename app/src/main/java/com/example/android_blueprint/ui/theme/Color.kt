@@ -10,8 +10,8 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val BackgroundColor = Color(27, 35, 42)
-val ActionColor = Color(94, 213, 168)
+val SecondaryColor = Color(27, 35, 42)
+val PrimaryColor = Color(94, 213, 168)
 val ActionFontColor = Color(193, 199, 205)
 val UnSelectedColor = Color(119, 119, 119)
 
@@ -19,5 +19,5 @@ val OperatorBlockColor = Color(17, 22, 27).copy(alpha = 0.8f)
 val ComplexBlockColor = Color(17, 22, 27)
 val OperatorsTextColor = Color.LightGray.copy(alpha = 0.8f)
 val PlaceholderTextColor = Color(0xFF808080)
-val InactiveBreakpointColor = BackgroundColor
+val InactiveBreakpointColor = SecondaryColor
 val ActiveColor = Color.Red

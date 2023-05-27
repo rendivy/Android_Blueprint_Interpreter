@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.AdaptiveWidth
-import com.example.android_blueprint.ui.theme.BackgroundColor
+import com.example.android_blueprint.ui.theme.SecondaryColor
 import com.example.android_blueprint.ui.theme.BlockListPadding
 import com.example.android_blueprint.ui.theme.BottomBarPadding
 
@@ -67,7 +67,7 @@ fun BlockList(addBlock: (blockValue: Any) -> Unit) {
         verticalItemSpacing = BlockListPadding,
         modifier = Modifier
             .padding(bottom = BottomBarPadding)
-            .background(BackgroundColor)
+            .background(SecondaryColor)
             .fillMaxSize(),
     ) {
 

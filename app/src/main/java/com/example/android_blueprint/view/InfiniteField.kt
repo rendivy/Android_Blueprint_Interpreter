@@ -12,10 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Build
-import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -29,8 +25,8 @@ import androidx.compose.ui.res.painterResource
 import com.example.android_blueprint.R
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.BranchEntity
-import com.example.android_blueprint.ui.theme.ActionColor
-import com.example.android_blueprint.ui.theme.BackgroundColor
+import com.example.android_blueprint.ui.theme.PrimaryColor
+import com.example.android_blueprint.ui.theme.SecondaryColor
 import com.example.android_blueprint.ui.theme.DefaultPadding
 import com.example.android_blueprint.ui.theme.DeleteButtonSize
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
@@ -56,7 +52,7 @@ fun InfiniteField(
     Box(
         modifier = Modifier
             .transformable(state = state)
-            .background(BackgroundColor)
+            .background(SecondaryColor)
             .fillMaxSize()
             .graphicsLayer(
                 scaleX = transform.scale,
@@ -68,7 +64,7 @@ fun InfiniteField(
                 for (value in BranchEntity.pathData.values) {
                     drawPath(
                         value.path,
-                        if (value.isMainFlowBranch) Color.White else ActionColor,
+                        if (value.isMainFlowBranch) Color.White else PrimaryColor,
                         style = Stroke(width = 10f)
                     )
                 }
@@ -101,7 +97,7 @@ fun InfiniteField(
                         .padding(DefaultPadding)
                         .size(DeleteButtonSize)
                         .clip(CircleShape)
-                        .background(ActionColor)
+                        .background(PrimaryColor)
                         .clickable {
                             coroutineScope.launch {
                                 infiniteFieldViewModel.openBottomSheet()
@@ -119,7 +115,7 @@ fun InfiniteField(
                     .padding(DefaultPadding)
                     .size(DeleteButtonSize)
                     .clip(CircleShape)
-                    .background(ActionColor)
+                    .background(PrimaryColor)
                     .clickable {
                         start(
                             startBlock = infiniteFieldViewModel.startBlock,

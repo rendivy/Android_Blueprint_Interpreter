@@ -27,11 +27,11 @@ class BranchEntity(
         return id
     }
 
-    fun switchIsConnected(){
+    fun switchIsConnected() {
         isConnected = !isConnected
     }
 
-    fun getIsConnected(): Boolean{
+    fun getIsConnected(): Boolean {
         return isConnected
     }
 
@@ -46,24 +46,24 @@ class BranchEntity(
             xFinish.value,
             yFinish.value
         )
-       updateMap()
+        updateMap()
     }
 
     fun putInMap() {
         pathData[id] = this
     }
 
-    private fun updateMap(){
+    private fun updateMap() {
         pathData.remove(id)
         pathData[id] = this
     }
 
-    fun deleteBranch(){
+    fun deleteBranch() {
         path.moveTo(xStart.value, yStart.value)
         pathData.remove(id)
     }
 
-    fun isInMap(): Boolean{
+    fun isInMap(): Boolean {
         return pathData.containsKey(id)
     }
 }

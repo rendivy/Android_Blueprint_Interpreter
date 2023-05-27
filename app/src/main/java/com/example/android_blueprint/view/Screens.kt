@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.BottomBarPadding
+import com.example.android_blueprint.ui.theme.SecondaryColor
 import com.example.android_blueprint.ui.theme.SheetShape
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.ConsoleViewModel
@@ -52,7 +52,7 @@ fun ConsoleScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(SecondaryColor)
     ) {
         Column(
             Modifier

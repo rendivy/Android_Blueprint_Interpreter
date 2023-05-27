@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.android_blueprint.R
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.HeightOfSmallBlocks
@@ -27,9 +29,9 @@ fun BinaryFixedOperatorBlock(
     ) {
         if (value == BlockValue.BinaryOperator.POW || value == BlockValue.BinaryOperator.LOG) {
             BinaryOperatorText(
-                modifier = Modifier.align(Alignment.Center),
                 text = value.text,
-                fontSize = NotSingleTextSize
+                fontSize = NotSingleTextSize,
+                modifier = Modifier.align(Alignment.Center)
             )
         } else {
             BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
@@ -93,7 +95,7 @@ fun FixedBranchBlock(
         ) {
             MainFlow(modifier = Modifier.align(Alignment.TopStart))
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
-                TextForFlow(text = "True")
+                TextForFlow(text = stringResource(id = R.string.ifTrueValue))
                 MainFlow()
             }
         }
@@ -103,10 +105,10 @@ fun FixedBranchBlock(
         ) {
             Row(modifier = Modifier.align(Alignment.TopStart)) {
                 SupportingFlow()
-                TextForFlow(text = "Condition")
+                TextForFlow(text = stringResource(id = R.string.conditionalValue))
             }
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
-                TextForFlow(text = "False")
+                TextForFlow(text = stringResource(id = R.string.ifFalseValue))
                 MainFlow()
             }
         }
@@ -134,7 +136,7 @@ fun FixedInitializationBlock(
             MainFlow()
         }
         placeholderText(
-            text = "name or *name[n]", modifier = Modifier
+            text = stringResource(id = R.string.initBlockValue), modifier = Modifier
                 .fillMaxWidth()
         )
     }
@@ -163,7 +165,7 @@ fun FixedSetBlock(
                 .fillMaxWidth()
         ) {
             placeholderText(
-                text = "name = value", modifier = Modifier
+                text = stringResource(id = R.string.nameEqualValue), modifier = Modifier
                     .weight(1f)
             )
             SupportingFlow(modifier = Modifier.align(Alignment.CenterVertically))
@@ -188,13 +190,16 @@ fun FixedLoopBlock(
         ) {
             MainFlow()
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
-                TextForFlow(text = "loop")
+                TextForFlow(text = stringResource(id = R.string.loop))
                 MainFlow()
             }
         }
-        placeholderText(text = "conditional", modifier = Modifier.fillMaxWidth())
+        placeholderText(
+            text = stringResource(id = R.string.conditional),
+            modifier = Modifier.fillMaxWidth()
+        )
         Row(modifier = Modifier.align(Alignment.End)) {
-            TextForFlow(text = "endloop")
+            TextForFlow(text = stringResource(id = R.string.endLoop))
             MainFlow()
         }
     }
@@ -211,7 +216,10 @@ fun FixedGetValueBlock(
     ) {
         ComplexBlockText(text = value.text)
         Row {
-            placeholderText(text = "expression", modifier = Modifier.weight(1f))
+            placeholderText(
+                text = stringResource(id = R.string.expression),
+                modifier = Modifier.weight(1f)
+            )
             SupportingFlow()
         }
     }
@@ -228,7 +236,10 @@ fun FixedFunctionBlock(
     ) {
         ComplexBlockText(text = value.text)
         Row {
-            placeholderText(text = "name(args)", modifier = Modifier.weight(1f))
+            placeholderText(
+                text = stringResource(id = R.string.arrayName),
+                modifier = Modifier.weight(1f)
+            )
             MainFlow()
         }
     }
@@ -251,7 +262,7 @@ fun FixedReturnBlock(
         )
         Row {
             SupportingFlow()
-            TextForFlow(text = "value")
+            TextForFlow(text = stringResource(id = R.string.value))
         }
     }
 }
@@ -293,7 +304,7 @@ fun FixedCallFunctionBlock(
             MainFlow()
         }
         placeholderText(
-            text = "name(args)", modifier = Modifier
+            text = stringResource(id = R.string.arrayName), modifier = Modifier
                 .fillMaxWidth()
         )
     }

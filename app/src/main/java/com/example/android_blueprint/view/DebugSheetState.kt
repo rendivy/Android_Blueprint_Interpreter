@@ -18,15 +18,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.example.android_blueprint.ui.theme.BackgroundColor
+import com.example.android_blueprint.R
+import com.example.android_blueprint.ui.theme.PrimaryColor
+import com.example.android_blueprint.ui.theme.SecondaryColor
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BottomBarPadding
 import com.example.android_blueprint.ui.theme.ButtonSize
 import com.example.android_blueprint.ui.theme.DebugPadding
-import com.example.android_blueprint.ui.theme.OperatorsTextColor
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.ConsoleViewModel
 import interpretator.Interpret
@@ -39,7 +40,7 @@ fun DebugSheetState(interpret: Interpret, closeBottomSheet: KSuspendFunction0<Un
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(SecondaryColor)
     ) {
         Column(
             Modifier
@@ -66,7 +67,7 @@ fun DebugSheetState(interpret: Interpret, closeBottomSheet: KSuspendFunction0<Un
                 modifier = Modifier
                     .size(ButtonSize)
                     .clip(BlockShape)
-                    .background(Color.Gray)
+                    .background(PrimaryColor)
                     .clickable {
                         if (interpret.isRunning()) {
                             interpret.switchStepTo()
@@ -78,9 +79,9 @@ fun DebugSheetState(interpret: Interpret, closeBottomSheet: KSuspendFunction0<Un
                     }
             ) {
                 Text(
-                    text = "Step to",
+                    text = stringResource(id = R.string.StepTo),
                     fontFamily = neuMedium,
-                    color = OperatorsTextColor,
+                    color = SecondaryColor,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
@@ -88,7 +89,7 @@ fun DebugSheetState(interpret: Interpret, closeBottomSheet: KSuspendFunction0<Un
                 modifier = Modifier
                     .size(ButtonSize)
                     .clip(BlockShape)
-                    .background(Color.Gray)
+                    .background(PrimaryColor)
                     .clickable {
                         if (interpret.isRunning()) {
                             interpret.switchStepInto()
@@ -100,9 +101,9 @@ fun DebugSheetState(interpret: Interpret, closeBottomSheet: KSuspendFunction0<Un
                     }
             ) {
                 Text(
-                    text = "Step into",
+                    text = stringResource(id = R.string.StepInto),
                     fontFamily = neuMedium,
-                    color = OperatorsTextColor,
+                    color = SecondaryColor,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }

@@ -91,7 +91,7 @@ sealed class BlockValue(
         text = "Return",
     )
 
-    object CallFunctionBlock: BlockValue(
+    object CallFunctionBlock : BlockValue(
         text = "Call function"
     )
 

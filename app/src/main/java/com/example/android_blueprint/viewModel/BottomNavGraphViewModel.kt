@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.google.accompanist.navigation.animation.composable
 import com.example.android_blueprint.model.BottomBarModel
+import com.example.android_blueprint.ui.theme.TargetOffsetNavigation
 import com.example.android_blueprint.view.ConsoleScreen
 import com.example.android_blueprint.view.FieldScreen
 import com.example.android_blueprint.view.ListScreen
@@ -33,7 +34,7 @@ class BottomNavGraphViewModel : ViewModel() {
                 enterTransition = {
                     when (initialState.destination.route) {
                         BottomBarModel.BlockOfList.route ->
-                            fadeIn(animationSpec = tween(300))
+                            fadeIn(animationSpec = tween(TargetOffsetNavigation))
                         else -> null
                     }
                 },
@@ -41,12 +42,12 @@ class BottomNavGraphViewModel : ViewModel() {
                     when (targetState.destination.route) {
                         BottomBarModel.Field.route ->
                             slideOutHorizontally (
-                                targetOffsetX = {-300},
+                                targetOffsetX = {-TargetOffsetNavigation},
                                 animationSpec = tween(
-                                    durationMillis = 300,
+                                    durationMillis = TargetOffsetNavigation,
                                     easing = FastOutSlowInEasing
                                 )
-                            ) +  fadeOut(animationSpec = tween(300))
+                            ) +  fadeOut(animationSpec = tween(TargetOffsetNavigation))
 
                         else -> null
                     }
@@ -55,12 +56,12 @@ class BottomNavGraphViewModel : ViewModel() {
                     when (initialState.destination.route) {
                         BottomBarModel.Field.route ->
                         slideInHorizontally(
-                            initialOffsetX = {300},
+                            initialOffsetX = {TargetOffsetNavigation},
                             animationSpec = tween(
-                                durationMillis = 300,
+                                durationMillis = TargetOffsetNavigation,
                                 easing = FastOutSlowInEasing
                             )
-                        ) + fadeIn(animationSpec = tween(300))
+                        ) + fadeIn(animationSpec = tween(TargetOffsetNavigation))
                         else -> null
                     }
                 }

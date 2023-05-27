@@ -4,10 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.android_blueprint.model.BranchEntity
 import com.example.android_blueprint.model.BranchType
 import com.example.android_blueprint.model.CharacteristicsBlock
+import com.example.android_blueprint.ui.theme.ZeroOffset
 
 
-
-val defaultBranch = BranchEntity(mutableStateOf(0f), mutableStateOf(0f), idStartBlock = -1)
+val defaultBranch = BranchEntity(mutableStateOf(ZeroOffset), mutableStateOf(ZeroOffset), idStartBlock = -1)
 var branchInWorking: BranchEntity = defaultBranch
 
 
@@ -36,12 +36,11 @@ fun createEndBranch(
     isMainFlow: Boolean,
     idFinishBlock: Int
 ): BranchEntity {
-    return if(branchInWorking.getId() == defaultBranch.getId())
-    {
+    return if (branchInWorking.getId() == defaultBranch.getId()) {
         inputBranch
     } else if (branchInWorking.isMainFlowBranch != isMainFlow ||
-        branchInWorking.idStartBlock == idFinishBlock)
-    {
+        branchInWorking.idStartBlock == idFinishBlock
+    ) {
         defaultBranch
     } else {
         tryClearBranches(inputBranch)
@@ -62,7 +61,7 @@ fun updateStartBranch(
     outputBranch: BranchEntity,
     characteristicsBlock: CharacteristicsBlock
 ): BranchEntity {
-    if(outputBranch.idFinishBlock == -1){
+    if (outputBranch.idFinishBlock == -1) {
         outputBranch.xStart.value = characteristicsBlock.xResult
         outputBranch.yStart.value = characteristicsBlock.yResult
         return outputBranch
@@ -124,8 +123,8 @@ fun deleteAllBranches(
 fun selectBranch(
     branchType: BranchType,
     viewModel: BlockViewModel
-): BranchEntity{
-    return when(branchType){
+): BranchEntity {
+    return when (branchType) {
         BranchType.MainFlowOutput -> viewModel.outputBranch
         BranchType.MainFlowInput -> viewModel.inputBranch
         BranchType.SupportFlowOutput -> viewModel.outputSupportFLow
@@ -149,10 +148,10 @@ fun selectCreateStartBranch(
     val startY = viewModel.offsetY + viewModel.boxHeight / scale
 
     return createStartBranch(
-         selectBranch(branchType, viewModel),
-         CharacteristicsBlock(startX, startY),
-         isMainFlow,
-         idStartBlock
+        selectBranch(branchType, viewModel),
+        CharacteristicsBlock(startX, startY),
+        isMainFlow,
+        idStartBlock
     )
 }
 
@@ -192,7 +191,7 @@ fun selectUpdateEndBranch(
     viewModel: BlockViewModel,
     branchType: BranchType,
     scale: Float
-): BranchEntity{
+): BranchEntity {
     val endX = viewModel.offsetX
     val endY = viewModel.offsetY + viewModel.boxHeight / scale
 

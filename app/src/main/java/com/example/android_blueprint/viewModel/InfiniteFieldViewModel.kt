@@ -16,10 +16,10 @@ import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
 import com.example.android_blueprint.model.PreviousBlocks
 import com.example.android_blueprint.model.Transform
-import com.example.android_blueprint.ui.theme.ActionColor
 import com.example.android_blueprint.ui.theme.ActiveColor
 import com.example.android_blueprint.ui.theme.InitialOffset
 import com.example.android_blueprint.ui.theme.InitialScale
+import com.example.android_blueprint.ui.theme.PrimaryColor
 import interpretator.Interpret
 
 class InfiniteFieldViewModel : ViewModel() {
@@ -33,6 +33,7 @@ class InfiniteFieldViewModel : ViewModel() {
     var deleteMode by mutableStateOf(false)
     var transform by mutableStateOf(Transform(InitialScale, InitialOffset))
     var isDebug by mutableStateOf(false)
+
     @OptIn(ExperimentalMaterialApi::class)
     val sheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
@@ -101,7 +102,7 @@ class InfiniteFieldViewModel : ViewModel() {
         return if (deleteMode) {
             ActiveColor
         } else {
-            ActionColor
+            PrimaryColor
         }
     }
 

@@ -47,22 +47,23 @@ import block.SetVariableBlock
 import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
-import com.example.android_blueprint.ui.theme.ActionColor
-import com.example.android_blueprint.ui.theme.BackgroundColor
+import com.example.android_blueprint.ui.theme.PrimaryColor
+import com.example.android_blueprint.ui.theme.SecondaryColor
 import com.example.android_blueprint.ui.theme.BinaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BreakPointPadding
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
 import com.example.android_blueprint.ui.theme.ComplexBlockTextSize
 import com.example.android_blueprint.ui.theme.DefaultPadding
+import com.example.android_blueprint.ui.theme.EMPTY_STRING
 import com.example.android_blueprint.ui.theme.FlowSize
 import com.example.android_blueprint.ui.theme.FlowTextSize
 import com.example.android_blueprint.ui.theme.MainFlowShape
+import com.example.android_blueprint.ui.theme.NotSingleTextSize
 import com.example.android_blueprint.ui.theme.OperatorsTextColor
 import com.example.android_blueprint.ui.theme.PaddingForPlaceholderText
 import com.example.android_blueprint.ui.theme.PlaceholderTextColor
 import com.example.android_blueprint.ui.theme.TextPaddingForFlow
-import com.example.android_blueprint.ui.theme.NotSingleTextSize
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
@@ -72,10 +73,7 @@ fun SetMovableBlock(
     infiniteFieldViewModel: InfiniteFieldViewModel,
 ) {
     if (fieldBlock.value == -1) return
-    var offsetX by rememberSaveable { mutableStateOf(0f) }
-    var offsetY by rememberSaveable { mutableStateOf(0f) }
-    var boxHeight by remember { mutableStateOf(0f) }
-    var boxWidth by remember { mutableStateOf(0f) }
+
     val modifier = Modifier
         .clickable(
             indication = null,
@@ -260,20 +258,24 @@ fun TextForFlow(text: String, modifier: Modifier = Modifier) {
         text = text,
         fontSize = FlowTextSize,
         color = Color.White,
-        modifier = modifier.padding(top = TextPaddingForFlow),
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        modifier = modifier.padding(top = TextPaddingForFlow)
     )
 }
 
 @Composable
-fun BinaryOperatorText(modifier: Modifier, text: String, fontSize: TextUnit = BinaryOperatorsTextSize) {
+fun BinaryOperatorText(
+    modifier: Modifier,
+    text: String,
+    fontSize: TextUnit = BinaryOperatorsTextSize
+) {
     Text(
         text = text,
         fontFamily = neuMedium,
         fontSize = fontSize,
         color = OperatorsTextColor,
         modifier = modifier,
-        )
+    )
 }
 
 @Composable
@@ -283,17 +285,19 @@ fun UnaryOperatorText(modifier: Modifier, text: String) {
         fontFamily = neuMedium,
         fontSize = NotSingleTextSize,
         color = OperatorsTextColor,
-        modifier = modifier,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        modifier = modifier
     )
 }
 
 
 @Composable
 fun ComplexBlockText(
-    text: String, color: Color = BackgroundColor, modifier: Modifier = Modifier.background(
+    text: String,
+    color: Color = SecondaryColor,
+    modifier: Modifier = Modifier.background(
         Brush.linearGradient(
-            colors = listOf(ActionColor, ActionColor),
+            colors = listOf(PrimaryColor, PrimaryColor),
             start = Offset(0f, 0f),
             end = Offset(100f, 0f)
         )
@@ -321,7 +325,7 @@ fun SupportingFlow(
             .padding(DefaultPadding)
             .clip(BlockShape)
             .size(FlowSize)
-            .background(ActionColor)
+            .background(PrimaryColor)
     )
 }
 
@@ -343,7 +347,7 @@ fun MainFlow(
 @Composable
 fun TextFieldForVariable(value: String, modifier: Modifier, block: IHaveUserInput) {
     val focusManager = LocalFocusManager.current
-    var text by rememberSaveable { mutableStateOf("") }
+    var text by rememberSaveable { mutableStateOf(EMPTY_STRING) }
     TextField(
         value = text,
         onValueChange = {

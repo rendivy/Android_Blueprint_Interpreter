@@ -69,7 +69,6 @@ import com.example.android_blueprint.viewModel.tryClearBranches
 import com.example.android_blueprint.viewModel.updateEndBranch
 import com.example.android_blueprint.viewModel.updateStartBranch
 import kotlin.math.roundToInt
-import block.BlockEntity as BlockEntity1
 
 @Composable
 fun StartBlock(
@@ -376,7 +375,7 @@ fun BinaryMovableOperatorBlock(
                 viewModel,
                 BranchType.SupportFlowInputLeft,
                 false,
-                (block as BlockEntity1).getId(),
+                (block as BlockEntity).getId(),
                 5f
             )
         })
@@ -599,7 +598,7 @@ fun MovableIfBlock(
                         viewModel,
                         BranchType.SupportFlowInput,
                         false,
-                        (block as BlockEntity1).getId(),
+                        (block as BlockEntity).getId(),
                         1.2f
                     )
                 })
@@ -1135,7 +1134,7 @@ fun MovableWhileBlock(
             }
         }
         TextFieldForVariable(
-            value = "conditional",
+            value = stringResource(id = R.string.conditional),
             modifier = Modifier.fillMaxWidth(),
             block = block
         )
@@ -1269,7 +1268,7 @@ fun MovableFunctionBlock(
         }
         Row {
             TextFieldForVariable(
-                value = stringResource(R.string.array_name),
+                value = stringResource(R.string.arrayName),
                 modifier = Modifier.weight(1f),
                 block = block
             )
@@ -1422,12 +1421,12 @@ fun MovableContinueOrBreakBlock(
                     viewModel,
                     BranchType.MainFlowInput,
                     true,
-                    (block as BlockEntity1).getId(),
+                    (block as BlockEntity).getId(),
                     5f
                 )
             })
             BreakPoint(
-                block = block as BlockEntity1,
+                block = block as BlockEntity,
                 color = viewModel.color,
                 changeBreakPointColor = viewModel::changeBreakPointColor,
                 modifier = Modifier.align(Alignment.TopEnd)
@@ -1525,7 +1524,7 @@ fun MovableCallFunctionBlock(
             })
         }
         TextFieldForVariable(
-            value = "name(args)",
+            value = stringResource(id = R.string.arrayName),
             modifier = Modifier.fillMaxWidth(),
             block = block
         )

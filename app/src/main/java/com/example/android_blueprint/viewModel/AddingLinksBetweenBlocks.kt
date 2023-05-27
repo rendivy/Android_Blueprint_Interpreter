@@ -9,12 +9,12 @@ import block.IMainFLowBlock
 import block.IUnaryOperatorBlock
 import block.StartBlock
 import com.example.android_blueprint.model.PreviousBlocks
-import com.example.android_blueprint.ui.theme.ActionColor
+import com.example.android_blueprint.ui.theme.EMPTY_STRING
+import com.example.android_blueprint.ui.theme.PrimaryColor
 import interpretator.Interpret
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction0
 
 
 fun setBottomFlowOperator(block: IBinaryOperatorBlock) {
@@ -103,8 +103,8 @@ fun start(
         openDebugger()
     }
     GlobalScope.launch {
-        ConsoleViewModel.consoleText = ""
-        ConsoleViewModel.defaultTextColor = ActionColor
+        ConsoleViewModel.consoleText = EMPTY_STRING
+        ConsoleViewModel.defaultTextColor = PrimaryColor
         try {
             interpreter.run(startBlock)
             closeDebugger()

@@ -21,3 +21,4 @@ val AdaptiveWidth = 156.dp
 val InitialOffset = Offset.Zero
 val HeightOfSmallBlocks = 60.dp
 val ButtonSize = 70.dp
+val ShadowRadius = 24.dp

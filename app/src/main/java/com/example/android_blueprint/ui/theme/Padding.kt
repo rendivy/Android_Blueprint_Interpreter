@@ -9,3 +9,7 @@ val BottomBarPadding = 56.dp
 val PaddingForPlaceholderText = 3.dp
 val BreakPointPadding = 6.dp
 val DebugPadding = 80.dp
+val ItemBottom = 8.dp
+val ItemTop = 8.dp
+val ItemStart = 16.dp
+val ItemEnd = 16.dp
