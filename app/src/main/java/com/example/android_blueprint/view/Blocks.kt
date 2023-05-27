@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import block.BlockEntity
@@ -42,6 +43,7 @@ import block.SetVariableBlock
 import block.WhileBlock
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
+import com.example.android_blueprint.ui.theme.BackgroundColor
 import com.example.android_blueprint.ui.theme.BinaryOperatorsTextSize
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BreakPointPadding
@@ -237,7 +239,8 @@ fun TextForFlow(text: String, modifier: Modifier = Modifier) {
         text = text,
         fontSize = FlowTextSize,
         color = Color.White,
-        modifier = modifier.padding(top = TextPaddingForFlow)
+        modifier = modifier.padding(top = TextPaddingForFlow),
+        fontWeight = FontWeight.Bold
     )
 }
 
@@ -248,7 +251,8 @@ fun BinaryOperatorText(modifier: Modifier, text: String) {
         fontFamily = neuMedium,
         fontSize = BinaryOperatorsTextSize,
         color = OperatorsTextColor,
-        modifier = modifier
+        modifier = modifier,
+
     )
 }
 
@@ -259,7 +263,8 @@ fun UnaryOperatorText(modifier: Modifier, text: String) {
         fontFamily = neuMedium,
         fontSize = UnaryOperatorsTextSize,
         color = OperatorsTextColor,
-        modifier = modifier
+        modifier = modifier,
+        fontWeight = FontWeight.Bold
     )
 }
 
@@ -270,12 +275,25 @@ fun ComplexBlockText(modifier: Modifier, text: String) {
         text = text,
         fontFamily = neuMedium,
         fontSize = ComplexBlockTextSize,
-        color = OperatorsTextColor,
+        color = BackgroundColor,
         textAlign = TextAlign.Center,
-        modifier = modifier
+        modifier = modifier,
+        fontWeight = FontWeight.Bold
     )
 }
 
+@Composable
+fun ComplexSecondBlockText(modifier: Modifier, text: String) {
+    Text(
+        text = text,
+        fontFamily = neuMedium,
+        fontSize = ComplexBlockTextSize,
+        color = OperatorsTextColor,
+        textAlign = TextAlign.Center,
+        modifier = modifier,
+        fontWeight = FontWeight.Bold
+    )
+}
 
 @Composable
 fun SupportingFlow(

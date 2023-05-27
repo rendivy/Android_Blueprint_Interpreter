@@ -13,6 +13,7 @@ import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.FieldBlock
 import com.example.android_blueprint.model.PreviousBlocks
 import com.example.android_blueprint.model.Transform
+import com.example.android_blueprint.ui.theme.ActionColor
 import com.example.android_blueprint.ui.theme.ActiveColor
 import com.example.android_blueprint.ui.theme.InitialOffset
 import com.example.android_blueprint.ui.theme.InitialScale
@@ -84,7 +85,7 @@ class InfiniteFieldViewModel : ViewModel() {
         return if (deleteMode) {
             ActiveColor
         } else {
-            Color.Gray
+            ActionColor
         }
     }
 

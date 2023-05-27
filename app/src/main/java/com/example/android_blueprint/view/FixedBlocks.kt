@@ -234,7 +234,7 @@ fun FixedReturnBlock(
             .heightIn(min = BlockHeight)
     ) {
         MainFlow()
-        ComplexBlockText(
+        ComplexSecondBlockText(
             modifier = value.modifier.align(Alignment.CenterHorizontally),
             text = value.text
         )
@@ -255,7 +255,7 @@ fun FixedContinueOrBreakBlock(
             .heightIn(min = BlockHeight)
     ) {
         MainFlow()
-        ComplexBlockText(
+        ComplexSecondBlockText(
             modifier = value.modifier.align(Alignment.CenterHorizontally),
             text = value.text
         )
