@@ -45,6 +45,7 @@ import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BlockWidth
 import com.example.android_blueprint.ui.theme.BorderBlockWidth
 import com.example.android_blueprint.ui.theme.ComplexBlockColor
+import com.example.android_blueprint.ui.theme.NotSingleTextSize
 import com.example.android_blueprint.ui.theme.OperatorBlockColor
 import com.example.android_blueprint.ui.theme.OperatorsTextColor
 import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
@@ -358,10 +359,16 @@ fun BinaryMovableOperatorBlock(
             .background(OperatorBlockColor)
             .heightIn(min = BlockHeight)
             .then(modifier)
-
-
     ) {
-        BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
+        if (value == BlockValue.BinaryOperator.POW || value == BlockValue.BinaryOperator.LOG) {
+            BinaryOperatorText(
+                modifier = Modifier.align(Alignment.Center),
+                text = value.text,
+                fontSize = NotSingleTextSize
+            )
+        } else {
+            BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
+        }
         SupportingFlow(modifier = Modifier.clickable {
             setTopFlowOperator(block)
 

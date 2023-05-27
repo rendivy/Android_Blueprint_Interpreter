@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.HeightOfSmallBlocks
+import com.example.android_blueprint.ui.theme.NotSingleTextSize
 import com.example.android_blueprint.ui.theme.OperatorsTextColor
 
 @Composable
@@ -24,7 +25,15 @@ fun BinaryFixedOperatorBlock(
         modifier = modifier
             .height(BlockHeight)
     ) {
-        BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
+        if (value == BlockValue.BinaryOperator.POW || value == BlockValue.BinaryOperator.LOG) {
+            BinaryOperatorText(
+                modifier = Modifier.align(Alignment.Center),
+                text = value.text,
+                fontSize = NotSingleTextSize
+            )
+        } else {
+            BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
+        }
         SupportingFlow()
         SupportingFlow(modifier = Modifier.align(Alignment.BottomStart))
         SupportingFlow(modifier = Modifier.align(Alignment.CenterEnd))

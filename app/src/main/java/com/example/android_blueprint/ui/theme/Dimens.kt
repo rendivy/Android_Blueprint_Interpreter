@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.sp
 const val InitialScale = 1f
 
 val FlowTextSize = 12.sp
-val UnaryOperatorsTextSize = 30.sp
+val NotSingleTextSize = 30.sp
 val BinaryOperatorsTextSize = 40.sp
 val ComplexBlockTextSize = 17.sp
 

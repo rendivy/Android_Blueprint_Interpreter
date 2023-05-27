@@ -28,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import block.BlockEntity
 import block.CallFunctionBlock
 import block.EndFunctionBlock
@@ -61,7 +62,7 @@ import com.example.android_blueprint.ui.theme.OperatorsTextColor
 import com.example.android_blueprint.ui.theme.PaddingForPlaceholderText
 import com.example.android_blueprint.ui.theme.PlaceholderTextColor
 import com.example.android_blueprint.ui.theme.TextPaddingForFlow
-import com.example.android_blueprint.ui.theme.UnaryOperatorsTextSize
+import com.example.android_blueprint.ui.theme.NotSingleTextSize
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.viewModel.InfiniteFieldViewModel
 
@@ -265,14 +266,13 @@ fun TextForFlow(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BinaryOperatorText(modifier: Modifier, text: String) {
+fun BinaryOperatorText(modifier: Modifier, text: String, fontSize: TextUnit = BinaryOperatorsTextSize) {
     Text(
         text = text,
         fontFamily = neuMedium,
-        fontSize = BinaryOperatorsTextSize,
+        fontSize = fontSize,
         color = OperatorsTextColor,
         modifier = modifier,
-
         )
 }
 
@@ -281,7 +281,7 @@ fun UnaryOperatorText(modifier: Modifier, text: String) {
     Text(
         text = text,
         fontFamily = neuMedium,
-        fontSize = UnaryOperatorsTextSize,
+        fontSize = NotSingleTextSize,
         color = OperatorsTextColor,
         modifier = modifier,
         fontWeight = FontWeight.Bold
@@ -331,11 +331,12 @@ fun MainFlow(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .padding(DefaultPadding)
             .clip(MainFlowShape)
             .size(FlowSize)
             .background(Color.White)
+            .then(modifier)
     )
 }
 
