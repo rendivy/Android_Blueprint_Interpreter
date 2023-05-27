@@ -11,7 +11,7 @@ val UnaryOperatorsTextSize = 30.sp
 val BinaryOperatorsTextSize = 40.sp
 val ComplexBlockTextSize = 17.sp
 
-val DeleteButtonSize = 50.dp
+val DeleteButtonSize = 55.dp
 val FlowSize = 12.dp
 val BlockWidth = 180.dp
 val BlockHeight = 80.dp

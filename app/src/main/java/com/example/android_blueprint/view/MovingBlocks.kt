@@ -15,10 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import block.EndBlock
 import block.EndFunctionBlock
 import block.EndIfBlock
@@ -38,6 +40,7 @@ import com.example.android_blueprint.R
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.BranchType
 import com.example.android_blueprint.model.CharacteristicsBlock
+import com.example.android_blueprint.ui.theme.ActionColor
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
 import com.example.android_blueprint.ui.theme.BlockWidth
@@ -1366,7 +1369,7 @@ fun MovableReturnBlock(
                 modifier = Modifier.align(Alignment.TopEnd)
             )
         }
-        ComplexBlockText(
+        ComplexSecondBlockText(
             modifier = value.modifier.align(Alignment.CenterHorizontally),
             text = value.text
         )
@@ -1444,7 +1447,7 @@ fun MovableContinueOrBreakBlock(
                 modifier = Modifier.align(Alignment.TopEnd)
             )
         }
-        ComplexBlockText(
+        ComplexSecondBlockText(
             modifier = value.modifier.align(Alignment.CenterHorizontally),
             text = value.text
         )

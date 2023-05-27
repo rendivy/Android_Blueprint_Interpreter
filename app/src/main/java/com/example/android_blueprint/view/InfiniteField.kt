@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Build
@@ -21,9 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.example.android_blueprint.R
 import com.example.android_blueprint.model.BlockValue
 import com.example.android_blueprint.model.BranchEntity
 import com.example.android_blueprint.ui.theme.BackgroundColor
@@ -60,7 +65,11 @@ fun InfiniteField(
             )
             .drawBehind {
                 for (value in BranchEntity.pathData.values) {
-                    drawPath(value.path, if (value.isMainFlowBranch) Color.White else ActionColor, style = Stroke(width = 10f))
+                    drawPath(
+                        value.path,
+                        if (value.isMainFlowBranch) Color.White else ActionColor,
+                        style = Stroke(width = 10f)
+                    )
                 }
             }
     )
@@ -83,18 +92,19 @@ fun InfiniteField(
     Box(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
-                .align(Alignment.TopEnd)
+                .align(Alignment.Center)
         ) {
             if (infiniteFieldViewModel.isDebug) {
                 Box(
                     modifier = Modifier
                         .padding(DefaultPadding)
                         .size(DeleteButtonSize)
-                        .clip(CircleShape)
-                        .background(getDeleteButtonColor())
-                ) {
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(ActionColor)
+                    )
+                 {
                     Icon(
-                        Icons.Rounded.Call, contentDescription = null,
+                        painter = (painterResource(R.drawable.bug_fill)), contentDescription = null,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -104,7 +114,7 @@ fun InfiniteField(
                     .padding(DefaultPadding)
                     .size(DeleteButtonSize)
                     .clip(CircleShape)
-                    .background(Color.Gray)
+                    .background(ActionColor)
                     .clickable {
                         start(
                             startBlock = infiniteFieldViewModel.startBlock,
@@ -115,7 +125,7 @@ fun InfiniteField(
                     }
             ) {
                 Icon(
-                    Icons.Rounded.Build, contentDescription = null,
+                    painter = (painterResource(R.drawable.compile_icon)), contentDescription = null,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
@@ -129,7 +139,7 @@ fun InfiniteField(
                     .clickable { changeMode() }
             ) {
                 Icon(
-                    Icons.Rounded.Delete, contentDescription = null,
+                    painterResource(R.drawable.close_round_icon), contentDescription = null,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
