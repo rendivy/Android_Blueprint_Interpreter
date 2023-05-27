@@ -72,11 +72,11 @@ class Interpret() {
 
     fun run(startBlock: StartBlock) {
         blocks = BlockEntity.getBlocks()
+        clearContext()
         blocks.forEach {
             it.validate()
         }
         initializationsFunction()
-        isRunning = true
         parse(startBlock)
     }
 
@@ -90,6 +90,19 @@ class Interpret() {
             Notation.functionName.add(it.key)
             functionName.add(it.key)
         }
+    }
+
+    private fun clearContext() {
+        debug = true
+        stepInto = false
+        stepTo = true
+        isRunning = false
+        isRunningBlock = false
+        parseMap.clear()
+        loopStack.clear()
+        functionMemoryStack.clear()
+        functionHashMap.clear()
+        functionName.clear()
     }
 
     private fun parseForLoop(block: BlockEntity): List<String> {
