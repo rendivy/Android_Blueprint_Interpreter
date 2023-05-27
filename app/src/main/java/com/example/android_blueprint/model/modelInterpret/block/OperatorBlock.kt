@@ -17,7 +17,7 @@ class SetVariableBlock(
         return value!!
     }
 
-    fun setValue(value: Valuable){
+    fun setValue(value: Valuable) {
         this.value = value
     }
 
@@ -29,14 +29,13 @@ class SetVariableBlock(
         this.rawInput = input
     }
 
-    fun addNewField(): SetVariableBlock{
+    fun addNewField(): SetVariableBlock {
         val newNode = SetVariableBlock()
         this.setNextMainFlowBlock(newNode)
         newNode.setPreviousMainFlowBlock(this)
         return newNode
     }
 
-    //TODO: validate user input
     override fun validate() {
 
     }
@@ -50,7 +49,7 @@ class InitializationVariableBlock(
     override var nextMainFlowBlocks: BlockEntity? = null
     override var previousMainFlowBlocks: BlockEntity? = null
     private var value: Valuable? = null
-    fun setValue(value: Valuable){
+    fun setValue(value: Valuable) {
         this.value = value
     }
 
@@ -62,14 +61,13 @@ class InitializationVariableBlock(
         this.rawInput = input
     }
 
-    fun addNewField(): InitializationVariableBlock{
+    fun addNewField(): InitializationVariableBlock {
         val newNode = InitializationVariableBlock()
         this.setNextMainFlowBlock(newNode)
         newNode.setPreviousMainFlowBlock(this)
         return newNode
     }
 
-    //TODO: validate user input
     override fun validate() {
 
     }
@@ -97,7 +95,6 @@ class GetVariableBlock(
         this.variable = value
     }
 
-    //TODO: validate user input
     override fun validate() {
 
     }
@@ -125,7 +122,6 @@ class InputBlock(
         this.variable = value
     }
 
-    //TODO: validate user input
     override fun validate() {
 
     }
