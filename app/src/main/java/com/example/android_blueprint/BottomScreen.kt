@@ -1,6 +1,7 @@
 package com.example.android_blueprint
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,14 +36,16 @@ import com.example.android_blueprint.ui.theme.ActionFontColor
 import com.example.android_blueprint.ui.theme.neuMedium
 import com.example.android_blueprint.ui.theme.UnSelectedColor
 import com.example.android_blueprint.viewModel.BottomNavGraphViewModel
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
+@OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Preview(
     showSystemUi = true, device = "spec:parent=pixel_5"
 )
 @Composable
 fun MainScreen() {
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
     val viewModel: BottomNavGraphViewModel = viewModel()
     Scaffold(
         bottomBar = {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Android_Blueprint</string>
+    <string name="app_name">GOPrint</string>
     <string name="array_name">name(args)</string>
     <string name="value">value</string>
     <string name="expression">expression</string>
