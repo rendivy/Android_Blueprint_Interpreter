@@ -47,7 +47,7 @@ fun DebugSheetState(interpret: Interpret, closeBottomSheet: KSuspendFunction0<Un
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = ConsoleViewModel.consoleText,
+                text = ConsoleViewModel.debugText,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = neuMedium,

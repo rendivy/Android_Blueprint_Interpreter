@@ -173,15 +173,15 @@ class Interpret() {
     private fun printMemory() {
         var currentMemory = memory
         while (currentMemory.previousMemory != null) {
-            ConsoleViewModel.consoleText = currentMemory.scope + '\n'
+            ConsoleViewModel.debugText = currentMemory.scope + '\n'
             for ((key, value) in currentMemory.stack) {
-                ConsoleViewModel.consoleText += "$key: $value\n"
+                ConsoleViewModel.debugText += "$key: $value\n"
             }
             currentMemory = currentMemory.previousMemory!!
         }
-        ConsoleViewModel.consoleText = currentMemory.scope + '\n'
+        ConsoleViewModel.debugText = currentMemory.scope + '\n'
         for ((key, value) in currentMemory.stack) {
-            ConsoleViewModel.consoleText += "$key: $value\n"
+            ConsoleViewModel.debugText += "$key: $value\n"
         }
     }
 

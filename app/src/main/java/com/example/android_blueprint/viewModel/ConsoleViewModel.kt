@@ -10,5 +10,6 @@ class ConsoleViewModel: ViewModel() {
     companion object {
         var defaultTextColor = ActionColor
         var consoleText by mutableStateOf("")
+        var debugText by mutableStateOf("")
     }
 }
