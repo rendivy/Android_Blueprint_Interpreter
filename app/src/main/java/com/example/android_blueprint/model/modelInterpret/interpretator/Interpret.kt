@@ -66,7 +66,6 @@ class Interpret() {
 
     private var parseMap: MutableMap<String, List<String>> = mutableMapOf()
     private var loopStack: Stack<BlockEntity> = Stack()
-    private var functionMemoryStack: Stack<Memory> = Stack()
     private var functionHashMap: HashMap<String, FunctionEntity> = HashMap()
     private var functionName = mutableListOf<String>()
 
@@ -100,7 +99,6 @@ class Interpret() {
         isRunningBlock = false
         parseMap.clear()
         loopStack.clear()
-        functionMemoryStack.clear()
         functionHashMap.clear()
         functionName.clear()
     }
@@ -173,8 +171,7 @@ class Interpret() {
                         " variables passed"
             )
         }
-        functionMemoryStack.push(memory)
-        memory = functionEntity.memory
+        memory = Memory(memory, "FUNCTION SCOPE:" + functionEntity.name)
         for (i in functionEntity.variables.indices) {
             if(functionEntity.variables[i] == "" &&
                     callFunctionEntity.variables[i] == "") continue
@@ -299,12 +296,12 @@ class Interpret() {
 
                 Instruction.RETURN -> {
                     if ((currentBlock as EndFunctionBlock).valuable == null) {
-                        memory = functionMemoryStack.pop()
+                        removeFunctionMemory()
                         return null
                     }
                     initGetVariableBlock(currentBlock as IGetValuable)
                     val returnedValuable = currentBlock.getValue()
-                    memory = functionMemoryStack.pop()
+                    removeFunctionMemory()
                     return returnedValuable
                 }
 
@@ -378,6 +375,16 @@ class Interpret() {
                 }
             }
         }
+    }
+
+    private fun removeFunctionMemory() {
+        while (true) {
+            if (memory.scope.contains("FUNCTION SCOPE")) {
+                break
+            }
+            memory = memory.previousMemory!!
+        }
+        memory = memory.previousMemory!!
     }
 
     private suspend fun suspensionUserWhenInput() {
