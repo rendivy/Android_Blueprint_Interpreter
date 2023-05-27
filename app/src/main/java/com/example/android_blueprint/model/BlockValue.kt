@@ -2,14 +2,11 @@ package com.example.android_blueprint.model
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
-import android.content.res.Resources;
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import com.example.android_blueprint.R
 
 
 sealed class BlockValue(
@@ -45,10 +42,8 @@ sealed class BlockValue(
         ARCCTG("arcctg")
     }
 
-
-
     object InitializationBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.Initialization),
+        text = "Initialization",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -61,7 +56,7 @@ sealed class BlockValue(
     )
 
     object SetBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.Set),
+        text = "Set",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -74,7 +69,7 @@ sealed class BlockValue(
     )
 
     object IfBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.If),
+        text = "If",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -87,7 +82,7 @@ sealed class BlockValue(
     )
 
     object EndifBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.EndIf),
+        text = "Endif",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -100,7 +95,7 @@ sealed class BlockValue(
     )
 
     object PrintBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.Print),
+        text = "Print",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -113,7 +108,7 @@ sealed class BlockValue(
     )
 
     object StartBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.Start),
+        text = "Start",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -126,7 +121,7 @@ sealed class BlockValue(
     )
 
     object EndBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.End),
+        text = "End",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -139,7 +134,7 @@ sealed class BlockValue(
     )
 
     object ForBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.For),
+        text = "For",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -152,7 +147,7 @@ sealed class BlockValue(
     )
 
     object WhileBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.While),
+        text = "While",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -165,7 +160,7 @@ sealed class BlockValue(
     )
 
     object GetValueBlock : BlockValue(
-        text =Resources.getSystem().getString(R.string.GetValue),
+        text = "Get value",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -178,7 +173,7 @@ sealed class BlockValue(
     )
 
     object FunctionBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.Function),
+        text = "Function",
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -191,20 +186,20 @@ sealed class BlockValue(
     )
 
     object BreakBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.Break),
+        text = "Break",
         modifier = Modifier
             .fillMaxWidth()
     )
 
     object ContinueBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.Continue),
+        text = "Continue",
         modifier = Modifier
             .fillMaxWidth()
     )
 
 
     object ReturnBlock : BlockValue(
-        text = Resources.getSystem().getString(R.string.Return),
+        text = "Return",
         modifier = Modifier
             .fillMaxWidth()
     )

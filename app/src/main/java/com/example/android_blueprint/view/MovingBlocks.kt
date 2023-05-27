@@ -36,6 +36,7 @@ import block.StartBlock
 import block.WhileBlock
 import com.example.android_blueprint.R
 import com.example.android_blueprint.model.BlockValue
+import com.example.android_blueprint.model.BranchType
 import com.example.android_blueprint.model.CharacteristicsBlock
 import com.example.android_blueprint.ui.theme.BlockHeight
 import com.example.android_blueprint.ui.theme.BlockShape
@@ -47,6 +48,10 @@ import com.example.android_blueprint.ui.theme.TextFieldBlockWidth
 import com.example.android_blueprint.viewModel.BlockViewModel
 import com.example.android_blueprint.viewModel.createEndBranch
 import com.example.android_blueprint.viewModel.createStartBranch
+import com.example.android_blueprint.viewModel.selectCreateEndBranch
+import com.example.android_blueprint.viewModel.selectCreateStartBranch
+import com.example.android_blueprint.viewModel.selectUpdateEndBranch
+import com.example.android_blueprint.viewModel.selectUpdateStartBranch
 import com.example.android_blueprint.viewModel.setBottomFlowOperator
 import com.example.android_blueprint.viewModel.setEndifBottomFlow
 import com.example.android_blueprint.viewModel.setEndifTopFlow
@@ -86,12 +91,10 @@ fun StartBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.outputBranch = updateStartBranch(
-                        viewModel.outputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2
-                        )
+                    viewModel.outputBranch = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutput,
+                        2f
                     )
                 }
             }
@@ -115,13 +118,12 @@ fun StartBlock(
 
                     tryClearBranches(viewModel.outputBranch)
 
-                    viewModel.outputBranch = createStartBranch(
-                        viewModel.outputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        ),
-                        idStartBlock = block.getId()
+                    viewModel.outputBranch = selectCreateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutput,
+                        true,
+                        block.getId(),
+                        2f
                     )
                 }
         )
@@ -154,12 +156,10 @@ fun EndBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputBranch = updateEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        )
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        2f
                     )
                 }
             }
@@ -180,14 +180,12 @@ fun EndBlock(
             .clickable {
                 setMainFlow(block)
 
-                viewModel.inputBranch = createEndBranch(
-                    viewModel.inputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 2,
-                    ),
+                viewModel.inputBranch = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInput,
                     true,
-                    block.getId()
+                    block.getId(),
+                    2f
                 )
             })
     }
@@ -332,26 +330,22 @@ fun BinaryMovableOperatorBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputSupportFLowLeft = updateEndBranch(
-                        viewModel.inputSupportFLowLeft,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 5f,
-                        )
+                    viewModel.inputSupportFLowLeft = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.SupportFlowInputLeft,
+                        5f
                     )
-                    viewModel.inputSupportFLowRight = updateEndBranch(
-                        viewModel.inputSupportFLowRight,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
-                        )
+
+                    viewModel.inputSupportFLowRight = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.SupportFlowInputRight,
+                        1.2f
                     )
-                    viewModel.outputSupportFLow = updateStartBranch(
-                        viewModel.outputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        )
+
+                    viewModel.outputSupportFLow = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.SupportFlowOutput,
+                        2f
                     )
 
                 }
@@ -373,14 +367,13 @@ fun BinaryMovableOperatorBlock(
         BinaryOperatorText(modifier = Modifier.align(Alignment.Center), text = value.text)
         SupportingFlow(modifier = Modifier.clickable {
             setTopFlowOperator(block)
-            viewModel.inputSupportFLowLeft = createEndBranch(
-                viewModel.inputSupportFLowLeft,
-                CharacteristicsBlock(
-                    viewModel.offsetX,
-                    viewModel.offsetY + viewModel.boxHeight / 5f,
-                ),
+
+            viewModel.inputSupportFLowLeft = selectCreateEndBranch(
+                viewModel,
+                BranchType.SupportFlowInputLeft,
                 false,
-                (block as BlockEntity1).getId()
+                block.getId(),
+                5f
             )
         })
         SupportingFlow(
@@ -388,14 +381,13 @@ fun BinaryMovableOperatorBlock(
                 .align(Alignment.BottomStart)
                 .clickable {
                     setBottomFlowOperator(block)
-                    viewModel.inputSupportFLowRight = createEndBranch(
-                        viewModel.inputSupportFLowRight,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
-                        ),
+
+                    viewModel.inputSupportFLowRight = selectCreateEndBranch(
+                        viewModel,
+                        BranchType.SupportFlowInputRight,
                         false,
-                        (block as BlockEntity1).getId()
+                        block.getId(),
+                        1.2f
                     )
                 })
         SupportingFlow(
@@ -404,14 +396,12 @@ fun BinaryMovableOperatorBlock(
                 .clickable {
                     setPreviousSupportFlowBlock(block as BlockEntity1)
 
-                    viewModel.outputSupportFLow = createStartBranch(
-                        viewModel.outputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        ),
+                    viewModel.outputSupportFLow = selectCreateStartBranch(
+                        viewModel,
+                        BranchType.SupportFlowOutput,
                         false,
-                        block.getId()
+                        block.getId(),
+                        2f
                     )
                 })
     }
@@ -443,21 +433,17 @@ fun UnaryMovableOperatorBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputSupportFLow = updateEndBranch(
-                        viewModel.inputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        )
-                    )
-                    viewModel.outputSupportFLow = updateStartBranch(
-                        viewModel.outputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        )
+                    viewModel.inputSupportFLow = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.SupportFlowInput,
+                        2f
                     )
 
+                    viewModel.outputSupportFLow = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.SupportFlowOutput,
+                        2f
+                    )
                 }
             }
             .width(BlockWidth)
@@ -479,14 +465,12 @@ fun UnaryMovableOperatorBlock(
                 .clickable {
                     setUnaryOperatorFlow(block)
 
-                    viewModel.inputSupportFLow = createEndBranch(
-                        viewModel.inputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        ),
+                    viewModel.inputSupportFLow = selectCreateEndBranch(
+                        viewModel,
+                        BranchType.SupportFlowInput,
                         false,
-                        (block as BlockEntity1).getId()
+                        (block as BlockEntity1).getId(),
+                        2f
                     )
                 })
         SupportingFlow(
@@ -495,14 +479,12 @@ fun UnaryMovableOperatorBlock(
                 .clickable {
                     setPreviousSupportFlowBlock(block as BlockEntity1)
 
-                    viewModel.outputSupportFLow = createStartBranch(
-                        viewModel.outputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        ),
+                    viewModel.outputSupportFLow = selectCreateStartBranch(
+                        viewModel,
+                        BranchType.SupportFlowOutput,
                         false,
-                        block.getId()
+                        block.getId(),
+                        2f
                     )
                 })
     }
@@ -533,33 +515,28 @@ fun MovableIfBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputBranch = updateEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2.15f,
-                        )
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        2.15f
                     )
-                    viewModel.outputBranchTrue = updateStartBranch(
-                        viewModel.outputBranchTrue,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2.15f,
-                        )
+
+                    viewModel.outputBranchTrue = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputTrue,
+                        2.15f
                     )
-                    viewModel.outputBranchFalse = updateStartBranch(
-                        viewModel.outputBranchFalse,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
-                        )
+
+                    viewModel.outputBranchFalse = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputFalse,
+                        1.2f
                     )
-                    viewModel.inputSupportFLow = updateEndBranch(
-                        viewModel.inputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
-                        )
+
+                    viewModel.inputSupportFLow = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.SupportFlowInput,
+                        1.2f
                     )
                 }
             }
@@ -589,14 +566,12 @@ fun MovableIfBlock(
                 .clickable {
                     setMainFlow(block)
 
-                    viewModel.inputBranch = createEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2.15f,
-                        ),
+                    viewModel.inputBranch = selectCreateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
                         true,
-                        block.getId()
+                        block.getId(),
+                        2.15f
                     )
                 })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
@@ -604,13 +579,12 @@ fun MovableIfBlock(
                 MainFlow(modifier = Modifier.clickable {
                     setPreviousMainFlowTrueBlock(block)
 
-                    viewModel.outputBranchTrue = createStartBranch(
-                        viewModel.outputBranchTrue,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2.15f,
-                        ),
-                        idStartBlock = block.getId()
+                    viewModel.outputBranchTrue = selectCreateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputTrue,
+                        true,
+                        block.getId(),
+                        2.15f
                     )
                 })
             }
@@ -623,14 +597,12 @@ fun MovableIfBlock(
                 SupportingFlow(modifier = Modifier.clickable {
                     setUnaryOperatorFlow(block)
 
-                    viewModel.inputSupportFLow = createEndBranch(
-                        viewModel.inputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
-                        ),
+                    viewModel.inputSupportFLow = selectCreateEndBranch(
+                        viewModel,
+                        BranchType.SupportFlowInput,
                         false,
-                        (block as BlockEntity1).getId()
+                        (block as BlockEntity1).getId(),
+                        1.2f
                     )
                 })
                 TextForFlow(text = stringResource(R.string.conditionalValue))
@@ -640,13 +612,12 @@ fun MovableIfBlock(
                 MainFlow(modifier = Modifier.clickable {
                     setPreviousMainFlowFalseBlock(block)
 
-                    viewModel.outputBranchFalse = createStartBranch(
-                        viewModel.outputBranchFalse,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
-                        ),
-                        idStartBlock = block.getId()
+                    viewModel.outputBranchFalse = selectCreateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputFalse,
+                        true,
+                        block.getId(),
+                        1.2f
                     )
                 })
             }
@@ -680,26 +651,22 @@ fun MovableEndifBLock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputBranch = updateEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        )
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        2f
                     )
-                    viewModel.inputBranchForEndIf = updateEndBranch(
-                        viewModel.inputBranchForEndIf,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.25f,
-                        )
+
+                    viewModel.inputBranchForEndIf = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInputForEndIf,
+                        1.25f
                     )
-                    viewModel.outputBranch = updateStartBranch(
-                        viewModel.outputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        )
+
+                    viewModel.outputBranch = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutput,
+                        2f
                     )
                 }
             }
@@ -722,14 +689,12 @@ fun MovableEndifBLock(
             .clickable {
                 setEndifTopFlow(block)
 
-                viewModel.inputBranch = createEndBranch(
-                    viewModel.inputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 2,
-                    ),
+                viewModel.inputBranch = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInput,
                     true,
-                    block.getId()
+                    block.getId(),
+                    2f
                 )
             })
         MainFlow(modifier = Modifier
@@ -737,14 +702,12 @@ fun MovableEndifBLock(
             .clickable {
                 setEndifBottomFlow(block)
 
-                viewModel.inputBranchForEndIf = createEndBranch(
-                    viewModel.inputBranchForEndIf,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 1.25f,
-                    ),
+                viewModel.inputBranchForEndIf = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInputForEndIf,
                     true,
-                    block.getId()
+                    block.getId(),
+                    1.25f
                 )
             })
         MainFlow(
@@ -753,13 +716,12 @@ fun MovableEndifBLock(
                 .clickable {
                     setPreviousMainFlowTrueBlock(block)
 
-                    viewModel.outputBranch = createStartBranch(
-                        viewModel.outputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        ),
-                        idStartBlock = block.getId()
+                    viewModel.outputBranch = selectCreateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutput,
+                        true,
+                        block.getId(),
+                        2f
                     )
                 })
     }
@@ -790,20 +752,18 @@ fun MovableInitializationBlock(
                     change.consume()
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
+                    //TODO: fix position branches
 
-                    viewModel.inputBranch = updateEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        )
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        2.75f
                     )
-                    viewModel.outputBranch = updateStartBranch(
-                        viewModel.outputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2,
-                        )
+
+                    viewModel.outputBranch = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutput,
+                        2.75f
                     )
                 }
             }
@@ -831,26 +791,23 @@ fun MovableInitializationBlock(
             MainFlow(modifier = Modifier.clickable {
                 setMainFlow(block)
 
-                viewModel.inputBranch = createEndBranch(
-                    viewModel.inputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 2,
-                    ),
+                viewModel.inputBranch = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInput,
                     true,
-                    block.getId()
+                    block.getId(),
+                    2.75f
                 )
             })
             MainFlow(modifier = Modifier.clickable {
                 setPreviousMainFlowTrueBlock(block)
 
-                viewModel.outputBranch = createStartBranch(
-                    viewModel.outputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX + viewModel.boxWidth,
-                        viewModel.offsetY + viewModel.boxHeight / 2,
-                    ),
-                    idStartBlock = block.getId()
+                viewModel.outputBranch = selectCreateStartBranch(
+                    viewModel,
+                    BranchType.MainFlowOutput,
+                    true,
+                    block.getId(),
+                    2.75f
                 )
             })
         }
@@ -888,26 +845,22 @@ fun MovableSetBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputBranch = updateEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 2.75f,
-                        )
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        2.75f
                     )
-                    viewModel.outputBranch = updateStartBranch(
-                        viewModel.outputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 2.75f,
-                        )
+
+                    viewModel.outputBranch = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutput,
+                        2.75f
                     )
-                    viewModel.outputSupportFLow = updateStartBranch(
-                        viewModel.outputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.35f,
-                        )
+
+                    viewModel.outputSupportFLow = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.SupportFlowOutput,
+                        1.35f
                     )
                 }
             }
@@ -934,26 +887,23 @@ fun MovableSetBlock(
             MainFlow(modifier = Modifier.clickable {
                 setMainFlow(block)
 
-                viewModel.inputBranch = createEndBranch(
-                    viewModel.inputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 2.75f,
-                    ),
+                viewModel.inputBranch = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInput,
                     true,
-                    block.getId()
+                    block.getId(),
+                    2.75f
                 )
             })
             MainFlow(modifier = Modifier.clickable {
                 setPreviousMainFlowTrueBlock(block)
 
-                viewModel.outputBranch = createStartBranch(
-                    viewModel.outputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX + viewModel.boxWidth,
-                        viewModel.offsetY + viewModel.boxHeight / 2.75f,
-                    ),
-                    idStartBlock = block.getId()
+                viewModel.outputBranch = selectCreateStartBranch(
+                    viewModel,
+                    BranchType.MainFlowOutput,
+                    true,
+                    block.getId(),
+                    2.75f
                 )
             })
         }
@@ -972,14 +922,12 @@ fun MovableSetBlock(
                     .clickable {
                         setPreviousSupportFlowBlock(block)
 
-                        viewModel.outputSupportFLow = createStartBranch(
-                            viewModel.outputSupportFLow,
-                            CharacteristicsBlock(
-                                viewModel.offsetX + viewModel.boxWidth,
-                                viewModel.offsetY + viewModel.boxHeight / 1.35f,
-                            ),
+                        viewModel.outputSupportFLow = selectCreateStartBranch(
+                            viewModel,
+                            BranchType.SupportFlowOutput,
                             false,
-                            idStartBlock = block.getId()
+                            block.getId(),
+                            1.35f
                         )
                     })
         }
@@ -1012,26 +960,22 @@ fun MovableForBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputBranch = updateEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
-                        )
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        3.45f
                     )
-                    viewModel.outputBranchTrue = updateStartBranch(
-                        viewModel.outputBranchTrue,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
-                        )
+
+                    viewModel.outputBranchTrue = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputTrue,
+                        3.45f
                     )
-                    viewModel.outputBranchFalse = updateStartBranch(
-                        viewModel.outputBranchFalse,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.12f,
-                        )
+
+                    viewModel.outputBranchFalse = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputFalse,
+                        1.12f
                     )
                 }
             }
@@ -1057,14 +1001,12 @@ fun MovableForBlock(
             MainFlow(modifier = Modifier.clickable {
                 setMainFlow(block)
 
-                viewModel.inputBranch = createEndBranch(
-                    viewModel.inputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 3.45f,
-                    ),
+                viewModel.inputBranch = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInput,
                     true,
-                    block.getId()
+                    block.getId(),
+                    3.45f
                 )
             })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
@@ -1072,13 +1014,12 @@ fun MovableForBlock(
                 MainFlow(modifier = Modifier.clickable {
                     setPreviousMainFlowTrueBlock(block)
 
-                    viewModel.outputBranchTrue = createStartBranch(
-                        viewModel.outputBranchTrue,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
-                        ),
-                        idStartBlock = block.getId()
+                    viewModel.outputBranchTrue = selectCreateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputTrue,
+                        true,
+                        block.getId(),
+                        3.45f
                     )
                 })
             }
@@ -1093,14 +1034,14 @@ fun MovableForBlock(
             MainFlow(modifier = Modifier.clickable {
                 setPreviousMainFlowFalseBlock(block)
 
-                viewModel.outputBranchFalse = createStartBranch(
-                    viewModel.outputBranchFalse,
-                    CharacteristicsBlock(
-                        viewModel.offsetX + viewModel.boxWidth,
-                        viewModel.offsetY + viewModel.boxHeight / 1.12f,
-                    ),
-                    idStartBlock = block.getId()
+                viewModel.outputBranchFalse = selectCreateStartBranch(
+                    viewModel,
+                    BranchType.MainFlowOutputFalse,
+                    true,
+                    block.getId(),
+                    1.12f
                 )
+
             })
         }
     }
@@ -1131,26 +1072,22 @@ fun MovableWhileBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputBranch = updateEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
-                        )
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        3.45f
                     )
-                    viewModel.outputBranchTrue = updateStartBranch(
-                        viewModel.outputBranchTrue,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
-                        )
+
+                    viewModel.outputBranchTrue = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputTrue,
+                        3.45f
                     )
-                    viewModel.outputBranchFalse = updateStartBranch(
-                        viewModel.outputBranchFalse,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.12f,
-                        )
+
+                    viewModel.outputBranchFalse = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputFalse,
+                        1.12f
                     )
                 }
             }
@@ -1176,14 +1113,12 @@ fun MovableWhileBlock(
             MainFlow(modifier = Modifier.clickable {
                 setMainFlow(block)
 
-                viewModel.inputBranch = createEndBranch(
-                    viewModel.inputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 3.45f,
-                    ),
+                viewModel.inputBranch = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInput,
                     true,
-                    block.getId()
+                    block.getId(),
+                    3.45f
                 )
             })
             Row(modifier = Modifier.align(Alignment.TopEnd)) {
@@ -1191,13 +1126,12 @@ fun MovableWhileBlock(
                 MainFlow(modifier = Modifier.clickable {
                     setPreviousMainFlowTrueBlock(block)
 
-                    viewModel.outputBranchTrue = createStartBranch(
-                        viewModel.outputBranchTrue,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 3.45f,
-                        ),
-                        idStartBlock = block.getId()
+                    viewModel.outputBranchTrue = selectCreateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutputTrue,
+                        true,
+                        block.getId(),
+                        3.45f
                     )
                 })
             }
@@ -1212,13 +1146,12 @@ fun MovableWhileBlock(
             MainFlow(modifier = Modifier.clickable {
                 setPreviousMainFlowFalseBlock(block)
 
-                viewModel.outputBranchFalse = createStartBranch(
-                    viewModel.outputBranchFalse,
-                    CharacteristicsBlock(
-                        viewModel.offsetX + viewModel.boxWidth,
-                        viewModel.offsetY + viewModel.boxHeight / 1.12f,
-                    ),
-                    idStartBlock = block.getId()
+                viewModel.outputBranchFalse = selectCreateStartBranch(
+                    viewModel,
+                    BranchType.MainFlowOutputFalse,
+                    false,
+                    block.getId(),
+                    1.12f
                 )
             })
         }
@@ -1251,12 +1184,12 @@ fun MovableGetValueBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.outputSupportFLow = updateStartBranch(
-                        viewModel.outputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.5f,
-                        )
+                    viewModel.outputSupportFLow = selectCreateStartBranch(
+                        viewModel,
+                        BranchType.SupportFlowOutput,
+                        false,
+                        block.getId(),
+                        1.5f
                     )
                 }
             }
@@ -1287,14 +1220,12 @@ fun MovableGetValueBlock(
                     .clickable {
                         setPreviousSupportFlowBlock(block)
 
-                        viewModel.outputSupportFLow = createStartBranch(
-                            viewModel.outputSupportFLow,
-                            CharacteristicsBlock(
-                                viewModel.offsetX + viewModel.boxWidth,
-                                viewModel.offsetY + viewModel.boxHeight / 1.5f,
-                            ),
+                        viewModel.outputSupportFLow = selectCreateStartBranch(
+                            viewModel,
+                            BranchType.SupportFlowOutput,
                             false,
-                            block.getId()
+                            block.getId(),
+                            1.5f
                         )
                     })
         }
@@ -1326,12 +1257,10 @@ fun MovableFunctionBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.outputBranch = updateStartBranch(
-                        viewModel.outputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX + viewModel.boxWidth,
-                            viewModel.offsetY + viewModel.boxHeight / 1.5f,
-                        )
+                    viewModel.outputBranch = selectUpdateStartBranch(
+                        viewModel,
+                        BranchType.MainFlowOutput,
+                        1.5f
                     )
                 }
             }
@@ -1362,13 +1291,12 @@ fun MovableFunctionBlock(
                     .clickable {
                         setPreviousMainFlowTrueBlock(block)
 
-                        viewModel.outputBranch = createStartBranch(
-                            viewModel.outputBranch,
-                            CharacteristicsBlock(
-                                viewModel.offsetX + viewModel.boxWidth,
-                                viewModel.offsetY + viewModel.boxHeight / 1.5f,
-                            ),
-                            idStartBlock = block.getId()
+                        viewModel.outputBranch = selectCreateStartBranch(
+                            viewModel,
+                            BranchType.MainFlowOutput,
+                            true,
+                            block.getId(),
+                            1.5f
                         )
                     })
         }
@@ -1400,19 +1328,16 @@ fun MovableReturnBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputBranch = updateEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 5,
-                        )
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        5f
                     )
-                    viewModel.inputSupportFLow = updateEndBranch(
-                        viewModel.inputSupportFLow,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 1.2f,
-                        )
+
+                    viewModel.inputSupportFLow = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.SupportFlowInput,
+                        1.2f
                     )
                 }
             }
@@ -1426,14 +1351,12 @@ fun MovableReturnBlock(
             MainFlow(modifier = Modifier.clickable {
                 setMainFlow(block)
 
-                viewModel.inputBranch = createEndBranch(
-                    viewModel.inputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 5,
-                    ),
+                viewModel.inputBranch = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInput,
                     true,
-                    (block as BlockEntity1).getId()
+                    block.getId(),
+                    5f
                 )
             })
             BreakPoint(
@@ -1451,14 +1374,12 @@ fun MovableReturnBlock(
             SupportingFlow(modifier = Modifier.clickable {
                 setUnaryOperatorFlow(block)
 
-                viewModel.inputSupportFLow = createEndBranch(
-                    viewModel.inputSupportFLow,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 1.2f,
-                    ),
+                viewModel.inputSupportFLow = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.SupportFlowInput,
                     false,
-                    (block as BlockEntity1).getId()
+                    block.getId(),
+                    1.2f
                 )
             })
             TextForFlow(text = stringResource(R.string.value))
@@ -1491,12 +1412,10 @@ fun MovableContinueOrBreakBlock(
                     viewModel.offsetX += dragAmount.x
                     viewModel.offsetY += dragAmount.y
 
-                    viewModel.inputBranch = updateEndBranch(
-                        viewModel.inputBranch,
-                        CharacteristicsBlock(
-                            viewModel.offsetX,
-                            viewModel.offsetY + viewModel.boxHeight / 5,
-                        )
+                    viewModel.inputBranch = selectUpdateEndBranch(
+                        viewModel,
+                        BranchType.MainFlowInput,
+                        5f
                     )
                 }
             }
@@ -1510,14 +1429,12 @@ fun MovableContinueOrBreakBlock(
             MainFlow(modifier = Modifier.clickable {
                 setMainFlow(block)
 
-                viewModel.inputBranch = createEndBranch(
-                    viewModel.inputBranch,
-                    CharacteristicsBlock(
-                        viewModel.offsetX,
-                        viewModel.offsetY + viewModel.boxHeight / 5,
-                    ),
+                viewModel.inputBranch = selectCreateEndBranch(
+                    viewModel,
+                    BranchType.MainFlowInput,
                     true,
-                    (block as BlockEntity1).getId()
+                    (block as BlockEntity1).getId(),
+                    5f
                 )
             })
             BreakPoint(

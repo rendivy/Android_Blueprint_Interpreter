@@ -2,6 +2,7 @@ package com.example.android_blueprint.viewModel
 
 import androidx.compose.runtime.mutableStateOf
 import com.example.android_blueprint.model.BranchEntity
+import com.example.android_blueprint.model.BranchType
 import com.example.android_blueprint.model.CharacteristicsBlock
 
 
@@ -112,4 +113,85 @@ fun deleteAllBranches(
     tryClearBranches(viewModel.outputSupportFLow)
     tryClearBranches(viewModel.inputSupportFLowLeft)
     tryClearBranches(viewModel.inputSupportFLowRight)
+}
+
+fun selectBranch(
+    branchType: BranchType,
+    viewModel: BlockViewModel
+): BranchEntity{
+    return when(branchType){
+        BranchType.MainFlowOutput -> viewModel.outputBranch
+        BranchType.MainFlowInput -> viewModel.inputBranch
+        BranchType.SupportFlowOutput -> viewModel.outputSupportFLow
+        BranchType.SupportFlowInput -> viewModel.inputSupportFLow
+        BranchType.MainFlowInputForEndIf -> viewModel.inputBranchForEndIf
+        BranchType.MainFlowOutputTrue -> viewModel.outputBranchTrue
+        BranchType.MainFlowOutputFalse -> viewModel.outputBranchFalse
+        BranchType.SupportFlowInputLeft -> viewModel.inputSupportFLowLeft
+        BranchType.SupportFlowInputRight -> viewModel.inputSupportFLowRight
+    }
+}
+
+fun selectCreateStartBranch(
+    viewModel: BlockViewModel,
+    branchType: BranchType,
+    isMainFlow: Boolean,
+    idStartBlock: Int,
+    scale: Float
+): BranchEntity {
+    val startX = viewModel.offsetX + viewModel.boxWidth
+    val startY = viewModel.offsetY + viewModel.boxHeight / scale
+
+    return createStartBranch(
+         selectBranch(branchType, viewModel),
+         CharacteristicsBlock(startX, startY),
+         isMainFlow,
+         idStartBlock
+    )
+}
+
+fun selectUpdateStartBranch(
+    viewModel: BlockViewModel,
+    branchType: BranchType,
+    scale: Float
+): BranchEntity {
+    val startX = viewModel.offsetX + viewModel.boxWidth
+    val startY = viewModel.offsetY + viewModel.boxHeight / scale
+
+    return updateStartBranch(
+        selectBranch(branchType, viewModel),
+        CharacteristicsBlock(startX, startY)
+    )
+}
+
+fun selectCreateEndBranch(
+    viewModel: BlockViewModel,
+    branchType: BranchType,
+    isMainFlow: Boolean,
+    idFinishBlock: Int,
+    scale: Float
+): BranchEntity {
+    val endX = viewModel.offsetX
+    val endY = viewModel.offsetY + viewModel.boxHeight / scale
+
+    return createEndBranch(
+        selectBranch(branchType, viewModel),
+        CharacteristicsBlock(endX, endY),
+        isMainFlow,
+        idFinishBlock
+    )
+}
+
+fun selectUpdateEndBranch(
+    viewModel: BlockViewModel,
+    branchType: BranchType,
+    scale: Float
+): BranchEntity{
+    val endX = viewModel.offsetX
+    val endY = viewModel.offsetY + viewModel.boxHeight / scale
+
+    return updateEndBranch(
+        selectBranch(branchType, viewModel),
+        CharacteristicsBlock(endX, endY)
+    )
 }
