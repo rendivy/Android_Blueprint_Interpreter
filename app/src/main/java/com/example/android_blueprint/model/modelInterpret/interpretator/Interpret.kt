@@ -96,7 +96,7 @@ class Interpret() {
         debug = true
         stepInto = false
         stepTo = true
-        isRunning = false
+        isRunning = true
         isRunningBlock = false
         parseMap.clear()
         loopStack.clear()
