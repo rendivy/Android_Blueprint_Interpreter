@@ -140,7 +140,7 @@
 <img src="app/src/main/java/com/example/android_blueprint/image/call_function.png">
 </p>
 
-### Блок Endif появляется вместе с создание блока If, он не обязателен, но он служет для ограничения области видимости.
+### Блок Endif появляется вместе с создание блока If, он не обязателен, но он служит для ограничения области видимости.
 
 <p>
 <img src="app/src/main/java/com/example/android_blueprint/image/endif.png">
