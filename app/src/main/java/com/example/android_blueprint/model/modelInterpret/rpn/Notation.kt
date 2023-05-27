@@ -35,7 +35,7 @@ class Notation {
             "+=" to Operator.DEFINE, "-=" to Operator.DEFINE,
             "*=" to Operator.DEFINE, "/=" to Operator.DEFINE,
             "//=" to Operator.DEFINE, "%=" to Operator.DEFINE,
-            ".toInt()" to Operator.CONVERT, ".toFloat()" to Operator.CONVERT,
+            ".toInt()" to Operator.CONVERT, ".toDouble()" to Operator.CONVERT,
             ".toString()" to Operator.CONVERT, ".toBool()" to Operator.CONVERT,
             ".toList()" to Operator.CONVERT, "len" to Operator.MATH,
             "abs" to Operator.MATH, "exp" to Operator.MATH,
@@ -50,7 +50,7 @@ class Notation {
                 "∓",
                 "#",
                 ".toInt()",
-                ".toFloat()",
+                ".toDouble()",
                 ".toBool()",
                 ".toString()",
                 ".sort()",
@@ -140,7 +140,7 @@ class Notation {
             val name = "([\\d]+\\.?[\\d]+|\\w[\\w\\d_]*|\".*\")"
             val reserved = "(rand\\(\\)|abs|exp|floor|ceil|sorted|len)"
             val convert =
-                "(\\.toInt\\(\\)|\\.toFloat\\(\\)|\\.toString\\(\\)|\\.toBool\\(\\)|\\.sort\\(\\)|\\.toList\\(\\))"
+                "(\\.toInt\\(\\)|\\.toDouble\\(\\)|\\.toString\\(\\)|\\.toBool\\(\\)|\\.sort\\(\\)|\\.toList\\(\\))"
             val operator = "(\\+=|-=|\\*=|/=|%=|&&|\\|\\||\\+|-|//|\\*|%|/|==|=|!=|>=|<=|<|>|)"
             val bracket = "(\\(|\\)|\\[|\\])"
             val functionCall = "\\b($name)\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()]|\\((?:[^()])*\\))*\\))*\\))*\\))*\\)(?!\\))"
