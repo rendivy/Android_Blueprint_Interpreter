@@ -176,6 +176,8 @@ class Interpret() {
         functionMemoryStack.push(memory)
         memory = functionEntity.memory
         for (i in functionEntity.variables.indices) {
+            if(functionEntity.variables[i] == "" &&
+                    callFunctionEntity.variables[i] == "") continue
             val variable = functionEntity.variables[i]
             val value = callFunctionEntity.variables[i]
             parseExpressionString("$variable=$value", true)
