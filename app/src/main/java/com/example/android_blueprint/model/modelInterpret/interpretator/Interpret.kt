@@ -96,7 +96,7 @@ class Interpret() {
         debug = true
         stepInto = false
         stepTo = true
-        isRunning = false
+        isRunning = true
         isRunningBlock = false
         parseMap.clear()
         loopStack.clear()
@@ -176,6 +176,8 @@ class Interpret() {
         functionMemoryStack.push(memory)
         memory = functionEntity.memory
         for (i in functionEntity.variables.indices) {
+            if(functionEntity.variables[i] == "" &&
+                    callFunctionEntity.variables[i] == "") continue
             val variable = functionEntity.variables[i]
             val value = callFunctionEntity.variables[i]
             parseExpressionString("$variable=$value", true)

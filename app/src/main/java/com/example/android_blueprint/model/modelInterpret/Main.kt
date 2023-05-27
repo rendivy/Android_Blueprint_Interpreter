@@ -1,6 +1,26 @@
 import block.*
 import interpretator.Interpret
 
+fun main(){
+    val startBlock = StartBlock()
+    val endBlock = EndBlock()
+
+    val callFunctionBlock = CallFunctionBlock()
+    val functionBlock = FunctionBlock()
+    val endFunctionBlock = EndFunctionBlock()
+
+    functionBlock.setUserInput("hi()")
+    callFunctionBlock.setUserInput("hi()")
+
+    callFunctionBlock.setPreviousMainFlowBlock(startBlock)
+    endBlock.setPreviousMainFlowBlock(callFunctionBlock)
+
+    endFunctionBlock.setPreviousMainFlowBlock(functionBlock)
+
+    val interpret = Interpret()
+    interpret.run(startBlock)
+}
+
 /*
 fun main() {
     val startBlock = StartBlock()
